@@ -32,10 +32,8 @@ sed -i "s|^#\?default_uki=.*|default_uki=\"$DEFAULT_UKI\"|" "$PRESET_FILE"
 sed -i "s|^#\?fallback_image=.*|fallback_image=\"$FALLBACK_IMAGE\"|" "$PRESET_FILE"
 sed -i "s|^#\?fallback_uki=.*|fallback_uki=\"$FALLBACK_UKI\"|" "$PRESET_FILE"
 
-ROOT_UUID="$(root-uuid)"
-
 KERNEL_CMDLINE="$1"
-echo "$KERNEL_CMDLINE" > "$KERNEL_CMDLINE_FILE"
+echo "$KERNEL_CMDLINE" > /mnt/etc/kernel/cmdline
 
 EFI_LOADER="\\EFI\\$IEFI_LINUX_DIRNAME\\$IUKI_EXEC"
 if ! efibootmgr | grep -q "${IUKI_LABEL}$"; then
