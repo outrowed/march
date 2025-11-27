@@ -6,12 +6,16 @@ mkdir -p passwords
 echo "---- Multi-User Password Setup ----"
 echo "Enter a username to set the password; you will be prompted for extra groups."
 echo "Enter 'root' to set the root password (no extra groups allowed)."
-echo "Press Ctrl+C to stop when finished."
+echo "Type '.exit' to stop when finished."
 echo "-----------------------------------"
 
 while true; do
     echo ""
     read -p "Enter username to configure: " username
+
+    if [[ "$username" == ".exit" ]]; then
+        exit 0
+    fi
 
     if [[ -z "$username" ]]; then
         echo "Username cannot be empty."
