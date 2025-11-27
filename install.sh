@@ -104,7 +104,7 @@ CMDLINE="root=UUID=$ROOT_UUID rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet sp
 ## User configuration
 
 # Configure sudoers
-echo "%wheel ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers.d/10-wheel
+echo "%wheel ALL=(ALL:ALL) ALL" | tee /mnt/etc/sudoers.d/10-wheel
 chmod 440 /mnt/etc/sudoers.d/10-wheel
 
 # Check if the passwords directory exists and is not empty

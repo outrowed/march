@@ -12,7 +12,7 @@ echo "Starting post-installation configuration..."
 
 echo "Installing late AUR / Pacman packages..."
 
-echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /mnt/etc/sudoers.d/00-paru-nopasswd
+echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | tee /mnt/etc/sudoers.d/00-paru-nopasswd
 
 arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
     "${ILATE_PACKAGES[@]}"
