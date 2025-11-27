@@ -19,7 +19,7 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 * Post-installation systemd services, packages, and [flatpak](https://wiki.archlinux.org/title/Flatpak) applications.
 
 ## Configure before running
-* [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_DEVICE_FULL`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`).
+* [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_PARTITION`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`).
 * [`packages.sh`](packages.sh): base/pacman/AUR/late package selections.
 * [`flatpak-packages.sh`](flatpak-packages.sh): flatpaks to install post-boot.
 * [`users-gen.sh`](users-gen.sh): generate hashed passwords into [`passwords/`](passwords/) (`filename` = username or `username+groups`; contents from `openssl passwd -6`).
@@ -37,7 +37,7 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 * `march-post-install-packages.service`: late paru packages + flatpaks.
 
 ## Notes
-* Bootloaders: `IBOOTLOADER=systemd-boot` or `uki`; EFI device set from `IEFI_DEVICE_FULL`.
+* Bootloaders: `IBOOTLOADER=systemd-boot` or `uki`; EFI device set from `IEFI_PARTITION`.
 * GPU: installs NVIDIA, AMD, and Intel GPU stack by default; adjust in `packages.sh` if not needed.
 * Security: temporary passwordless sudo is used during paru installation and then removed.
 

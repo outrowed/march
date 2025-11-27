@@ -9,23 +9,27 @@ SCRIPTDIR="$(dirname ${BASH_SOURCE[1]})"
 . "$SCRIPTDIR/config.sh"
 
 derive_efi_device() {
-    local full="${1:-$IEFI_DEVICE_FULL}"
-    local device_var="${2:-IEFI_DEVICE}"
-    local part_var="${3:-IEFI_PARTITION_INDEX}"
-    local regex='^(/dev/[a-zA-Z0-9]+)(p?)([0-9]+)$'
+    local partition="$1"
+    local device_var="$2"
+    local part_var="$3"
 
-    if [[ -z "$full" ]]; then
-        echo "ERROR: undefined EFI device variable \$full: '$full'"
+    if [[ -z "$partition" ]]; then
+        echo "ERROR: undefined EFI device variable \$partition: '$partition'"
         exit 1
     fi
 
-    if [[ "$full" =~ $regex ]]; then
-        printf -v "$device_var" '%s' "${BASH_REMATCH[1]}"
-        printf -v "$part_var" '%s' "${BASH_REMATCH[3]}"
-    else
-        echo "Unable to parse EFI device from '$full'. Expected e.g. /dev/nvme0n1p1 or /dev/sda1."
+    local parent part_index
+
+    parent="$(lsblk -no PKNAME "$partition" 2>/dev/null | head -n1)"
+    part_index="$(lsblk -no PARTN "$partition" 2>/dev/null | head -n1)"
+
+    if [[ -z "$partition" || -z "$parent" || -z "$part_index" ]]; then
+        echo "Unable to derive EFI device from '$partition'. Expected e.g. /dev/nvme0n1p1 or /dev/sda1."
         exit 1
     fi
+
+    printf -v "$device_var" '/dev/%s' "$parent"
+    printf -v "$part_var" '%s' "$part_index"
 }
 
 bakup() {

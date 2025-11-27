@@ -35,7 +35,7 @@ sed -i "s|^#\?fallback_uki=.*|fallback_uki=\"$FALLBACK_UKI\"|" "$PRESET_FILE"
 KERNEL_CMDLINE="$1"
 echo "$KERNEL_CMDLINE" > /mnt/etc/kernel/cmdline
 
-derive_efi_device "$IEFI_DEVICE_FULL" IEFI_DEVICE IEFI_PARTITION_INDEX
+derive_efi_device "$IEFI_PARTITION" IEFI_DEVICE IEFI_PARTITION_INDEX
 
 EFI_LOADER="\\EFI\\$IEFI_LINUX_DIRNAME\\$IUKI_EXEC"
 if ! efibootmgr | grep -q "${IUKI_LABEL}$"; then

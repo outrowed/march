@@ -14,7 +14,7 @@ mount --mkdir -o noatime,nofail /dev/disk/by-partlabel/"$IHOME_PARTITION_LABEL" 
 
 # EFI partitions don't support POSIX atime, but defaults are fine.
 
-mount --mkdir "$IEFI_DEVICE_FULL" /mnt/efi
+mount --mkdir "$IEFI_PARTITION" /mnt/efi
 
 mkdir -p /mnt/efi/EFI/"$IEFI_LINUX_DIRNAME"
 

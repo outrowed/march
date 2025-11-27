@@ -28,17 +28,16 @@ export INTP="0.arch.pool.ntp.org 1.arch.pool.ntp.org"
 export INTP_FALLBACK="0.pool.ntp.org 1.pool.ntp.org"
 
 export IROOT_PARTITION_LABEL=arch-linux-root
-# Only ext4 is supported by the current formatter; keep this as ext4.
-export IROOT_PARTITION_FSTYPE=ext4
 export IHOME_PARTITION_LABEL=arch-linux-home
 # Only ext4 is supported by the current formatter; keep this as ext4.
+export IROOT_PARTITION_FSTYPE=ext4
 export IHOME_PARTITION_FSTYPE=ext4
 
 export IREFLECTOR_COUNTRIES="Singapore"
 
 # EFI System Partition location
-export IEFI_DEVICE_FULL=/dev/nvme0n1p1
-# IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_DEVICE_FULL.
+export IEFI_PARTITION=/dev/nvme0n1p1
+# IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_PARTITION.
 export IEFI_LINUX_DIRNAME="Arch Linux"
 
 export IBOOTLOADER=systemd-boot
