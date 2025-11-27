@@ -41,7 +41,9 @@ arch-chroot /mnt systemctl enable systemd-timesyncd.service
 
 arch-chroot /mnt systemctl enable sshd.service
 
-arch-chroot /mnt systemctl enable systemd-boot-update.service
+if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
+    arch-chroot /mnt systemctl enable systemd-boot-update.service
+fi
 
 arch-chroot /mnt systemctl enable sddm.service
 

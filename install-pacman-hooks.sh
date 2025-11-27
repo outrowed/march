@@ -1,6 +1,9 @@
 #!/usr/bin/bash
 # Unattend Arch by Outrowed
 
+SCRIPTDIR="$(dirname ${BASH_SOURCE[0]})"
+. "$SCRIPTDIR/config.sh"
+
 ## Configure Pacman Hooks
 
 echo "Configuring system maintenance hooks..."
@@ -10,9 +13,10 @@ mkdir -p /mnt/etc/pacman.d/hooks
 
 # Systemd-boot Update Hook
 
-# Automatically updates the bootloader binary (BOOTX64.EFI) when systemd is updated
-# https://wiki.archlinux.org/title/Systemd-boot#pacman_hook
-cat <<EOF > /mnt/etc/pacman.d/hooks/95-systemd-boot.hook
+if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
+    # Automatically updates the bootloader binary (BOOTX64.EFI) when systemd is updated
+    # https://wiki.archlinux.org/title/Systemd-boot#pacman_hook
+    cat <<EOF > /mnt/etc/pacman.d/hooks/95-systemd-boot.hook
 [Trigger]
 Type = Package
 Operation = Upgrade
@@ -23,6 +27,7 @@ Description = Gracefully upgrading systemd-boot...
 When = PostTransaction
 Exec = /usr/bin/systemctl restart systemd-boot-update.service
 EOF
+fi
 
 # NVIDIA Initramfs Hook
 
