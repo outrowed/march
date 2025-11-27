@@ -3,10 +3,25 @@
 # Create the directory for password hashes
 mkdir -p passwords
 
+required_user="$1"
+required_user_created=false
+
+# Mark as created if a password hash already exists for the required user
+if [[ -n "$required_user" ]]; then
+    if ls passwords/"${required_user}" passwords/"${required_user}"+* > /dev/null 2>&1; then
+        required_user_created=true
+    fi
+fi
+
 echo "---- Multi-User Password Setup ----"
 echo "Enter a username to set the password; you will be prompted for extra groups."
 echo "Enter 'root' to set the root password (no extra groups allowed)."
 echo "Type '.exit' to stop when finished."
+if [[ -n "$required_user" ]]; then
+    echo "Required user: ${required_user}"
+else
+    echo "No required user specified."
+fi
 echo "-----------------------------------"
 
 while true; do
@@ -14,6 +29,10 @@ while true; do
     read -p "Enter username to configure: " username
 
     if [[ "$username" == ".exit" ]]; then
+        if [[ -n "$required_user" && "$required_user_created" != true ]]; then
+            echo "Required user '${required_user}' must be created before exiting."
+            continue
+        fi
         exit 0
     fi
 
@@ -50,11 +69,15 @@ while true; do
         fi
     fi
 
+    if [[ -n "$required_user" && "$username" == "$required_user" ]]; then
+        required_user_created=true
+    fi
+
     echo "Enter password for $username:"
     # Generate hash and save to passwords/<filename>
     # We save using '<username>+<groups>' so the installer sees the extra groups later
     openssl passwd -6 > "passwords/$filename"
     
     echo "Saved hash for user: $username"
-    echo "Press Ctrl+C to stop when finished."
+    echo "Type '.exit' to stop when finished."
 done
