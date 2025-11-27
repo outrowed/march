@@ -97,7 +97,7 @@ arch-chroot /mnt mkinitcpio -p linux || true
 
 # Configure a boot loader
 
-CMDLINE="root=UUID=$(root-uuid) rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto"
+CMDLINE="root=UUID=$(root-uuid) rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto systemd.gpt_auto=0"
 
 if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
     echo Setting up systemd-boot...
