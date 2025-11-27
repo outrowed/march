@@ -47,6 +47,7 @@ IPACSTRAP_PACKAGES=(
     plymouth        # boot startup
     zsh
     zram-generator
+    arch-audit-gtk
 
     ## Network
     systemd-resolvconf
@@ -181,13 +182,13 @@ IPACMAN_PACKAGES=(
     ## Fonts
     ttf-dejavu
     ttf-liberation
+    ttf-roboto
+    ttf-cascadia-code
+    ttf-jetbrains-mono
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    ttf-roboto
     otf-font-awesome
-    ttf-cascadia-code
-    ttf-jetbrains-mono
 
     ## Virtualization
     qemu-desktop
