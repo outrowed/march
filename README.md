@@ -18,6 +18,12 @@
 
 * The "main" script you're supposed to run for the first time is: `./install.sh`.
 
+* This is not a fully unattended installation, as some part of the script requires user input, including but not all:
+
+    * Installing packages via `paru` which requires asking for user password.
+
+    * Initial prompt confirming whether the user is okay with reformatting partitions.
+
 ## License
 
 This project is licensed under the terms of the
