@@ -36,7 +36,7 @@ linux   /EFI/$IEFI_LINUX_DIRNAME/vmlinuz-linux
 initrd  /EFI/$IEFI_LINUX_DIRNAME/intel-ucode.img
 initrd  /EFI/$IEFI_LINUX_DIRNAME/amd-ucode.img
 initrd  /EFI/$IEFI_LINUX_DIRNAME/initramfs-linux.img
-options root=UUID=$ROOT_UUID rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto
+options $1
 EOF
 
 # Update systemd-boot

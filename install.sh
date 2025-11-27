@@ -97,7 +97,9 @@ arch-chroot /mnt mkinitcpio -p linux || true
 
 # Configure a boot loader
 
-./install-systemd-boot.sh
+CMDLINE="root=UUID=$ROOT_UUID rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto"
+
+./install-systemd-boot.sh "$CMDLINE"
 
 ## User configuration
 
