@@ -4,7 +4,12 @@ set -a
 set -euo pipefail
 IFS=$'\n\t'
 
-SCRIPTDIR="$(dirname ${BASH_SOURCE[1]})"
+SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
+
+if [[ "$PWD" != "$SCRIPTDIR" ]]; then
+    echo "Please run the installer from its directory: $SCRIPT_SRC_DIR (current: $PWD)"
+    exit 1
+fi
 
 . "$SCRIPTDIR/config.sh"
 
