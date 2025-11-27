@@ -120,9 +120,8 @@ chmod 440 /mnt/etc/sudoers.d/10-wheel
 
 # Check if the passwords directory exists and is not empty
 if [[ ! -d passwords || -z "$(ls -A passwords 2>/dev/null)" ]]; then
-    echo "ERROR: 'passwords/' directory is missing or empty."
-    echo "Please run users-gen.sh to generate user passwords."
-    exit 1
+    echo "'passwords/' directory is missing or empty. Prompting multi-user creation..."
+    ./users-gen.sh
 fi
 
 # Setup users from passwords/ directory
