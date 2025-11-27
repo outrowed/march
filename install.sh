@@ -99,7 +99,18 @@ arch-chroot /mnt mkinitcpio -p linux || true
 
 CMDLINE="root=UUID=$ROOT_UUID rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto"
 
-./install-systemd-boot.sh "$CMDLINE"
+if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
+    echo Setting up systemd-boot...
+
+    ./install-systemd-boot.sh "$CMDLINE"
+elif [[ "$IBOOTLOADER" == "uki" ]]; then
+    echo Setting up UKI...
+
+    ./install-uki.sh "$CMDLINE"
+else
+    echo "Unsupported bootloader: $IBOOTLOADER"
+    exit 1
+fi
 
 ## User configuration
 
@@ -108,7 +119,7 @@ echo "%wheel ALL=(ALL:ALL) ALL" | tee /mnt/etc/sudoers.d/10-wheel
 chmod 440 /mnt/etc/sudoers.d/10-wheel
 
 # Check if the passwords directory exists and is not empty
-if [ ! -d "passwords" ] || [ -z "$(ls -A passwords)" ]; then
+if [[ ! -d passwords || -z "$(ls -A passwords 2>/dev/null)" ]]; then
     echo "ERROR: 'passwords/' directory is missing or empty."
     echo "Please run users-gen.sh to generate user passwords."
     exit 1

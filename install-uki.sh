@@ -1,14 +1,49 @@
 #!/usr/bin/bash
 
-# todo: modify linux.preset to uncomment *_uki and *_image with IUKI_EXEC (as .efi exec) and IEFI_LINUX_DIRNAME (as directory name)
+. "$(dirname ${BASH_SOURCE[0]})"/common.sh
+. "$SCRIPTDIR/config.sh"
 
-# todo: write /etc/kernel/cmdline
+PRESET_FILE=/mnt/etc/mkinitcpio.d/linux.preset
+KERNEL_CMDLINE_FILE=/mnt/etc/kernel/cmdline
 
-# todo: efibootmgr with IUKI_LABEL as the EFI name
+if [[ ! -f "$PRESET_FILE" ]]; then
+    echo "mkinitcpio preset not found at $PRESET_FILE"
+    exit 1
+fi
 
-# todo: optional pacman hook for auto-generating EFI entry as pacman hook: 90-uki-efibootmgr.hook
+bakup "$PRESET_FILE"
 
-: <<EFIBOOTMGR_HOOK
+DEFAULT_IMAGE="/efi/EFI/$IEFI_LINUX_DIRNAME/initramfs-linux.img"
+FALLBACK_IMAGE="/efi/EFI/$IEFI_LINUX_DIRNAME/initramfs-linux-fallback.img"
+
+uki_ext="${IUKI_EXEC##*.}"
+if [[ "$uki_ext" == "$IUKI_EXEC" ]]; then
+    fallback_exec="${IUKI_EXEC}-fallback"
+else
+    fallback_exec="${IUKI_EXEC%.$uki_ext}-fallback.$uki_ext"
+fi
+
+DEFAULT_UKI="/efi/EFI/$IEFI_LINUX_DIRNAME/$IUKI_EXEC"
+FALLBACK_UKI="/efi/EFI/$IEFI_LINUX_DIRNAME/$fallback_exec"
+
+sed -i "s|^#\?default_image=.*|default_image=\"$DEFAULT_IMAGE\"|" "$PRESET_FILE"
+sed -i "s|^#\?default_uki=.*|default_uki=\"$DEFAULT_UKI\"|" "$PRESET_FILE"
+sed -i "s|^#\?fallback_image=.*|fallback_image=\"$FALLBACK_IMAGE\"|" "$PRESET_FILE"
+sed -i "s|^#\?fallback_uki=.*|fallback_uki=\"$FALLBACK_UKI\"|" "$PRESET_FILE"
+
+ROOT_UUID="$(root-uuid)"
+
+KERNEL_CMDLINE="$1"
+echo "$KERNEL_CMDLINE" > "$KERNEL_CMDLINE_FILE"
+
+EFI_LOADER="\\EFI\\$IEFI_LINUX_DIRNAME\\$IUKI_EXEC"
+if ! efibootmgr | grep -q "${IUKI_LABEL}$"; then
+    efibootmgr --create --disk "$IEFI_DEVICE" --part "$IEFI_PARTITION_INDEX" --label "$IUKI_LABEL" --loader "$EFI_LOADER"
+fi
+
+if prompt "Install pacman hook to keep $IUKI_LABEL EFI entry present?"; then
+    mkdir -p /mnt/etc/pacman.d/hooks
+    cat <<EOF > /mnt/etc/pacman.d/hooks/90-uki-efibootmgr.hook
 [Trigger]
 Type = Package
 Operation = Install
@@ -18,7 +53,8 @@ Target = linux
 [Action]
 Description = Ensure UEFI entry for Arch UKI exists
 When = PostTransaction
-Exec = /usr/bin/bash -c 'efibootmgr -v | grep -q "arch-linux.efi" || efibootmgr --create --disk /dev/nvme0n1 --part 1 --label "Arch Linux (UKI)" --loader "\EFI\Linux\arch-linux.efi"'
-EFIBOOTMGR_HOOK
+Exec = /usr/bin/bash -c 'efibootmgr -v | grep -q "$IUKI_LABEL" || efibootmgr --create --disk $IEFI_DEVICE --part $IEFI_PARTITION_INDEX --label "$IUKI_LABEL" --loader "\\EFI\\$IEFI_LINUX_DIRNAME\\$IUKI_EXEC"'
+EOF
+fi
 
-mkinitcpio -P
+arch-chroot /mnt mkinitcpio -P

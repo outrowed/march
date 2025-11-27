@@ -29,4 +29,19 @@ prompt() {
     done
 }
 
+root-uuid() {
+    ROOT_UUID=$(grep -E '\s/\s' /mnt/etc/fstab | awk '{print $1}' | sed 's/^UUID=//' | head -n1)
+
+    if [[ -z "$ROOT_UUID" ]]; then
+        ROOT_UUID=$(blkid -s UUID -o value "/dev/disk/by-partlabel/$IROOT_PARTITION_LABEL" || true)
+    fi
+
+    if [[ -z "$ROOT_UUID" ]]; then
+        echo "Unable to determine root UUID for kernel cmdline."
+        exit 1
+    fi
+
+    echo $ROOT_UUID
+}
+
 set +a

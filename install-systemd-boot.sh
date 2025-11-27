@@ -24,7 +24,7 @@ EOF
 # Create the Arch Linux boot entry
 
 # Get the UUID for the root partition (/) from your fstab
-ROOT_UUID=$(grep -E '\s/\s' /mnt/etc/fstab | awk '{print $1}' | sed 's/^UUID=//' | head -n1)
+ROOT_UUID="$(root-uuid)"
 
 # Write the boot entry file
 
