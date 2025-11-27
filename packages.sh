@@ -6,7 +6,6 @@ IPACSTRAP_PACKAGES=(
     base
     linux
     linux-firmware
-    linux-firmware-intel
     base-devel
     intel-ucode
     amd-ucode
@@ -39,13 +38,13 @@ IPACSTRAP_PACKAGES=(
     unzip
     linux-headers
     htop
-    fwupd # Firmware updates
+    fwupd           # Firmware updates
     fastfetch
     rsync
     smartmontools
     timeshift
-    plocate
-    plymouth
+    plocate         # "everything" in linux
+    plymouth        # boot startup
     zsh
     zram-generator
 
@@ -53,7 +52,7 @@ IPACSTRAP_PACKAGES=(
     systemd-resolvconf
     networkmanager
     wireguard-tools
-    ufw
+    ufw                     # firewall
     network-manager-applet
     inetutils
     openbsd-netcat
@@ -62,10 +61,10 @@ IPACSTRAP_PACKAGES=(
     iwd
     wireless_tools
     wpa_supplicant
-    bluez
+    bluez                   # bluetooth support
     bluez-utils
-    avahi       # Network discovery (mDNS/Bonjour)
-    nss-mdns    # Hostname resolution for .local domains
+    avahi                   # Network discovery (mDNS/Bonjour)
+    nss-mdns                # Hostname resolution for .local domains
 
     ## Pacman Utilities
     pacman-contrib
@@ -112,10 +111,11 @@ IPACSTRAP_PACKAGES=(
     zsh-completions
     zsh-syntax-highlighting
     zsh-autosuggestions
-    grml-zsh-config
+    grml-zsh-config         # Recommendation per https://wiki.archlinux.org/title/Zsh#Sample_.zshrc_files
 )
 
 ## Post install Pacman packages
+# massive packages that are not that "important" for the base installation
 IPACMAN_PACKAGES=(
     ## System Utilities
     nvtop
@@ -126,7 +126,7 @@ IPACMAN_PACKAGES=(
 
     ## NVIDIA Drivers
     nvidia-prime
-    cuda
+    cuda            # here's the big boi
 
     ## Intel Drivers
     intel-media-driver
@@ -221,5 +221,5 @@ ILATE_PACKAGES=(
     ventoy-bin
 
     ## Applications
-    sunshine-bin
+    sunshine-bin    # moonlight
 )
