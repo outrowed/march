@@ -7,16 +7,16 @@
 
 echo "Starting Arch Linux installation..."
 
-prompt "This script will reformat $IROOT_PARTITION_LABEL and $IHOME_PARTITION_LABEL."
+MARCH_INSTALL_STATE_DIR="/mnt/var/lib/march-install"
 
-if [[ $? = 1 ]]; then
-    exit
-fi
+mkdir -p "$MARCH_INSTALL_STATE_DIR"
 
 if ! ping -c 1 archlinux.org &>/dev/null; then
-    echo "Error: No internet connection."
+    echo "ERROR: No internet connection."
     exit 1
 fi
+
+## Configure reflector
 
 echo Configuring reflector...
 
@@ -25,16 +25,40 @@ reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 1
 ## Partitioning
 
 # Reformat partitions
-./reformat-partitions.sh
+if prompt "This script will reformat $IROOT_PARTITION_LABEL and $IHOME_PARTITION_LABEL."; then
+    ./reformat-partitions.sh
+else
+    echo "Skipping partition reformat; existing data will be preserved."
+fi
 
 # Mount partitions
 ./mount-partitions.sh
 
 # Pacstrap packages to /mnt
 
-echo Running pacstrap on /mnt...
+PACSTRAP_FLAG="$MARCH_INSTALL_STATE_DIR/pacstrap.done"
+RUN_PACSTRAP=1
 
-pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
+if [[ -f "$PACSTRAP_FLAG" ]]; then
+    if prompt "Pacstrap already completed (found $PACSTRAP_FLAG). Run pacstrap again?"; then
+        RUN_PACSTRAP=1
+    else
+        RUN_PACSTRAP=0
+        echo "Skipping pacstrap; continuing with existing /mnt contents."
+    fi
+fi
+
+if [[ "$RUN_PACSTRAP" -eq 0 && ! -d /mnt/etc ]]; then
+    echo "pacstrap has not been run yet (missing /mnt/etc). Please allow pacstrap to run."
+    exit 1
+fi
+
+if [[ "$RUN_PACSTRAP" -eq 1 ]]; then
+    echo Running pacstrap on /mnt...
+    rm -f "$PACSTRAP_FLAG"
+    pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
+    date -Iseconds > "$PACSTRAP_FLAG"
+fi
 
 # Generate fstab to Arch Linux
 
@@ -136,8 +160,13 @@ arch-chroot /mnt usermod -aG wheel "$ISUPER_USER"
 
 ## Shell global config
 
+BASHRC_FLAG="$MARCH_INSTALL_STATE_DIR/bashrc.done"
+
 # Bash global config
-cat <<EOF >> /mnt/etc/bash.bashrc
+if [[ -f "$BASHRC_FLAG" ]]; then
+    echo "Global bash config already added; skipping /mnt/etc/bash.bashrc append."
+else
+    cat <<EOF >> /mnt/etc/bash.bashrc
 
 # -- Added by march/install.sh --
 
@@ -150,6 +179,8 @@ alias ip='ip -c'
 # Set a colorful prompt (Green User @ Host : Blue CWD $)
 PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 EOF
+    date -Iseconds > "$BASHRC_FLAG"
+fi
 
 ## ZRAM configuration
 
