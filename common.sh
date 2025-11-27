@@ -15,7 +15,7 @@ derive_efi_device() {
     local regex='^(/dev/[a-zA-Z0-9]+)(p?)([0-9]+)$'
 
     if [[ -z "$full" ]]; then
-        echo "IEFI_DEVICE_FULL is not set in config.sh"
+        echo "ERROR: undefined EFI device variable \$full: '$full'"
         exit 1
     fi
 
