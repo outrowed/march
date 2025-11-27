@@ -2,7 +2,6 @@
 # Unattend Arch by Outrowed
 
 . "$(dirname ${BASH_SOURCE[0]})"/common.sh
-. "$SCRIPTDIR/install-func.sh"
 . "$SCRIPTDIR/packages.sh"
 . "$SCRIPTDIR/config.sh"
 
@@ -218,7 +217,7 @@ echo Done
 
 echo Installing paru AUR helper...
 
-install-paru
+./install-paru "$ISUPER_USER"
 
 echo Done
 
