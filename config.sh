@@ -24,6 +24,8 @@ ILOCALE_CONF=(
     "LC_MEASUREMENT=en_GB.UTF-8"
 )    
 export IKEYMAP=us
+export INTP="0.arch.pool.ntp.org 1.arch.pool.ntp.org"
+export INTP_FALLBACK="0.pool.ntp.org 1.pool.ntp.org"
 
 export IROOT_PARTITION_LABEL=arch-linux-root
 export IROOT_PARTITION_FSTYPE=ext4

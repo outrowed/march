@@ -2,7 +2,6 @@
 # Unattend Arch by Outrowed
 
 . "$(dirname ${BASH_SOURCE[0]})"/common.sh
-. "$SCRIPTDIR/install-func.sh"
 . "$SCRIPTDIR/packages.sh"
 . "$SCRIPTDIR/config.sh"
 
@@ -32,8 +31,8 @@ mkdir -p /mnt/etc/systemd/timesyncd.conf.d
 
 cat <<EOF > /mnt/etc/systemd/timesyncd.conf.d/ntp.conf
 [Time]
-NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org
-FallbackNTP=0.pool.ntp.org 1.pool.ntp.org
+NTP=$INTP
+FallbackNTP=$INTP_FALLBACK
 EOF
 
 arch-chroot /mnt systemctl enable systemd-timesyncd.service
