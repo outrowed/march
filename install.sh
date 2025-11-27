@@ -38,6 +38,7 @@ pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
 
 # Generate fstab to Arch Linux
 
+# Intentionally clears the fstab file
 echo "# <file system> <dir> <type> <options> <dump> <pass>" > /mnt/etc/fstab
 
 genfstab -U /mnt >> /mnt/etc/fstab
