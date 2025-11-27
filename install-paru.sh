@@ -5,7 +5,7 @@ arch-chroot /mnt pacman -S --noconfirm --needed rust
 
 # Run the build process as the super user, not as root
 # We use 'sudo -u' for this.
-arch-chroot /mnt sudo -u "$0" bash -c "
+arch-chroot /mnt sudo -u "$1" bash -c "
     cd /tmp
     git clone https://aur.archlinux.org/paru.git /tmp/paru-build
     cd /tmp/paru-build
