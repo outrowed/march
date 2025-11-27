@@ -12,14 +12,14 @@ echo "Starting post-installation configuration..."
 
 echo "Installing late AUR / Pacman packages..."
 
-echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | tee /mnt/etc/sudoers.d/00-paru-nopasswd
+echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/00-paru-nopasswd
 
-arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
+sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
     "${ILATE_PACKAGES[@]}"
 
 echo "Restoring sudo password requirement..."
 
-rm /mnt/etc/sudoers.d/00-paru-nopasswd
+rm /etc/sudoers.d/00-paru-nopasswd
 
 ## Flatpak setup
 
