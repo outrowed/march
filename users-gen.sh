@@ -3,42 +3,43 @@
 # Create the directory for password hashes
 mkdir -p passwords
 
-echo "--- Multi-User Password Setup ---"
-echo "Format: username (e.g. 'example') or username+groups (e.g. 'example+wheel,samba')"
-echo "Enter 'root' to set the root password."
+echo "---- Multi-User Password Setup ----"
+echo "Enter a username to set the password; you will be prompted for extra groups."
+echo "Enter 'root' to set the root password (no extra groups allowed)."
 echo "Press Ctrl+C to stop when finished."
 echo "-----------------------------------"
 
 while true; do
     echo ""
-    read -p "Enter username to configure: " input_name
+    read -p "Enter username to configure: " username
 
-    if [[ -z "$input_name" ]]; then
+    if [[ -z "$username" ]]; then
         echo "Username cannot be empty."
         continue
     fi
 
-    # Only split if a '+' exists
-    if [[ "$input_name" == *"+"* ]]; then
-        username="${input_name%%+*}"
-        groups="${input_name#*+}"
-        echo " -> User: $username"
-        echo " -> Groups: $groups"
-    else
-        username="$input_name"
-        groups=""
-        echo " -> User: $username"
-        echo " -> No group specified."
-    fi
+    filename="$username"
+    groups=""
 
-    # Don't allow groups for root
-    if [[ "$username" == "root" ]] && [[ -n "$groups" ]]; then
-        echo "Error: You cannot add extra groups to 'root'. Please just type 'root'."
-        continue
+    if [[ "$username" == "root" ]]; then
+        echo " -> User: $username"
+        echo " -> Extra groups are not allowed for root."
+    else
+        read -p "Enter extra groups for $username (comma-separated, blank for none): " groups_input
+        # Strip whitespace from the comma-separated list
+        groups="${groups_input//[[:space:]]/}"
+        if [[ -n "$groups" ]]; then
+            filename="${username}+${groups}"
+            echo " -> User: $username"
+            echo " -> Groups: $groups"
+        else
+            echo " -> User: $username"
+            echo " -> No extra groups specified."
+        fi
     fi
 
     # Check if we are overwriting an existing user
-    if [[ -f "passwords/$input_name" ]]; then
+    if [[ -f "passwords/$filename" ]]; then
         read -p "User '$username' already exists. Overwrite? [y/N]: " confirm
         if [[ "$confirm" != "y" ]]; then
             continue
@@ -47,8 +48,9 @@ while true; do
 
     echo "Enter password for $username:"
     # Generate hash and save to passwords/<filename>
-    # We save using 'input_name' so the installer sees the '+groups' part later
-    openssl passwd -6 > "passwords/$input_name"
+    # We save using '<username>+<groups>' so the installer sees the extra groups later
+    openssl passwd -6 > "passwords/$filename"
     
     echo "Saved hash for user: $username"
+    echo "Press Ctrl+C to stop when finished."
 done
