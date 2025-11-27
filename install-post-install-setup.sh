@@ -4,7 +4,7 @@
 . "$(dirname ${BASH_SOURCE[0]})"/common.sh
 . "$SCRIPTDIR/config.sh"
 
-## Setup march-post-install.sh to run on first boot
+## Setup march/post-install-*.sh to run on first boot
 
 echo "Setting up march post install script to run on first boot..."
 
@@ -14,7 +14,7 @@ install -Dm644 "$SCRIPTDIR/packages.sh" /mnt/usr/local/sbin/march-packages.sh
 
 # Post install configuration service
 
-install -Dm755 "$SCRIPTDIR/march-post-install-config.sh" /mnt/usr/local/sbin/march-post-install-config.sh
+install -Dm755 "$SCRIPTDIR/post-install-config.sh" /mnt/usr/local/sbin/march-post-install-config.sh
 
 cat <<EOF > /mnt/etc/systemd/system/march-post-install-config.service
 [Unit]
@@ -33,7 +33,7 @@ arch-chroot /mnt systemctl enable march-post-install-config.service
 
 # Flatpak and late AUR / Pacman packages installation service
 
-install -Dm755 "$SCRIPTDIR/march-post-install-packages.sh" /mnt/usr/local/sbin/march-post-install-packages.sh
+install -Dm755 "$SCRIPTDIR/post-install-packages.sh" /mnt/usr/local/sbin/march-post-install-packages.sh
 
 cat <<EOF > /mnt/etc/systemd/system/march-post-install-packages.service
 [Unit]

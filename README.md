@@ -12,11 +12,11 @@
 
     * By default, the packages selected are very bloated (including NVIDIA, Intel, and AMD drivers), and this is by design to support many devices with different hardware and specification in the long run.
 
-* Generate users used in the installation via `./march-users-gen.sh` to automatically generate users in the `./passwords` directory.
+* Generate users used in the installation via `./users-gen.sh` to automatically generate users in the `./passwords` directory.
 
     * The filenames in `./passwords` directory are used for the usernames, and the files' content are the hashed password via `openssl passwd -6`.
 
-* The "main" script you're supposed to run for the first time is: `./march-install.sh`.
+* The "main" script you're supposed to run for the first time is: `./install.sh`.
 
 ## License
 
