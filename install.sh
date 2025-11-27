@@ -25,7 +25,7 @@ reflector --country "$IREFLECTOR_COUNTRIES" --age 12 --save /etc/pacman.d/mirror
 ## Partitioning
 
 # Reformat partitions
-./reformat-patitions.sh
+./reformat-partitions.sh
 
 # Mount partitions
 ./mount-partitions.sh
@@ -97,7 +97,7 @@ arch-chroot /mnt mkinitcpio -p linux || true
 
 # Configure a boot loader
 
-CMDLINE="root=UUID=$ROOT_UUID rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto"
+CMDLINE="root=UUID=$(root-uuid) rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto"
 
 if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
     echo Setting up systemd-boot...
@@ -196,7 +196,7 @@ echo Done
 
 echo Installing paru AUR helper...
 
-./install-paru "$ISUPER_USER"
+./install-paru.sh "$ISUPER_USER"
 
 echo Done
 
