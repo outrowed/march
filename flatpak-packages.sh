@@ -2,12 +2,12 @@
 
 IFLATPAK_PACKAGES=(
     ## Utility Tools
-    org.kde.kamoso
-    io.github.webcamoid.Webcamoid
+    org.kde.kamoso                  # camera
+    io.github.webcamoid.Webcamoid   # camera
     com.github.tchx84.Flatseal
     io.github.flattool.Warehouse
     org.localsend.localsend_app
-    com.moonlight_stream.Moonlight
+    com.moonlight_stream.Moonlight  # sunshine
 
     ## Media
     org.kde.haruna
@@ -24,8 +24,8 @@ IFLATPAK_PACKAGES=(
     com.bitwarden.desktop
 
     ## Social
-    dev.vencord.Vesktop
-    com.ktechpit.whatsie
+    dev.vencord.Vesktop     # better discord
+    com.ktechpit.whatsie    # WhatsApp
     org.kde.konversation
     org.kde.neochat
 
