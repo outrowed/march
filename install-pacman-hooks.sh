@@ -11,6 +11,7 @@ mkdir -p /mnt/etc/pacman.d/hooks
 # Systemd-boot Update Hook
 
 # Automatically updates the bootloader binary (BOOTX64.EFI) when systemd is updated
+# https://wiki.archlinux.org/title/Systemd-boot#pacman_hook
 cat <<EOF > /mnt/etc/pacman.d/hooks/95-systemd-boot.hook
 [Trigger]
 Type = Package
