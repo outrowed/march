@@ -11,7 +11,7 @@ echo Installing dekstop and AUR packages...
 
 echo Modifying sudoers to allow passwordless sudo wheel group for unattended paru packages installation..
 
-echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /mnt/etc/sudoers.d/10-wheel
+echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /mnt/etc/sudoers.d/00-paru-nopasswd
 
 arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
     "${IPACMAN_PACKAGES[@]}" \
@@ -19,7 +19,7 @@ arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
 
 echo "Restoring sudo password requirement..."
 
-echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/10-wheel
+rm /mnt/etc/sudoers.d/00-paru-nopasswd
 
 echo Done
 
