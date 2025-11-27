@@ -20,7 +20,7 @@ fi
 
 echo Configuring reflector...
 
-reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 12 --save /etc/pacman.d/mirrorlist
+retry reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 12 --save /etc/pacman.d/mirrorlist
 
 ## Partitioning
 
@@ -56,7 +56,7 @@ fi
 if [[ "$RUN_PACSTRAP" -eq 1 ]]; then
     echo Running pacstrap on /mnt...
     rm -f "$PACSTRAP_FLAG"
-    pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
+    retry pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
     date -Iseconds > "$PACSTRAP_FLAG"
 fi
 
@@ -117,7 +117,7 @@ echo 'MODULES+=(amdgpu)' \
 arch-chroot /mnt sed -i 's/udev/udev plymouth/g' /etc/mkinitcpio.conf
 
 # Regenerate the initramfs
-arch-chroot /mnt mkinitcpio -p linux || true
+retry arch-chroot /mnt mkinitcpio -p linux
 
 # Configure a boot loader
 
@@ -206,7 +206,7 @@ sed -i 's/^#Color/Color/' /mnt/etc/pacman.conf
 echo Configuring reflector...
 
 # Initial reflector run to set the mirrorlist
-arch-chroot /mnt reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 12 --save /etc/pacman.d/mirrorlist
+retry arch-chroot /mnt reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 12 --save /etc/pacman.d/mirrorlist
 
 # This ensures that when the weekly timer runs, it uses your preferred countries.
 mkdir -p /mnt/etc/xdg/reflector

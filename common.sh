@@ -53,6 +53,27 @@ prompt() {
     done
 }
 
+retry() {
+    local fn="$1"
+    shift || true
+
+    while true; do
+        if "$fn" "$@"; then
+            return 0
+        fi
+
+        local status=$?
+        echo "'$fn' failed with exit code $status."
+
+        if prompt "Retry $fn?"; then
+            echo "Retrying $fn..."
+        else
+            echo "Exiting install."
+            exit "$status"
+        fi
+    done
+}
+
 root-uuid() {
     ROOT_UUID=$(grep -E '\s/\s' /mnt/etc/fstab | awk '{print $1}' | sed 's/^UUID=//' | head -n1)
 

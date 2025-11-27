@@ -13,7 +13,7 @@ echo Modifying sudoers to allow passwordless sudo wheel group for unattended par
 
 echo "$ISUPER_USER ALL=(ALL:ALL) NOPASSWD: ALL" | tee /mnt/etc/sudoers.d/00-paru-nopasswd
 
-arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
+retry arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
     "${IPACMAN_PACKAGES[@]}" \
     "${IAUR_PACKAGES[@]}"
 
