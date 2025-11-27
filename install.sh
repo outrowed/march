@@ -95,44 +95,9 @@ arch-chroot /mnt sed -i 's/udev/udev plymouth/g' /etc/mkinitcpio.conf
 # Regenerate the initramfs
 arch-chroot /mnt mkinitcpio -p linux || true
 
-# Configure systemd-boot bootloader
+# Configure a boot loader
 
-# Install systemd-boot to the ESP mount point
-arch-chroot /mnt bootctl --esp-path=/efi install
-
-# Create EFI boot entry
-if ! efibootmgr | grep -q "${ISYSTEMD_BOOT_EFI_LABEL}$"; then
-    efibootmgr --create --disk $IEFI_DEVICE --part $IEFI_PARTITION_INDEX --label "$ISYSTEMD_BOOT_EFI_LABEL" --loader /EFI/systemd/systemd-bootx64.efi
-fi
-
-# Create the main loader config
-cat <<EOF > /mnt/efi/loader/loader.conf
-default  arch.conf
-timeout  5
-console-mode max
-editor no
-EOF
-
-# Create the Arch Linux boot entry
-
-# Get the UUID for the root partition (/) from your fstab
-ROOT_UUID=$(grep -E '\s/\s' /mnt/etc/fstab | awk '{print $1}' | sed 's/^UUID=//' | head -n1)
-
-# Write the boot entry file
-
-mkdir -p /mnt/efi/loader/entries
-
-cat <<EOF > /mnt/efi/loader/entries/arch.conf
-title   $ISYSTEMD_BOOT_ARCH_LABEL
-linux   /EFI/$IEFI_LINUX_DIRNAME/vmlinuz-linux
-initrd  /EFI/$IEFI_LINUX_DIRNAME/intel-ucode.img
-initrd  /EFI/$IEFI_LINUX_DIRNAME/amd-ucode.img
-initrd  /EFI/$IEFI_LINUX_DIRNAME/initramfs-linux.img
-options root=UUID=$ROOT_UUID rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto
-EOF
-
-# Update systemd-boot
-arch-chroot /mnt bootctl --esp-path=/efi update
+./install-systemd-boot.sh
 
 ## User configuration
 
