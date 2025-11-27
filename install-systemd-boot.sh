@@ -5,6 +5,8 @@
 
 ## Configure systemd-boot bootloader
 
+derive_efi_device "$IEFI_DEVICE_FULL" IEFI_DEVICE IEFI_PARTITION_INDEX
+
 # Install systemd-boot to the ESP mount point
 arch-chroot /mnt bootctl --esp-path=/efi install
 

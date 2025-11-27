@@ -38,8 +38,7 @@ export IREFLECTOR_COUNTRIES="Singapore"
 
 # EFI System Partition location
 export IEFI_DEVICE_FULL=/dev/nvme0n1p1
-export IEFI_DEVICE=/dev/nvme0n1
-export IEFI_PARTITION_INDEX=1
+# IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_DEVICE_FULL.
 export IEFI_LINUX_DIRNAME="Arch Linux"
 
 export IBOOTLOADER=systemd-boot
