@@ -4,7 +4,8 @@
 . "$SCRIPTDIR/config.sh"
 
 PRESET_FILE=/mnt/etc/mkinitcpio.d/linux.preset
-KERNEL_CMDLINE_FILE=/mnt/etc/kernel/cmdline
+
+mkdir -p /mnt/etc/kernel
 
 if [[ ! -f "$PRESET_FILE" ]]; then
     echo "mkinitcpio preset not found at $PRESET_FILE"
