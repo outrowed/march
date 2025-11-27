@@ -20,7 +20,7 @@ fi
 
 echo Configuring reflector...
 
-reflector --country "$IREFLECTOR_COUNTRIES" --age 12 --save /etc/pacman.d/mirrorlist
+reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 12 --save /etc/pacman.d/mirrorlist
 
 ## Partitioning
 
@@ -175,7 +175,7 @@ sed -i 's/^#Color/Color/' /mnt/etc/pacman.conf
 echo Configuring reflector...
 
 # Initial reflector run to set the mirrorlist
-arch-chroot /mnt reflector --country "$IREFLECTOR_COUNTRIES" --age 12 --save /etc/pacman.d/mirrorlist
+arch-chroot /mnt reflector --country "$IREFLECTOR_COUNTRIES" --protocol https --sort rate --age 12 --save /etc/pacman.d/mirrorlist
 
 # This ensures that when the weekly timer runs, it uses your preferred countries.
 mkdir -p /mnt/etc/xdg/reflector
