@@ -80,7 +80,7 @@ echo 'MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)' \
     > /mnt/etc/mkinitcpio.conf.d/nvidia.conf
 
 # Intel modules
-echo 'MODULES+=(i915 vmd crc32c-intel)' \
+echo 'MODULES+=(i915 vmd)' \
     > /mnt/etc/mkinitcpio.conf.d/intel.conf
 
 # AMD modules
