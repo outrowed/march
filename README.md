@@ -10,7 +10,7 @@
 
 * Also configure `./packages.sh` and `./flatpak-packages.sh` files to specify which packages you want to install.
 
-    * By default, the packages installed are very bloated (including NVIDIA, Intel, and AMD drivers), and this is by design to support different devices in long run.
+    * By default, the packages selected are very bloated (including NVIDIA, Intel, and AMD drivers), and this is by design to support many devices with different hardware and specification in the long run.
 
 * Generate users used in the installation via `./march-users-gen.sh` to automatically generate users in the `./passwords` directory.
 
