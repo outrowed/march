@@ -2,8 +2,8 @@
 # Unattend Arch by Outrowed
 
 . "$(dirname ${BASH_SOURCE[0]})"/common.sh
-. "$SCRIPTDIR/packages.sh"
 . "$SCRIPTDIR/config.sh"
+. "$SCRIPTDIR/packages.sh"
 
 ## Deferred / AUR packages installation
 
