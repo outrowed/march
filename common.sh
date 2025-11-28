@@ -11,8 +11,6 @@ if [[ "$PWD" != "$SCRIPTDIR" ]]; then
     exit 1
 fi
 
-. "$SCRIPTDIR/config.sh"
-
 derive_efi_device() {
     local partition="$1"
     local device_var="$2"
