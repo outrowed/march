@@ -30,6 +30,6 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 # Install them (non-interactively)
 flatpak install flathub "${IFLATPAK_PACKAGES[@]}" -y
 
-echo "Post-installation configuration completed."
+echo "Post-installation packages completed."
 
 exit 0

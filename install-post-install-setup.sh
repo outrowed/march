@@ -19,11 +19,12 @@ install -Dm755 "$SCRIPTDIR/post-install-config.sh" /mnt/usr/local/sbin/march-pos
 cat <<EOF > /mnt/etc/systemd/system/march-post-install-config.service
 [Unit]
 Description=Run one-time march post install configuration on first boot
+After=graphical.target
+Wants=graphical.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/march-post-install-config.sh
-ExecStartPost=/usr/bin/systemctl disable --now march-post-install-config.service
+ExecStart=/usr/bin/bash -c '/usr/local/sbin/march-post-install-config.sh && /usr/bin/systemctl disable --now march-post-install-config.service'
 
 [Install]
 WantedBy=multi-user.target
@@ -38,13 +39,12 @@ install -Dm755 "$SCRIPTDIR/post-install-packages.sh" /mnt/usr/local/sbin/march-p
 cat <<EOF > /mnt/etc/systemd/system/march-post-install-packages.service
 [Unit]
 Description=Run flatpak packages installation on first boot
-After=network-online.target
-Wants=network-online.target
+After=network-online.target graphical.target
+Wants=network-online.target graphical.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/march-post-install-packages.sh
-ExecStartPost=/usr/bin/systemctl disable --now march-post-install-packages.service
+ExecStart=/usr/bin/bash -c '/usr/local/sbin/march-post-install-packages.sh && /usr/bin/systemctl disable --now march-post-install-packages.service'
 
 [Install]
 WantedBy=multi-user.target
