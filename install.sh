@@ -34,6 +34,9 @@ fi
 # Mount partitions
 ./mount-partitions.sh
 
+# Cleanup /mnt/boot
+./cleanup-boot.sh
+
 # Pacstrap packages to /mnt
 
 PACSTRAP_FLAG="$MARCH_INSTALL_STATE_DIR/pacstrap.done"
