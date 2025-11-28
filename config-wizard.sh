@@ -36,7 +36,8 @@ ITEMS=(
     "IHOME_PARTITION_LABEL|string|Home partition label"
     "IROOT_PARTITION_FSTYPE|string|Root filesystem type"
     "IHOME_PARTITION_FSTYPE|string|Home filesystem type"
-    "IREFLECTOR_COUNTRIES|string|Reflector countries (comma-separated)"
+    "IREFLECTOR_COUNTRY|string|Reflector countries (comma-separated)"
+    "IREFLECTOR_LATEST|string|Reflector 'latest' mirror count"
     "IEFI_PARTITION|string|EFI partition path"
     "IEFI_LINUX_DIRNAME|string|EFI Linux directory name"
     "IBOOTLOADER|string|Bootloader (systemd-boot/uki)"
@@ -130,7 +131,8 @@ write_config() {
         printf 'export IROOT_PARTITION_FSTYPE=\"%s\"\n' "$(escape_val "$IROOT_PARTITION_FSTYPE")"
         printf 'export IHOME_PARTITION_FSTYPE=\"%s\"\n' "$(escape_val "$IHOME_PARTITION_FSTYPE")"
         echo
-        printf 'export IREFLECTOR_COUNTRIES=\"%s\"\n' "$(escape_val "$IREFLECTOR_COUNTRIES")"
+        printf 'export IREFLECTOR_COUNTRY=\"%s\"\n' "$(escape_val "$IREFLECTOR_COUNTRY")"
+        printf 'export IREFLECTOR_LATEST=\"%s\"\n' "$(escape_val "$IREFLECTOR_LATEST")"
         echo
         printf 'export IEFI_PARTITION=\"%s\"\n' "$(escape_val "$IEFI_PARTITION")"
         printf 'export IEFI_LINUX_DIRNAME=\"%s\"\n' "$(escape_val "$IEFI_LINUX_DIRNAME")"

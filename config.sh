@@ -33,7 +33,8 @@ export IHOME_PARTITION_LABEL=arch-linux-home
 export IROOT_PARTITION_FSTYPE=ext4
 export IHOME_PARTITION_FSTYPE=ext4
 
-export IREFLECTOR_COUNTRIES="Singapore"
+export IREFLECTOR_COUNTRY="Singapore"
+export IREFLECTOR_LATEST=10
 
 # EFI System Partition location
 export IEFI_PARTITION=/dev/nvme0n1p1
