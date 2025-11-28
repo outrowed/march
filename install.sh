@@ -7,10 +7,6 @@
 
 echo "Starting Arch Linux installation..."
 
-MARCH_INSTALL_STATE_DIR="/mnt/var/lib/march-install"
-
-mkdir -p "$MARCH_INSTALL_STATE_DIR"
-
 if ! ping -c 1 archlinux.org &>/dev/null; then
     echo "ERROR: No internet connection."
     exit 1
@@ -39,6 +35,8 @@ fi
 
 # Pacstrap packages to /mnt
 
+MARCH_INSTALL_STATE_DIR="/mnt/var/lib/march-install"
+
 PACSTRAP_FLAG="$MARCH_INSTALL_STATE_DIR/pacstrap.done"
 RUN_PACSTRAP=1
 
@@ -60,6 +58,7 @@ if [[ "$RUN_PACSTRAP" -eq 1 ]]; then
     echo Running pacstrap on /mnt...
     rm -f "$PACSTRAP_FLAG"
     retry pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
+    mkdir -p "$MARCH_INSTALL_STATE_DIR"
     date -Iseconds > "$PACSTRAP_FLAG"
 fi
 
