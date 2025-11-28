@@ -20,17 +20,19 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 
 ## Configure before running
 * [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_PARTITION`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`).
-* [`packages.sh`](packages.sh): base/pacman/AUR/late package selections.
+* [`packages.sh`](packages.sh): base/pacman/AUR/late package selections. Late packages are installed after the system is fully installed (after base, pacman, and AUR packages).
 * [`flatpak-packages.sh`](flatpak-packages.sh): flatpaks to install post-boot.
-* [`users-gen.sh`](users-gen.sh): generate hashed passwords into [`passwords/`](passwords/) (`filename` = username or `username+groups`; contents from `openssl passwd -6`).
+* You can use the interactive wizard to generate the configs: [`./config-wizard.sh`](config-wizard.sh) (defaults to `config-generated.sh` when saving) and [`./packages-wizard.sh`](packages-wizard.sh) (defaults to `packages-generated.sh` / `flatpak-packages-generated.sh` when saving).
+* [`user-wizard.sh`](user-wizard.sh): generate hashed passwords into [`passwords/`](passwords/) (`filename` = username or `username+groups`; contents from `openssl passwd -6`).
 
 ## Quickstart
 1) Boot Arch ISO with internet.
 2) Clone this repo into the live environment.
-3) Adjust [`config.sh`](config.sh), [`packages.sh`](packages.sh), [`flatpak-packages.sh`](flatpak-packages.sh).
-4) Generate users: [`./users-gen.sh`](users-gen.sh) (creates [`passwords/`](passwords/) entries).
-5) Run the installer: [`./install.sh`](install.sh) (will prompt before formatting and during paru build).
-6) Reboot into the installed system; post-install services will finish remaining packages/flatpaks.
+3) Make scripts executable: `chmod +x *.sh`.
+4) Adjust [`config.sh`](config.sh), [`packages.sh`](packages.sh), [`flatpak-packages.sh`](flatpak-packages.sh) (or use the wizards: [`./config-wizard.sh`](config-wizard.sh), [`./packages-wizard.sh`](packages-wizard.sh)).
+5) Generate users: [`./user-wizard.sh`](user-wizard.sh) (creates [`passwords/`](passwords/) entries).
+6) Run the installer: [`./install.sh`](install.sh) (will prompt before formatting and during paru build).
+7) Reboot into the installed system; post-install services will finish remaining packages/flatpaks.
 
 ## Post-boot services
 * `march-post-install-config.service`: one-time system config (firewall, samba groups, etc.).
