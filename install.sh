@@ -34,7 +34,7 @@ fi
 # Mount partitions
 ./mount-partitions.sh
 
-# Cleanup /mnt/boot
+# Remove files recursively in /mnt/boot
 ./cleanup-boot.sh
 
 # Pacstrap packages to /mnt
