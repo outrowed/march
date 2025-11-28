@@ -22,7 +22,7 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 * [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_PARTITION`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`).
 * [`packages.sh`](packages.sh): base/pacman/AUR/late package selections. Late packages are installed after the system is fully installed (after base, pacman, and AUR packages).
 * [`flatpak-packages.sh`](flatpak-packages.sh): flatpaks to install post-boot.
-* You can use the interactive wizard to generate the configs: [`./config-wizard.sh`](config-wizard.sh) (defaults to `config-generated.sh` when saving) and [`./packages-wizard.sh`](packages-wizard.sh) (defaults to `packages-generated.sh` / `flatpak-packages-generated.sh` when saving).
+* You can use the interactive wizard to generate the configs: [`./config-wizard.sh`](config-wizard.sh) (defaults to `config-user.sh` when saving) and [`./packages-wizard.sh`](packages-wizard.sh) (defaults to `packages-user.sh` / `flatpak-packages-user.sh` when saving).
 * [`user-wizard.sh`](user-wizard.sh): generate hashed passwords into [`passwords/`](passwords/) (`filename` = username or `username+groups`; contents from `openssl passwd -6`).
 
 ## Quickstart

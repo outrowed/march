@@ -1,5 +1,5 @@
 passwords/**/*
-*-generated.sh
+*-user.sh
 
 .vscode/*
 !.vscode/settings.json

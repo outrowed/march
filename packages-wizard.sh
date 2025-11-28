@@ -11,9 +11,9 @@ set -euo pipefail
 IFS=$'\n\t'
 
 DEFAULT_PKGS_FILE="$SCRIPTDIR/packages.sh"
-DEFAULT_PKGS_GENERATED="$SCRIPTDIR/packages-generated.sh"
+DEFAULT_PKGS_GENERATED="$SCRIPTDIR/packages-user.sh"
 DEFAULT_FLATPAK_FILE="$SCRIPTDIR/flatpak-packages.sh"
-DEFAULT_FLATPAK_GENERATED="$SCRIPTDIR/flatpak-packages-generated.sh"
+DEFAULT_FLATPAK_GENERATED="$SCRIPTDIR/flatpak-packages-user.sh"
 
 choose_defaults() {
     choose_defaults_common "$DEFAULT_PKGS_FILE" "$DEFAULT_PKGS_GENERATED" \

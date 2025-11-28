@@ -9,7 +9,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 DEFAULT_CONFIG_FILE="$SCRIPTDIR/config.sh"
-DEFAULT_CONFIG_GENERATED="$SCRIPTDIR/config-generated.sh"
+DEFAULT_CONFIG_GENERATED="$SCRIPTDIR/config-user.sh"
 
 choose_defaults() {
     choose_defaults_common "$DEFAULT_CONFIG_FILE" "$DEFAULT_CONFIG_GENERATED" \
