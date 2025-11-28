@@ -2,6 +2,9 @@
 
 set -a
 set -euo pipefail
+
+shopt -s dotglob nullglob
+
 IFS=$'\n\t'
 
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
