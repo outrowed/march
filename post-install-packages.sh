@@ -12,7 +12,7 @@ echo "Starting post-installation configuration..."
 
 echo "Installing late AUR / Pacman packages..."
 
-echo "$ISUPER_USER ALL=(ALL:ALL) NOPASSWD: /usr/bin/pacman" > /etc/sudoers.d/00-paru-nopasswd
+echo "$ISUPER_USER ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/00-paru-nopasswd
 
 sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
     "${ILATE_PACKAGES[@]}"
