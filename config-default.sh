@@ -37,9 +37,10 @@ export IREFLECTOR_COUNTRY="Singapore"
 export IREFLECTOR_LATEST=10
 
 # EFI System Partition location
-export IEFI_PARTITION=/dev/nvme0n1p1
 # IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_PARTITION.
-export IEFI_LINUX_DIRNAME="Arch Linux"
+export IEFI_PARTITION=/dev/nvme0n1p1
+# IEFI_LINUNX_DIRNAME is the directory stored in the ESP, must be safe non-space characters (regex: /[a-zA-Z-_]+/)
+export IEFI_LINUX_DIRNAME=arch-linux
 
 export IBOOTLOADER=systemd-boot
 
