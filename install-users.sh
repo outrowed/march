@@ -54,3 +54,7 @@ for hash_file in passwords/*; do
         fi
     fi
 done
+
+echo "Setting /usr/bin/zsh shell for root..."
+
+arch-chroot /mnt chsh -s /usr/bin/zsh root
