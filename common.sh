@@ -10,7 +10,7 @@ IFS=$'\n\t'
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
 
 if [[ "$PWD" != "$SCRIPTDIR" ]]; then
-    echo "Please run the installer from its directory: $SCRIPT_SRC_DIR (current: $PWD)"
+    echo "Please run the installer from its directory: $SCRIPTDIR (current: $PWD)"
     exit 1
 fi
 
