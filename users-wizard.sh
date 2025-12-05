@@ -5,6 +5,7 @@ mkdir -p passwords
 
 required_user="$1"
 required_user_created=false
+root_password_created=false
 
 # Mark as created if a password hash already exists for the required user
 if [[ -n "$required_user" ]]; then
@@ -13,22 +14,35 @@ if [[ -n "$required_user" ]]; then
     fi
 fi
 
+# Mark root as created if a password hash already exists for root
+if ls passwords/root passwords/root+* > /dev/null 2>&1; then
+    root_password_created=true
+fi
+
 echo "---- Multi-User Password Setup ----"
 echo "Enter a username to set the password; you will be prompted for extra groups."
 echo "Enter 'root' to set the root password (no extra groups allowed)."
 echo "Type '.exit' to stop when finished."
+echo "Type '.exit-without-root' to stop even if root has no password."
+echo "-----------------------------------"
+echo ""
+
 if [[ -n "$required_user" ]]; then
     echo "Required user: ${required_user}"
 else
     echo "No required user specified."
 fi
-echo "-----------------------------------"
 
 while true; do
     echo ""
     read -p "Enter username to configure: " username
 
-    if [[ "$username" == ".exit" ]]; then
+    if [[ -z "$username" ]]; then
+        echo "Username cannot be empty."
+        continue
+    fi
+
+    if [[ "$username" == ".exit-without-root" ]]; then
         if [[ -n "$required_user" && "$required_user_created" != true ]]; then
             echo "Required user '${required_user}' must be created before exiting."
             continue
@@ -36,9 +50,16 @@ while true; do
         exit 0
     fi
 
-    if [[ -z "$username" ]]; then
-        echo "Username cannot be empty."
-        continue
+    if [[ "$username" == ".exit" ]]; then
+        if [[ -n "$required_user" && "$required_user_created" != true ]]; then
+            echo "Required user '${required_user}' must be created before exiting."
+            continue
+        fi
+        if [[ "$root_password_created" != true ]]; then
+            echo "Root password must be set before exiting (or use '.exit-without-root')."
+            continue
+        fi
+        exit 0
     fi
 
     filename="$username"
@@ -72,6 +93,9 @@ while true; do
     if [[ -n "$required_user" && "$username" == "$required_user" ]]; then
         required_user_created=true
     fi
+    if [[ "$username" == "root" ]]; then
+        root_password_created=true
+    fi
 
     echo "Enter password for $username:"
     # Generate hash and save to passwords/<filename>
@@ -79,5 +103,11 @@ while true; do
     openssl passwd -6 > "passwords/$filename"
     
     echo "Saved hash for user: $username"
+    if [[ -n "$required_user" && "$required_user_created" != true ]]; then
+        echo "Required user: ${required_user}"
+    fi
+    if [[ "$root_password_created" != true ]]; then
+        echo "Root password not set yet."
+    fi
     echo "Type '.exit' to stop when finished."
 done
