@@ -28,7 +28,7 @@ echo "-----------------------------------"
 echo ""
 
 if [[ -n "$required_user" ]]; then
-    echo "Required user: ${required_user}"
+    echo "Required user must be created: ${required_user}"
 else
     echo "No required user specified."
 fi
@@ -104,7 +104,7 @@ while true; do
     
     echo "Saved hash for user: $username"
     if [[ -n "$required_user" && "$required_user_created" != true ]]; then
-        echo "Required user: ${required_user}"
+        echo "Required user must be created: ${required_user}"
     fi
     if [[ "$root_password_created" != true ]]; then
         echo "Root password not set yet."
