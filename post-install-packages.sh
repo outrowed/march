@@ -9,6 +9,16 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
 echo "Starting post-installation configuration..."
 
+## Wait for network online to archlinux.org
+
+echo "Waiting for DNS..."
+
+until ping -c1 archlinux.org &>/dev/null; do
+    sleep 1
+done
+
+echo "DNS OK."
+
 ## Late AUR / Pacman packages installation
 
 echo "Installing late AUR / Pacman packages..."
