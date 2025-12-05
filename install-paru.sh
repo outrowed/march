@@ -7,7 +7,7 @@ retry arch-chroot /mnt pacman -S --noconfirm --needed rust
 
 # Run the build process as the super user, not as root
 # We use 'sudo -u' for this.
-retry arch-chroot /mnt sudo -u "$1" bash -c "
+autosudo "$ISUPER_USER" /mnt retry arch-chroot /mnt sudo -u "$1" bash -c "
     cd /tmp
     git clone https://aur.archlinux.org/paru.git /tmp/paru-build
     cd /tmp/paru-build

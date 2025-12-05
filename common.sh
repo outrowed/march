@@ -112,4 +112,23 @@ chkpkg() {
     return 0
 }
 
+# temporary passwordless sudo
+autosudo() {
+    local user="$1"
+    local root="$2"
+    shift 2
+
+    local sudoers_file="$root/etc/sudoers.d/100-nopasswd-$user"
+
+    echo "Temporarily enabling passwordless sudo for user: $user (in $root)"
+    echo "$user ALL=(ALL:ALL) NOPASSWD: ALL" > "$sudoers_file"
+    chmod 440 "$sudoers_file"
+
+    # Execute whatever commands were passed
+    "$@"
+
+    echo "Restoring sudo requirement..."
+    rm -f "$sudoers_file"
+}
+
 set +a

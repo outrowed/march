@@ -8,6 +8,7 @@
 
 echo "Setting up march post install script to run on first boot..."
 
+install -Dm644 "$SCRIPTDIR/common.sh" /mnt/usr/local/sbin/march-common.sh
 install -Dm644 "$SCRIPTDIR/config.sh" /mnt/usr/local/sbin/march-config.sh
 install -Dm644 "$SCRIPTDIR/flatpak-packages.sh" /mnt/usr/local/sbin/march-flatpak-packages.sh
 install -Dm644 "$SCRIPTDIR/packages.sh" /mnt/usr/local/sbin/march-packages.sh
@@ -39,8 +40,8 @@ install -Dm755 "$SCRIPTDIR/post-install-packages.sh" /mnt/usr/local/sbin/march-p
 cat <<EOF > /mnt/etc/systemd/system/march-post-install-packages.service
 [Unit]
 Description=Run flatpak packages installation on first boot
-After=network-online.target graphical.target
-Wants=network-online.target graphical.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
