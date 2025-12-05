@@ -90,9 +90,7 @@ if chkpkgroot /mnt reflector; then
     arch-chroot /mnt systemctl enable reflector.timer
 fi
 
-if chkpkgroot /mnt util-linux; then
-    arch-chroot /mnt systemctl enable fstrim.timer
-fi
+arch-chroot /mnt systemctl enable fstrim.timer
 
 if chkpkgroot /mnt man-db; then
     arch-chroot /mnt systemctl enable man-db.timer
