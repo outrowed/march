@@ -75,7 +75,7 @@ echo "$IHOSTNAME" > /mnt/etc/hostname
 ## Timezone and localization config
 
 # Select timezone from config
-ln -sf /mnt/usr/share/zoneinfo/"$ITIMEZONE" /mnt/etc/localtime
+ln -sf /usr/share/zoneinfo/"$ITIMEZONE" /mnt/etc/localtime
 
 # Generate localization from locale list
 
