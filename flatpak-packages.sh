@@ -1,33 +1,37 @@
 #!/usr/bin/bash
 
+## Flatpak system-wide packages
 IFLATPAK_PACKAGES=(
-    ## Utility Tools
-    org.kde.kamoso                  # camera
-    io.github.webcamoid.Webcamoid   # camera
+    ## Util
+    # Camera
+    org.kde.kamoso
+    io.github.webcamoid.Webcamoid
+    # Flatpak manager
     com.github.tchx84.Flatseal
     io.github.flattool.Warehouse
+    # LAN / remote
     org.localsend.localsend_app
     com.moonlight_stream.Moonlight  # sunshine
 
-    ## Media
+    ## Multimedia
     org.kde.haruna
     com.github.wwmm.easyeffects
 
-    ## Gaming & Windows Compatibility
+    ## Gaming + Windows compat
     com.valvesoftware.Steam
     com.usebottles.bottles
     net.davidotek.pupgui2
     com.github.Matoking.protontricks
 
-    ## User Applications
-    com.vscodium.codium
+    ## User
     com.bitwarden.desktop
+    # ex: com.vscodium.codium -- AUR code code-features code-marketplace
 
-    ## Social
+    ## Internet social
     dev.vencord.Vesktop     # better discord
-    com.ktechpit.whatsie    # WhatsApp
     org.kde.konversation
     org.kde.neochat
+    # ex: com.ktechpit.whatsie -- whatsapp on web is just better
 
     ## Office
     org.libreoffice.LibreOffice

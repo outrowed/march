@@ -208,6 +208,11 @@ IPACMAN_PACKAGES=(
     hyphen
 
     ## Devel
+    # AUR VSCode
+    code
+    code-features
+    code-marketplace
+    # NodeJS
     nodejs
     npm
     pnpm
