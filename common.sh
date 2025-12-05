@@ -95,4 +95,21 @@ root-uuid() {
     echo $ROOT_UUID
 }
 
+# check if packages exist
+chkpkg() {
+    # prefer paru if installed (AUR support)
+    if command -v paru &>/dev/null; then
+        checker="paru -Q"
+    else
+        checker="pacman -Q"
+    fi
+
+    # check all packages
+    for pkg in "$@"; do
+        $checker "$pkg" &>/dev/null || return 1
+    done
+
+    return 0
+}
+
 set +a
