@@ -95,18 +95,44 @@ root-uuid() {
     echo $ROOT_UUID
 }
 
-# check if packages exist
-chkpkg() {
-    # prefer paru if installed (AUR support)
-    if command -v paru &>/dev/null; then
-        checker="paru -Q"
-    else
-        checker="pacman -Q"
+# check if packages exist in a given root
+chkpkgroot() {
+    local root="$1"
+    shift || true
+
+    if [[ -z "$root" ]]; then
+        echo "chkpkgroot: root path is required"
+        return 1
     fi
 
-    # check all packages
+    local checker=()
+
+    # Prefer paru inside the target root for AUR awareness; fall back to pacman.
+    if [[ -x "$root/usr/bin/paru" || -x "$root/bin/paru" ]]; then
+        checker=(arch-chroot "$root" paru -Q)
+    else
+        checker=(pacman --root "$root" -Q)
+    fi
+
     for pkg in "$@"; do
-        $checker "$pkg" &>/dev/null || return 1
+        "${checker[@]}" "$pkg" &>/dev/null || return 1
+    done
+
+    return 0
+}
+
+# check if packages exist on the host
+chkpkg() {
+    local checker=()
+
+    if command -v paru &>/dev/null; then
+        checker=(paru -Q)
+    else
+        checker=(pacman -Q)
+    fi
+
+    for pkg in "$@"; do
+        "${checker[@]}" "$pkg" &>/dev/null || return 1
     done
 
     return 0

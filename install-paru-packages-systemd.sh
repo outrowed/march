@@ -32,42 +32,76 @@ arch-chroot /mnt systemctl enable systemd-timesyncd.service
 
 # Enable other services
 
-arch-chroot /mnt systemctl enable sshd.service
+if chkpkgroot /mnt openssh; then
+    arch-chroot /mnt systemctl enable sshd.service
+fi
 
 if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
     arch-chroot /mnt systemctl enable systemd-boot-update.service
 fi
 
-arch-chroot /mnt systemctl enable sddm.service
+if chkpkgroot /mnt sddm; then
+    arch-chroot /mnt systemctl enable sddm.service
+fi
 
-arch-chroot /mnt systemctl enable NetworkManager.service
+if chkpkgroot /mnt networkmanager; then
+    arch-chroot /mnt systemctl enable NetworkManager.service
+fi
 
-arch-chroot /mnt systemctl enable ufw.service
+if chkpkgroot /mnt ufw; then
+    arch-chroot /mnt systemctl enable ufw.service
+fi
 
-arch-chroot /mnt systemctl enable bluetooth.service
+if chkpkgroot /mnt bluez; then
+    arch-chroot /mnt systemctl enable bluetooth.service
+fi
 
 arch-chroot /mnt systemctl enable systemd-oomd.service
 
-arch-chroot /mnt systemctl enable fwupd-refresh.timer
+if chkpkgroot /mnt fwupd; then
+    arch-chroot /mnt systemctl enable fwupd-refresh.timer
+fi
 
 # Enable PipeWire
 
-arch-chroot /mnt systemctl --global enable pipewire.socket
-arch-chroot /mnt systemctl --global enable pipewire-pulse.socket
-arch-chroot /mnt systemctl --global enable wireplumber.service
+if chkpkgroot /mnt pipewire; then
+    arch-chroot /mnt systemctl --global enable pipewire.socket
+fi
+
+if chkpkgroot /mnt pipewire-pulse; then
+    arch-chroot /mnt systemctl --global enable pipewire-pulse.socket
+fi
+
+if chkpkgroot /mnt wireplumber; then
+    arch-chroot /mnt systemctl --global enable wireplumber.service
+fi
 
 # Auto rotation for 2-in-1 devices
-arch-chroot /mnt systemctl enable iio-sensor-proxy.service
+if chkpkgroot /mnt iio-sensor-proxy; then
+    arch-chroot /mnt systemctl enable iio-sensor-proxy.service
+fi
 
 # Thunderbolt manager
-arch-chroot /mnt systemctl enable bolt.service
+if chkpkgroot /mnt bolt; then
+    arch-chroot /mnt systemctl enable bolt.service
+fi
 
-arch-chroot /mnt systemctl enable reflector.timer
+if chkpkgroot /mnt reflector; then
+    arch-chroot /mnt systemctl enable reflector.timer
+fi
 
-arch-chroot /mnt systemctl enable fstrim.timer
+if chkpkgroot /mnt util-linux; then
+    arch-chroot /mnt systemctl enable fstrim.timer
+fi
 
-arch-chroot /mnt systemctl enable man-db.timer
+if chkpkgroot /mnt man-db; then
+    arch-chroot /mnt systemctl enable man-db.timer
+fi
 
-arch-chroot /mnt systemctl enable plocate-updatedb.timer
+if chkpkgroot /mnt plocate; then
+    arch-chroot /mnt systemctl enable plocate-updatedb.timer
+fi
 
-arch-chroot /mnt systemctl enable paccache.timer
+if chkpkgroot /mnt pacman-contrib; then
+    arch-chroot /mnt systemctl enable paccache.timer
+fi

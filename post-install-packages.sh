@@ -30,12 +30,16 @@ autosudo "$ISUPER_USER" / paru -Syu --needed --noconfirm \
 
 echo "Installing system-wide Flatpak packages..."
 
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+if chkpkg flatpak; then
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# Install them (non-interactively)
-autosudo "$ISUPER_USER" / flatpak install --system flathub "${IFLATPAK_PACKAGES[@]}" -y &
+    # Install them (non-interactively)
+    autosudo "$ISUPER_USER" / flatpak install --system flathub "${IFLATPAK_PACKAGES[@]}" -y &
+fi
 
-wait
+if [[ -n "$(jobs -p)" ]]; then
+    wait
+fi
 
 echo "Post-installation packages completed."
 
