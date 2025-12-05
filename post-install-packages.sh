@@ -24,16 +24,18 @@ echo "DNS OK."
 echo "Installing late AUR / Pacman packages..."
 
 autosudo "$ISUPER_USER" / paru -Syu --needed --noconfirm \
-    "${ILATE_PACKAGES[@]}"
+    "${ILATE_PACKAGES[@]}" &
 
 ## Flatpak setup
 
-echo "Installing Flatpaks..."
+echo "Installing system-wide Flatpak packages..."
 
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # Install them (non-interactively)
-flatpak install flathub "${IFLATPAK_PACKAGES[@]}" -y
+autosudo "$ISUPER_USER" / flatpak install --system flathub "${IFLATPAK_PACKAGES[@]}" -y &
+
+wait
 
 echo "Post-installation packages completed."
 
