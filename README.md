@@ -19,7 +19,7 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 * Post-installation systemd services, packages, and [flatpak](https://wiki.archlinux.org/title/Flatpak) applications.
 
 ## Configure before running
-* [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_PARTITION`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`).
+* [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_PARTITION`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`), swap (`ISWAP_TYPE=zram|swapfile`, defaults to zram).
 * [`packages.sh`](packages.sh): base/pacman/AUR/late package selections. Late packages are installed after the system is fully installed (after base, pacman, and AUR packages).
 * [`flatpak-packages.sh`](flatpak-packages.sh): flatpaks to install post-boot.
 * You can use the interactive wizard to generate the configs: [`./config-wizard.sh`](config-wizard.sh) (defaults to `config-user.sh` when saving) and [`./packages-wizard.sh`](packages-wizard.sh) (defaults to `packages-user.sh` / `flatpak-packages-user.sh` when saving).

@@ -36,6 +36,7 @@ ITEMS=(
     "IHOME_PARTITION_LABEL|string|Home partition label"
     "IROOT_PARTITION_FSTYPE|string|Root filesystem type"
     "IHOME_PARTITION_FSTYPE|string|Home filesystem type"
+    "ISWAP_TYPE|string|Swap type (zram/swapfile)"
     "IREFLECTOR_COUNTRY|string|Reflector countries (comma-separated)"
     "IREFLECTOR_LATEST|string|Reflector 'latest' mirror count"
     "IEFI_PARTITION|string|EFI partition path"
@@ -130,6 +131,8 @@ write_config() {
         printf 'export IHOME_PARTITION_LABEL=\"%s\"\n' "$(escape_val "$IHOME_PARTITION_LABEL")"
         printf 'export IROOT_PARTITION_FSTYPE=\"%s\"\n' "$(escape_val "$IROOT_PARTITION_FSTYPE")"
         printf 'export IHOME_PARTITION_FSTYPE=\"%s\"\n' "$(escape_val "$IHOME_PARTITION_FSTYPE")"
+        echo
+        printf 'export ISWAP_TYPE=\"%s\"\n' "$(escape_val "$ISWAP_TYPE")"
         echo
         printf 'export IREFLECTOR_COUNTRY=\"%s\"\n' "$(escape_val "$IREFLECTOR_COUNTRY")"
         printf 'export IREFLECTOR_LATEST=\"%s\"\n' "$(escape_val "$IREFLECTOR_LATEST")"

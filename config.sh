@@ -36,6 +36,9 @@ export IHOME_PARTITION_FSTYPE=ext4
 export IREFLECTOR_COUNTRY="Singapore"
 export IREFLECTOR_LATEST=10
 
+# Swap configuration: zram or swapfile
+export ISWAP_TYPE=zram
+
 # EFI System Partition location
 # IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_PARTITION.
 export IEFI_PARTITION=/dev/nvme0n1p1

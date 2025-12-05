@@ -184,14 +184,53 @@ EOF
     date -Iseconds > "$BASHRC_FLAG"
 fi
 
-## ZRAM configuration
+## Swap configuration
 
-echo "Configuring ZRAM..."
-cat <<EOF > /mnt/etc/systemd/zram-generator.conf
+SWAP_TYPE="${ISWAP_TYPE:-}"
+
+case "$SWAP_TYPE" in
+    "")
+        echo "ISWAP_TYPE is unset; skipping swap configuration."
+        ;;
+    zram)
+        echo "Configuring ZRAM..."
+        cat <<EOF > /mnt/etc/systemd/zram-generator.conf
 [zram0]
 zram-size = min(ram / 2, 4096)
 compression-algorithm = zstd
 EOF
+        ;;
+    swapfile)
+        echo "Configuring swapfile..."
+        swapfile=/mnt/swapfile
+
+        # min(ram / 2, 4096) MiB
+        mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+        swap_mb=$((mem_kb / 2 / 1024))
+        (( swap_mb > 4096 )) && swap_mb=4096
+
+        if [[ -f "$swapfile" ]]; then
+            echo "Existing swapfile found at $swapfile; recreating."
+            rm -f "$swapfile"
+        fi
+
+        if ! fallocate -l "${swap_mb}M" "$swapfile"; then
+            echo "fallocate failed; falling back to dd..."
+            dd if=/dev/zero of="$swapfile" bs=1M count="$swap_mb" status=progress
+        fi
+
+        chmod 600 "$swapfile"
+        arch-chroot /mnt mkswap /swapfile
+        arch-chroot /mnt swapon /swapfile
+
+        if ! grep -qE '^/swapfile\s' /mnt/etc/fstab; then
+            echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
+        fi
+        ;;
+    *)
+        echo "Unknown ISWAP_TYPE '$SWAP_TYPE'; skipping swap configuration."
+        ;;
+esac
 
 ## Pacman config
 
