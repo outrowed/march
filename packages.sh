@@ -78,6 +78,7 @@ IPACSTRAP_PACKAGES=(
     # Utils
     inetutils
     openbsd-netcat
+    nmap
     speedtest-cli
     # Wireless
     iwd
