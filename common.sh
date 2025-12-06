@@ -71,12 +71,27 @@ retry() {
         local status=$?
         echo "'$fn' failed with exit code $status."
 
-        if prompt "Retry $fn?"; then
-            echo "Retrying $fn..."
-        else
-            echo "Exiting install."
-            exit "$status"
-        fi
+        while true; do
+            read -p "Retry $fn? [r]etry/[s]kip/[e]xit: " choice
+
+            case "$choice" in
+                [Rr]* )
+                    echo "Retrying $fn..."
+                    break
+                    ;;
+                [Ss]* )
+                    echo "Skipping $fn."
+                    return 0
+                    ;;
+                [Ee]* )
+                    echo "Exiting install."
+                    exit "$status"
+                    ;;
+                * )
+                    echo "Please enter r to retry, s to skip, or e to exit."
+                    ;;
+            esac
+        done
     done
 }
 
