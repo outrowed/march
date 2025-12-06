@@ -117,8 +117,9 @@ IPACSTRAP_PACKAGES=(
 # packages installed after the base system installation
 # usually this is where DE and graphical related things are installed
 IPACMAN_PACKAGES=(
-    ## Generic GPU
+    ## Generic GPU/CPU
     vulkan-icd-loader
+    vulkan-swrast       # Vulkan Software Rasterizer (CPU)
 
     ## NVIDIA
     nvidia-prime
