@@ -137,6 +137,17 @@ IPACMAN_PACKAGES=(
     ## Thunderbolt
     bolt
 
+    ## Audio
+    pipewire
+    wireplumber
+    pipewire-jack
+    pipewire-pulse
+    pipewire-alsa
+    phonon-qt6-vlc
+    alsa-utils
+    gst-plugin-pipewire
+    pavucontrol
+
     ## Admin
     gparted
     smartmontools
@@ -189,17 +200,6 @@ IPACMAN_PACKAGES=(
 
     ## Multimedia
     ffmpegthumbs
-
-    ## Audio
-    pipewire
-    wireplumber
-    pipewire-jack
-    pipewire-pulse
-    pipewire-alsa
-    phonon-qt6-vlc
-    alsa-utils
-    gst-plugin-pipewire
-    pavucontrol
 
     ## Network
     avahi       # Network discovery (mDNS/Bonjour)
