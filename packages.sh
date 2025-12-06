@@ -119,7 +119,8 @@ IPACSTRAP_PACKAGES=(
 IPACMAN_PACKAGES=(
     ## Generic GPU/CPU
     vulkan-icd-loader
-    vulkan-swrast       # Vulkan Software Rasterizer (CPU)
+    vulkan-swrast               # Vulkan Software Rasterizer (CPU)
+    vulkan-mesa-device-select
 
     ## NVIDIA
     nvidia-prime
@@ -141,6 +142,7 @@ IPACMAN_PACKAGES=(
     smartmontools
     nvtop
     iotop
+    vulkan-tools
     # ex: timeshift
 
     ## Desktop Environment (KDE Plasma)
@@ -264,12 +266,13 @@ IAUR_PACKAGES=(
 )
 
 ## Late AUR / Pacman packages
-# some packages have very long compile time and thus needs to be deferred / ran in background
+# some packages have very long compile time and thus needs to be deferred / ran in background after KDE Plasma installation
 ILATE_PACKAGES=(
-    cuda            # big boi NVIDIA driver
-    maliit-keyboard # virtual keyboard
-    topgrade        # all-in-one universal system upgrade
-    sunshine-bin    # remote server
-    ventoy-bin      # ventoy bootloader
-    archiso         # archiso creation
+    cuda                # big boi NVIDIA driver
+    maliit-keyboard     # virtual keyboard
+    topgrade            # all-in-one universal system upgrade
+    sunshine-bin        # remote server
+    ventoy-bin          # ventoy bootloader
+    archiso             # archiso creation
+    optimus-manager-git # NVIDIA optimus manager
 )
