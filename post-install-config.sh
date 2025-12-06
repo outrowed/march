@@ -30,9 +30,27 @@ fi
 ## kdenetwork-filesharing setup
 
 if chkpkg samba; then
+    mkdir -p /etc/samba
+
+    # Default samba configuration
+    cat <<EOF > /etc/samba/smb.conf
+[global]
+workgroup = $IHOSTNAME
+server string = $ISUPER_USER's Samba Server
+server role = standalone server
+
+logging = systemd
+EOF
+
     # Add user to sambashare
     groupadd -r sambashare
     gpasswd -a "$ISUPER_USER" sambashare
+
+    # UFW
+
+    if chkpkg ufw; then
+        ufw allow CFIS
+    fi
 
     # Enable samba services
     systemctl enable smb nmb
