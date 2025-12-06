@@ -66,6 +66,7 @@ IFLATPAK_SYSTEM_PACKAGES=(
 
 ## Flatpak main user packages
 IFLATPAK_USER_PACKAGES=(
+    # opt: io.github.giantpinkrobots.varia -- download manager
     # opt: com.github.marinm.songrec -- unofficial Shazam client (song recognition) app
     # opt: com.spotify.Client -- normal spotify
     # opt: dev.diegovsky.Riff -- spotify backend, requires spotify premium
