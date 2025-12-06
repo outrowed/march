@@ -200,6 +200,7 @@ IPACMAN_PACKAGES=(
 
     ## Generic DE
     plymouth            # boot startup
+    wl-clipboard
     xdg-utils
     trash-cli
     iio-sensor-proxy
