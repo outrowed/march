@@ -7,9 +7,15 @@ shopt -s dotglob nullglob
 
 IFS=$'\n\t'
 
-SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
+is_systemd_service() {
+    [[ -n "${INVOCATION_ID-}" || -n "${SYSTEMD_EXEC_PID-}" || -n "${JOURNAL_STREAM-}" ]]
+}
 
-if [[ "$PWD" != "$SCRIPTDIR" ]]; then
+SCRIPT_CALLER="${BASH_SOURCE[1]:-$0}"
+SCRIPTDIR="$(cd "$(dirname "$SCRIPT_CALLER")" && pwd)"
+SCRIPT_BASENAME="$(basename "$SCRIPT_CALLER")"
+
+if [[ "$SCRIPT_BASENAME" == march-* && "$PWD" != "$SCRIPTDIR" ]] && ! is_systemd_service; then
     echo "Please run the installer from its directory: $SCRIPTDIR (current: $PWD)"
     exit 1
 fi
