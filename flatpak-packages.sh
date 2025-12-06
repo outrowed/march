@@ -15,6 +15,9 @@ IFLATPAK_SYSTEM_PACKAGES=(
     # LAN / remote
     org.localsend.localsend_app
     com.moonlight_stream.Moonlight  # sunshine
+    # Devel
+    org.kde.kdiff3
+    org.kde.kompare
 
     ## Multimedia
     org.kde.haruna
@@ -26,16 +29,17 @@ IFLATPAK_SYSTEM_PACKAGES=(
     net.davidotek.pupgui2
     com.github.Matoking.protontricks
 
+    ## Office
+    org.libreoffice.LibreOffice
+    org.kde.ghostwriter
+    org.kde.okular
+    org.gnome.gitlab.ilhooq.Bookup
+
     ## Internet social
     dev.vencord.Vesktop     # better discord
     org.kde.konversation
     org.kde.neochat
     # ex: com.ktechpit.whatsie -- whatsapp on web is just better
-
-    ## Office
-    org.libreoffice.LibreOffice
-    org.kde.ghostwriter
-    org.kde.okular
 
     ## Internet
     org.mozilla.firefox
@@ -44,7 +48,6 @@ IFLATPAK_SYSTEM_PACKAGES=(
     org.qbittorrent.qBittorrent
     org.kde.kget
     org.kde.alligator
-    com.spotify.Client
 
     ## Creative & Graphics
     org.gimp.GIMP
@@ -57,10 +60,12 @@ IFLATPAK_SYSTEM_PACKAGES=(
     
     ## Miscellaneous
     org.godotengine.Godot
+    com.bitwarden.desktop
 )
 
 ## Flatpak main user packages
 IFLATPAK_USER_PACKAGES=(
-    com.bitwarden.desktop
+    # opt: com.spotify.Client -- normal spotify
+    # opt: dev.diegovsky.Riff -- spotify backend, requires spotify premium
     # ex: com.vscodium.codium -- AUR code code-features code-marketplace
 )
