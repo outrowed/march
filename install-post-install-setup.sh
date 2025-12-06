@@ -20,8 +20,7 @@ install -Dm755 "$SCRIPTDIR/post-install-config.sh" /mnt/usr/local/sbin/march-pos
 cat <<EOF > /mnt/etc/systemd/system/march-post-install-config.service
 [Unit]
 Description=Run one-time march post install configuration on first boot
-After=graphical.target
-Wants=graphical.target
+After=basic.target
 
 [Service]
 Type=oneshot
