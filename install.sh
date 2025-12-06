@@ -115,10 +115,10 @@ configure_swapfile() {
     echo "Configuring swapfile..."
     swapfile=/mnt/swapfile
 
-    # min(ram / 2, 4096) MiB
+    # Allocate swapfile as 1.5x physical RAM (in MiB)
     mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-    swap_mb=$((mem_kb / 2 / 1024))
-    (( swap_mb > 4096 )) && swap_mb=4096
+    mem_mb=$((mem_kb / 1024))
+    swap_mb=$((mem_mb + mem_mb / 2))
 
     if [[ -f "$swapfile" ]]; then
         echo "Existing swapfile found at $swapfile; recreating."
