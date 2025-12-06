@@ -110,7 +110,7 @@ IPACSTRAP_PACKAGES=(
     zsh-completions
     zsh-syntax-highlighting
     zsh-autosuggestions
-    grml-zsh-config         # Recommendation per https://wiki.archlinux.org/title/Zsh#Sample_.zshrc_files
+    grml-zsh-config         # ArchISO Zsh Config per https://wiki.archlinux.org/title/Zsh#Sample_.zshrc_files
 )
 
 ## Pacman packages
