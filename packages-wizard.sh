@@ -53,7 +53,8 @@ write_flatpaks() {
     {
         echo "#!/usr/bin/bash"
         echo
-        write_array "IFLATPAK_PACKAGES"
+        write_array "IFLATPAK_SYSTEM_PACKAGES"
+        write_array "IFLATPAK_USER_PACKAGES"
     } > "$FLATPAK_OUT"
     echo "Saved flatpak list to $FLATPAK_OUT"
 }
@@ -69,7 +70,8 @@ show_menu() {
     echo "  2) IPACMAN_PACKAGES      (${#IPACMAN_PACKAGES[@]} entries)"
     echo "  3) IAUR_PACKAGES         (${#IAUR_PACKAGES[@]} entries)"
     echo "  4) ILATE_PACKAGES        (${#ILATE_PACKAGES[@]} entries)"
-    echo "  5) IFLATPAK_PACKAGES     (${#IFLATPAK_PACKAGES[@]} entries)"
+    echo "  5) IFLATPAK_SYSTEM_PACKAGES (${#IFLATPAK_SYSTEM_PACKAGES[@]} entries)"
+    echo "  6) IFLATPAK_USER_PACKAGES   (${#IFLATPAK_USER_PACKAGES[@]} entries)"
     echo "  f) Change load/save files"
     echo "  s) Save and exit"
     echo "  q) Quit without saving"
@@ -85,7 +87,8 @@ main() {
             2) edit_array "IPACMAN_PACKAGES" "Pacman packages (post install)";;
             3) edit_array "IAUR_PACKAGES" "AUR packages";;
             4) edit_array "ILATE_PACKAGES" "Late AUR/Pacman packages";;
-            5) edit_array "IFLATPAK_PACKAGES" "Flatpak packages";;
+            5) edit_array "IFLATPAK_SYSTEM_PACKAGES" "Flatpak packages (system-wide)";;
+            6) edit_array "IFLATPAK_USER_PACKAGES" "Flatpak packages (the main user)";;
             f)
                 choose_defaults
                 ;;

@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 ## Flatpak system-wide packages
-IFLATPAK_PACKAGES=(
+IFLATPAK_SYSTEM_PACKAGES=(
     ## Theme
     org.gtk.Gtk3theme.Breeze
 
@@ -25,10 +25,6 @@ IFLATPAK_PACKAGES=(
     com.usebottles.bottles
     net.davidotek.pupgui2
     com.github.Matoking.protontricks
-
-    ## User
-    com.bitwarden.desktop
-    # ex: com.vscodium.codium -- AUR code code-features code-marketplace
 
     ## Internet social
     dev.vencord.Vesktop     # better discord
@@ -58,7 +54,13 @@ IFLATPAK_PACKAGES=(
     org.blender.Blender
     org.inkscape.Inkscape
     org.kde.digikam
-
+    
     ## Miscellaneous
     org.godotengine.Godot
+)
+
+## Flatpak main user packages
+IFLATPAK_USER_PACKAGES=(
+    com.bitwarden.desktop
+    # ex: com.vscodium.codium -- AUR code code-features code-marketplace
 )
