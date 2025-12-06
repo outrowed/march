@@ -13,7 +13,7 @@ hwclock --systohc
 
 if chkpkg systemd-resolvconf; then
     ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
-    systemctl enable systemd-resolved.service
+    systemctl enable --now systemd-resolved.service
 fi
 
 ## Configure UFW
