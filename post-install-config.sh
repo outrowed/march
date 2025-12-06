@@ -47,9 +47,8 @@ EOF
     gpasswd -a "$ISUPER_USER" sambashare
 
     # UFW
-
     if chkpkg ufw; then
-        ufw allow CFIS
+        ufw allow CIFS
     fi
 
     # Enable samba services

@@ -57,7 +57,7 @@ if chkpkgroot /mnt systemd-resolvconf; then
     mkdir -p /mnt/etc/systemd/resolved.conf.d
 
     cat <<EOF > /mnt/etc/systemd/resolved.conf.d/10-dns.conf
-    [Resolve]
+[Resolve]
 DNS=1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com
 FallbackDNS=9.9.9.9#dns.quad9.net
 DNSOverTLS=yes
