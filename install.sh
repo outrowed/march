@@ -166,7 +166,7 @@ case "$ISWAP_TYPE" in
 
         # Update fstab entry for swapfile with lower priority (e.g., 10)
         if grep -qE '^/swapfile\s' /mnt/etc/fstab; then
-            sed -i 's|^/swapfile[[:space:]]\\+none[[:space:]]\\+swap[[:space:]]\\+defaults.*|/swapfile none swap defaults,pri=10 0 0|' /mnt/etc/fstab
+            sed -i 's|^/swapfile.*|/swapfile none swap defaults,pri=10 0 0|' /mnt/etc/fstab
         else
             echo "/swapfile none swap defaults,pri=10 0 0" >> /mnt/etc/fstab
         fi
