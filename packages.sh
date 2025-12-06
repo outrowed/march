@@ -130,7 +130,6 @@ IPACMAN_PACKAGES=(
 
     ## AMD
     libva-mesa-driver
-    mesa-vdpau
     vulkan-radeon
 
     ## Thunderbolt
