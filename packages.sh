@@ -113,6 +113,22 @@ IPACSTRAP_PACKAGES=(
     grml-zsh-config         # ArchISO Zsh Config per https://wiki.archlinux.org/title/Zsh#Sample_.zshrc_files
 )
 
+## Pre-Pacman packages
+# packages that are before IPACMAN_PACKAGES
+# usually this is required because of dependency conflict and explicitly choosing which one to install
+IPREPACMAN_PACKAGES=(
+    ## Audio
+    pipewire
+    wireplumber
+    pipewire-jack
+    pipewire-pulse
+    pipewire-alsa
+    phonon-qt6-vlc
+    alsa-utils
+    gst-plugin-pipewire
+    pavucontrol
+)
+
 ## Pacman packages
 # packages installed after the base system installation
 # usually this is where DE and graphical related things are installed
@@ -120,7 +136,7 @@ IPACMAN_PACKAGES=(
     ## Generic GPU/CPU
     vulkan-icd-loader
     vulkan-swrast               # Vulkan Software Rasterizer (CPU)
-    vulkan-mesa-device-select
+    # vulkan-mesa-device-select
 
     ## NVIDIA
     nvidia-prime
@@ -136,17 +152,6 @@ IPACMAN_PACKAGES=(
 
     ## Thunderbolt
     bolt
-
-    ## Audio
-    pipewire
-    wireplumber
-    pipewire-jack
-    pipewire-pulse
-    pipewire-alsa
-    phonon-qt6-vlc
-    alsa-utils
-    gst-plugin-pipewire
-    pavucontrol
 
     ## Admin
     gparted

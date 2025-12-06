@@ -11,6 +11,10 @@ echo Installing dekstop and AUR packages...
 
 autosudo "$ISUPER_USER" /mnt \
     retry arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
+        "${IPREPACMAN_PACKAGES[@]}"
+
+autosudo "$ISUPER_USER" /mnt \
+    retry arch-chroot /mnt sudo -u "$ISUPER_USER" paru -Syu --needed --noconfirm \
         "${IPACMAN_PACKAGES[@]}" \
         "${IAUR_PACKAGES[@]}"
 
