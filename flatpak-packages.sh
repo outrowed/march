@@ -22,6 +22,7 @@ IFLATPAK_SYSTEM_PACKAGES=(
     ## Multimedia
     org.kde.haruna
     com.github.wwmm.easyeffects
+    org.tenacityaudio.Tenacity
 
     ## Gaming + Windows compat
     com.valvesoftware.Steam
@@ -65,6 +66,7 @@ IFLATPAK_SYSTEM_PACKAGES=(
 
 ## Flatpak main user packages
 IFLATPAK_USER_PACKAGES=(
+    # opt: com.github.marinm.songrec -- unofficial Shazam client (song recognition) app
     # opt: com.spotify.Client -- normal spotify
     # opt: dev.diegovsky.Riff -- spotify backend, requires spotify premium
     # ex: com.vscodium.codium -- AUR code code-features code-marketplace
