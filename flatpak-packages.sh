@@ -2,6 +2,9 @@
 
 ## Flatpak system-wide packages
 IFLATPAK_PACKAGES=(
+    ## Theme
+    org.gtk.Gtk3theme.Breeze
+
     ## Util
     # Camera
     org.kde.kamoso
