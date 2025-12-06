@@ -97,10 +97,17 @@ RESUME_ARGS=""
 
 configure_zram() {
     echo "Configuring ZRAM..."
-    cat <<EOF > /mnt/etc/systemd/zram-generator.conf
+
+    mkdir -p /mnt/etc/systemd/zram-generator.conf.d
+
+    # On zram+swapfile configuration: prefer zram high priority (100), swapfile gets lower priority (10)
+    # per https://wiki.gentoo.org/wiki/Zram#Using_systemd_zram-generator (modified)
+    cat <<EOF > /mnt/etc/systemd/zram-generator.conf.d/zram0-swap.conf
 [zram0]
 zram-size = min(ram / 2, 4096)
 compression-algorithm = zstd
+swap-priority = 100
+fs-type = swap
 EOF
 }
 
@@ -156,15 +163,6 @@ case "$ISWAP_TYPE" in
     zram+swapfile)
         configure_zram
         configure_swapfile
-
-        # Configure swap priorities when both zram and swapfile are present.
-        
-        # Prefer zram (higher priority); swapfile gets lower priority.
-        mkdir -p /mnt/etc/systemd/zram-generator.conf.d
-        cat <<EOF > /mnt/etc/systemd/zram-generator.conf.d/priority.conf
-[zram0]
-priority=100
-EOF
 
         # Update fstab entry for swapfile with lower priority (e.g., 10)
         if grep -qE '^/swapfile\s' /mnt/etc/fstab; then
