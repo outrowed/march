@@ -91,7 +91,94 @@ printf "%s\n" "${ILOCALE_CONF[@]}" | tee /mnt/etc/locale.conf
 
 echo "KEYMAP=$IKEYMAP" > /mnt/etc/vconsole.conf
 
-## Bootloader and initramfs config
+## Swap configuration
+
+RESUME_ARGS=""
+
+configure_zram() {
+    echo "Configuring ZRAM..."
+    cat <<EOF > /mnt/etc/systemd/zram-generator.conf
+[zram0]
+zram-size = min(ram / 2, 4096)
+compression-algorithm = zstd
+EOF
+}
+
+configure_swapfile() {
+    echo "Configuring swapfile..."
+    swapfile=/mnt/swapfile
+
+    # min(ram / 2, 4096) MiB
+    mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+    swap_mb=$((mem_kb / 2 / 1024))
+    (( swap_mb > 4096 )) && swap_mb=4096
+
+    if [[ -f "$swapfile" ]]; then
+        echo "Existing swapfile found at $swapfile; recreating."
+        rm -f "$swapfile"
+    fi
+
+    if ! fallocate -l "${swap_mb}M" "$swapfile"; then
+        echo "fallocate failed; falling back to dd..."
+        dd if=/dev/zero of="$swapfile" bs=1M count="$swap_mb" status=progress
+    fi
+
+    chmod 600 "$swapfile"
+    arch-chroot /mnt mkswap /swapfile
+    arch-chroot /mnt swapon /swapfile
+
+    if ! grep -qE '^/swapfile\s' /mnt/etc/fstab; then
+        echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
+    fi
+
+    # Capture resume information for swapfile hibernation support.
+    if command -v filefrag &>/dev/null; then
+        if resume_offset=$(filefrag -v /mnt/swapfile | awk '/ 0:/{print $4}' | sed 's/\\..*//'); then
+            RESUME_ARGS="resume=UUID=$(root-uuid) resume_offset=$resume_offset"
+        else
+            echo "Warning: unable to determine resume_offset for swapfile."
+        fi
+    else
+        echo "filefrag not available; skipping resume_offset calculation."
+    fi
+}
+
+case "$ISWAP_TYPE" in
+    "")
+        echo "ISWAP_TYPE is unset; skipping swap configuration."
+        ;;
+    zram)
+        configure_zram
+        ;;
+    swapfile)
+        configure_swapfile
+        ;;
+    zram+swapfile)
+        configure_zram
+        configure_swapfile
+
+        # Configure swap priorities when both zram and swapfile are present.
+        
+        # Prefer zram (higher priority); swapfile gets lower priority.
+        mkdir -p /mnt/etc/systemd/zram-generator.conf.d
+        cat <<EOF > /mnt/etc/systemd/zram-generator.conf.d/priority.conf
+[zram0]
+priority=100
+EOF
+
+        # Update fstab entry for swapfile with lower priority (e.g., 10)
+        if grep -qE '^/swapfile\s' /mnt/etc/fstab; then
+            sed -i 's|^/swapfile[[:space:]]\\+none[[:space:]]\\+swap[[:space:]]\\+defaults.*|/swapfile none swap defaults,pri=10 0 0|' /mnt/etc/fstab
+        else
+            echo "/swapfile none swap defaults,pri=10 0 0" >> /mnt/etc/fstab
+        fi
+        ;;
+    *)
+        echo "Unknown ISWAP_TYPE '$ISWAP_TYPE'; skipping swap configuration."
+        ;;
+esac
+
+# Bootloader and initramfs config
 
 # Adding essential modules and hooks to mkinitcpio config
 
@@ -113,17 +200,49 @@ echo 'MODULES+=(i915 vmd)' \
 echo 'MODULES+=(amdgpu)' \
     > /mnt/etc/mkinitcpio.conf.d/amd.conf
 
-# Plymouth hook
-# Use sed to find 'udev' and replace it with 'udev plymouth'
-# This creates the order: base udev plymouth autodetect ...
-arch-chroot /mnt sed -i 's/udev/udev plymouth/g' /etc/mkinitcpio.conf
+# mkinitcpio HOOKS
+
+IS_SYSTEMD_HOOKS=false
+if [[ -f /etc/mkinitcpio.conf ]] && grep -Eq '^\s*HOOKS=.*\bsystemd\b' /etc/mkinitcpio.conf; then
+    IS_SYSTEMD_HOOKS=true
+fi
+
+# see https://wiki.archlinux.org/title/Mkinitcpio#Common_hooks
+if $IS_SYSTEMD_HOOKS; then
+    # systemd init hooks
+    # "systemd" hooks: udev, usr, resume
+    # "sd-vconsole" hooks: keymap, consolefont
+    HOOKS=(base systemd plymouth autodetect microcode modconf kms keyboard sd-vconsole block filesystems fsck)
+else
+    # busybox init hooks
+    HOOKS=(base udev plymouth autodetect microcode modconf kms keyboard keymap consolefont)
+    if [[ -n "$RESUME_ARGS" ]]; then
+        HOOKS+=(resume)
+    fi
+    HOOKS+=(block usr filesystems fsck)
+fi
+
+{
+    printf 'HOOKS=('
+    printf '%s ' "${HOOKS[@]}"
+    printf ')\n'
+} > /mnt/etc/mkinitcpio.conf.d/hooks.conf
 
 # Regenerate the initramfs
 retry arch-chroot /mnt mkinitcpio -p linux
 
 # Configure a boot loader
 
-CMDLINE="root=UUID=$(root-uuid) rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto systemd.gpt_auto=0"
+CMDLINE="root=UUID=$(root-uuid)"
+if [[ -n "$IKERNEL_CMDLINE" ]]; then
+    CMDLINE+=" $IKERNEL_CMDLINE"
+fi
+if [[ "$ISWAP_TYPE" == zram* && -n "$IKERNEL_ZSWAP_CMDLINE" ]]; then
+    CMDLINE+=" $IKERNEL_ZSWAP_CMDLINE"
+fi
+if [[ -n "$RESUME_ARGS" ]]; then
+    CMDLINE+=" $RESUME_ARGS"
+fi
 
 if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
     echo Setting up systemd-boot...
@@ -183,54 +302,6 @@ PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 EOF
     date -Iseconds > "$BASHRC_FLAG"
 fi
-
-## Swap configuration
-
-SWAP_TYPE="${ISWAP_TYPE:-}"
-
-case "$SWAP_TYPE" in
-    "")
-        echo "ISWAP_TYPE is unset; skipping swap configuration."
-        ;;
-    zram)
-        echo "Configuring ZRAM..."
-        cat <<EOF > /mnt/etc/systemd/zram-generator.conf
-[zram0]
-zram-size = min(ram / 2, 4096)
-compression-algorithm = zstd
-EOF
-        ;;
-    swapfile)
-        echo "Configuring swapfile..."
-        swapfile=/mnt/swapfile
-
-        # min(ram / 2, 4096) MiB
-        mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-        swap_mb=$((mem_kb / 2 / 1024))
-        (( swap_mb > 4096 )) && swap_mb=4096
-
-        if [[ -f "$swapfile" ]]; then
-            echo "Existing swapfile found at $swapfile; recreating."
-            rm -f "$swapfile"
-        fi
-
-        if ! fallocate -l "${swap_mb}M" "$swapfile"; then
-            echo "fallocate failed; falling back to dd..."
-            dd if=/dev/zero of="$swapfile" bs=1M count="$swap_mb" status=progress
-        fi
-
-        chmod 600 "$swapfile"
-        arch-chroot /mnt mkswap /swapfile
-        arch-chroot /mnt swapon /swapfile
-
-        if ! grep -qE '^/swapfile\s' /mnt/etc/fstab; then
-            echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
-        fi
-        ;;
-    *)
-        echo "Unknown ISWAP_TYPE '$SWAP_TYPE'; skipping swap configuration."
-        ;;
-esac
 
 ## Pacman config
 

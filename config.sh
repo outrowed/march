@@ -37,7 +37,7 @@ export IREFLECTOR_COUNTRY="Singapore"
 export IREFLECTOR_LATEST=10
 
 # Swap configuration: zram or swapfile
-export ISWAP_TYPE=zram
+export ISWAP_TYPE=zram+swapfile
 
 # EFI System Partition location
 # IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_PARTITION.
@@ -52,6 +52,12 @@ export ISYSTEMD_BOOT_EFI_LABEL="Arch Linux Boot Manager"
 
 export IUKI_LABEL="Arch Linux"
 export IUKI_EXEC=arch.efi
+
+# Kernel command line appended after root=UUID=... in install.sh
+export IKERNEL_CMDLINE="rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto systemd.gpt_auto=0"
+
+# Optional zswap tuning appended only when zram is enabled
+export IKERNEL_ZSWAP_CMDLINE="zswap.enabled=1 zswap.compressor=zstd zswap.zpool=z3fold zswap.max_pool_percent=20"
 
 # Path for visudo editor
 export IVISUDO_EDITOR=/usr/bin/nano
