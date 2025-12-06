@@ -135,8 +135,8 @@ IPREPACMAN_PACKAGES=(
 IPACMAN_PACKAGES=(
     ## Generic GPU/CPU
     vulkan-icd-loader
-    vulkan-swrast               # Vulkan Software Rasterizer (CPU)
-    # vulkan-mesa-device-select
+    vulkan-swrast                   # Vulkan Software Rasterizer (CPU)
+    # ex: vulkan-mesa-device-select -- conflict with vulkan-mesa-implicit-layers
 
     ## NVIDIA
     nvidia-prime
