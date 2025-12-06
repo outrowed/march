@@ -15,6 +15,7 @@ IPACSTRAP_PACKAGES=(
     # Extra
     base-devel
     linux-headers
+    zram-generator
 
     ## Partition + FS
     # EFI
@@ -33,25 +34,38 @@ IPACSTRAP_PACKAGES=(
     sudo
     openssh
     openssl
+    # System info
+    btop            # alternative to htop
+    fwupd           # firmware updates
+    fastfetch
+    # Z shell
+    zsh
+    zsh-completions
+    zsh-syntax-highlighting
+    zsh-autosuggestions
+    grml-zsh-config         # ArchISO Zsh Config per https://wiki.archlinux.org/title/Zsh#Sample_.zshrc_files
+    # Bash
+    bash
+    bash-completion
+    bash-language-server
+    # Remote downloader
     git
     curl
     wget
+    rsync
+    # Text editor
     nano
     vim
+    # Text util
     man-db
     man-pages
-    bash-completion
     less
+    dos2unix    # convert CRLF to LF
+    # Archival
     gzip
     xz
     zip
     unzip
-    btop            # alternative to htop
-    fwupd           # firmware updates
-    fastfetch
-    rsync
-    zsh
-    zram-generator
     # FS listing / finder
     tree
     plocate         # "everything" file finder in linux
@@ -105,12 +119,6 @@ IPACSTRAP_PACKAGES=(
     nvidia
     nvidia-utils
     nvidia-settings
-
-    ## Zsh extra
-    zsh-completions
-    zsh-syntax-highlighting
-    zsh-autosuggestions
-    grml-zsh-config         # ArchISO Zsh Config per https://wiki.archlinux.org/title/Zsh#Sample_.zshrc_files
 )
 
 ## Pre-Pacman packages
