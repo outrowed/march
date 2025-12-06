@@ -9,13 +9,6 @@ echo "Starting post-installation configuration..."
 
 hwclock --systohc
 
-## Configure systemd-resolved
-
-if chkpkg systemd-resolvconf; then
-    ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
-    systemctl enable --now systemd-resolved.service
-fi
-
 ## Configure UFW
 
 if chkpkg ufw; then
