@@ -21,7 +21,7 @@ uki_ext="${IUKI_EXEC##*.}"
 if [[ "$uki_ext" == "$IUKI_EXEC" ]]; then
     fallback_exec="${IUKI_EXEC}-fallback"
 else
-    fallback_exec="${IUKI_EXEC%.$uki_ext}-fallback.$uki_ext"
+    fallback_exec="${IUKI_EXEC%."$uki_ext"}-fallback.$uki_ext"
 fi
 
 DEFAULT_UKI="/efi/EFI/$IEFI_LINUX_DIRNAME/$IUKI_EXEC"
