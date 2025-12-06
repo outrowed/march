@@ -135,12 +135,12 @@ configure_swapfile() {
     arch-chroot /mnt swapon /swapfile
 
     if ! grep -qE '^/swapfile\s' /mnt/etc/fstab; then
-        echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
+        echo "/swapfile none swap defaults,pri=10 0 0" >> /mnt/etc/fstab
     fi
 
     # Capture resume information for swapfile hibernation support.
     if command -v filefrag &>/dev/null; then
-        if resume_offset=$(filefrag -v /mnt/swapfile | awk '/ 0:/{print $4}' | sed 's/\\..*//'); then
+        if resume_offset=$(filefrag -v /mnt/swapfile | awk '/ 0:/{print $4}' | cut -d. -f1); then
             RESUME_ARGS="resume=UUID=$(root-uuid) resume_offset=$resume_offset"
         else
             echo "Warning: unable to determine resume_offset for swapfile."
