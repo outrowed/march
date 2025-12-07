@@ -93,6 +93,7 @@ echo "KEYMAP=$IKEYMAP" > /mnt/etc/vconsole.conf
 
 ## Swap configuration
 
+# resume= and resume_offset= in kernel parameter
 RESUME_ARGS=""
 
 configure_zram() {
@@ -134,11 +135,12 @@ configure_swapfile() {
     arch-chroot /mnt mkswap /swapfile
     arch-chroot /mnt swapon /swapfile
 
+    # On zram+swapfile configuration: prefer zram high priority (100), swapfile gets lower priority (10)
     if ! grep -qE '^/swapfile\s' /mnt/etc/fstab; then
         echo "/swapfile none swap defaults,pri=10 0 0" >> /mnt/etc/fstab
     fi
 
-    # Capture resume information for swapfile hibernation support.
+    # Capture resume= and resume_offset= from /swapfile for hibernation
     if command -v filefrag &>/dev/null; then
         if resume_offset=$(filefrag -v /mnt/swapfile | awk '/ 0:/{print $4}' | cut -d. -f1); then
             RESUME_ARGS="resume=UUID=$(root-uuid) resume_offset=$resume_offset"
@@ -206,6 +208,7 @@ if [[ -f /etc/mkinitcpio.conf ]] && grep -Eq '^\s*HOOKS=.*\bsystemd\b' /etc/mkin
 fi
 
 # see https://wiki.archlinux.org/title/Mkinitcpio#Common_hooks
+# see https://github.com/archlinux/mkinitcpio/blob/master/meson.build for HOOKS/hooks default values
 if $IS_SYSTEMD_HOOKS; then
     # systemd init hooks
     # "systemd" hooks: udev, usr, resume
@@ -258,7 +261,7 @@ fi
 ## User configuration
 
 # Configure sudoers
-echo "%wheel ALL=(ALL:ALL) ALL" | tee /mnt/etc/sudoers.d/10-wheel
+echo "%wheel ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers.d/10-wheel
 chmod 440 /mnt/etc/sudoers.d/10-wheel
 
 # Check if the passwords directory exists and is not empty
