@@ -52,7 +52,7 @@ fi
 if chkpkgroot /mnt systemd-resolvconf; then
     arch-chroot /mnt systemctl enable systemd-resolved.service
 
-    ln -sf ../run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
+    ln -sf /run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
 
     mkdir -p /mnt/etc/systemd/resolved.conf.d
 
