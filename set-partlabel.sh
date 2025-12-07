@@ -17,20 +17,27 @@ if [ ! -b "$PART" ]; then
     exit 1
 fi
 
-# Use lsblk to extract disk and partition number
-DISK=$(lsblk -no PKNAME "$PART")
-PARTNUM=$(lsblk -no PARTNUM "$PART")
+# Extract base name (e.g., nvme0n1p1)
+BASENAME=$(basename "$PART")
 
-if [ -z "$DISK" ] || [ -z "$PARTNUM" ]; then
-    echo "Error: Could not determine disk or partition number from lsblk."
+# Determine the parent disk
+DISK=$(lsblk -no PKNAME "$PART")
+DISK="/dev/$DISK"
+
+# Get partition number reliably via sysfs
+SYS_PART="/sys/class/block/$BASENAME/partition"
+
+if [[ ! -f "$SYS_PART" ]]; then
+    echo "Error: Could not determine partition index."
     exit 1
 fi
 
-DISK="/dev/$DISK"
+PARTNUM=$(cat "$SYS_PART")
 
 echo "Detected disk: $DISK"
 echo "Partition index: $PARTNUM"
 echo "Applying GPT PARTLABEL \"$NEWLABEL\" to $PART"
+
 sudo sgdisk --change-name=${PARTNUM}:"${NEWLABEL}" "$DISK"
 
 echo "Done."
