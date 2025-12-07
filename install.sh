@@ -211,7 +211,7 @@ fi
 
 # see https://wiki.archlinux.org/title/Mkinitcpio#Common_hooks
 # see https://github.com/archlinux/mkinitcpio/blob/master/meson.build for HOOKS/hooks default values
-if $IS_SYSTEMD_HOOKS; then
+if [[ $IS_SYSTEMD_HOOKS == "true" || $IINITRAMFS_TYPE == "systemd" ]]; then
     # systemd init hooks
     # "systemd" hooks: udev, usr, resume
     # "sd-vconsole" hooks: keymap, consolefont
