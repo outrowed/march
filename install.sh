@@ -133,7 +133,7 @@ configure_swapfile() {
 
     chmod 600 "$swapfile"
     arch-chroot /mnt mkswap /swapfile
-    arch-chroot /mnt swapon /swapfile
+    # arch-chroot /mnt swapon /swapfile
 
     # On zram+swapfile configuration: prefer zram high priority (100), swapfile gets lower priority (10)
     if ! grep -qE '^/swapfile\s' /mnt/etc/fstab; then
