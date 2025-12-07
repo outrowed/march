@@ -258,6 +258,35 @@ else
     exit 1
 fi
 
+## Shell global config
+
+# Z shell useradd
+
+sed -i 's|^SHELL=.*|SHELL=/bin/zsh|' /mnt/etc/default/useradd
+
+# Bash global config
+
+BASHRC_FLAG="$MARCH_INSTALL_STATE_DIR/bashrc.done"
+
+if [[ -f "$BASHRC_FLAG" ]]; then
+    echo "Global bash config already added; skipping /mnt/etc/bash.bashrc append."
+else
+    cat <<EOF >> /mnt/etc/bash.bashrc
+
+# -- Added by march/install.sh --
+
+# Enable colors for common commands
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -c'
+
+# Set a colorful prompt (Green User @ Host : Blue CWD $)
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+EOF
+    date -Iseconds > "$BASHRC_FLAG"
+fi
+
 ## User configuration
 
 # Configure sudoers
@@ -279,30 +308,6 @@ if ! arch-chroot /mnt id "$ISUPER_USER" &>/dev/null; then
 fi
 
 arch-chroot /mnt usermod -aG wheel "$ISUPER_USER"
-
-## Shell global config
-
-BASHRC_FLAG="$MARCH_INSTALL_STATE_DIR/bashrc.done"
-
-# Bash global config
-if [[ -f "$BASHRC_FLAG" ]]; then
-    echo "Global bash config already added; skipping /mnt/etc/bash.bashrc append."
-else
-    cat <<EOF >> /mnt/etc/bash.bashrc
-
-# -- Added by march/install.sh --
-
-# Enable colors for common commands
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-alias diff='diff --color=auto'
-alias ip='ip -c'
-
-# Set a colorful prompt (Green User @ Host : Blue CWD $)
-PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-EOF
-    date -Iseconds > "$BASHRC_FLAG"
-fi
 
 ## Pacman config
 
