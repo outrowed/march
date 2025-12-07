@@ -16,6 +16,7 @@ IPACSTRAP_PACKAGES=(
     base-devel
     linux-headers
     zram-generator
+    plymouth        # boot startup
 
     ## Partition + FS
     # EFI
@@ -200,7 +201,6 @@ IPACMAN_PACKAGES=(
     plasma-thunderbolt
 
     ## Generic DE
-    plymouth            # boot startup
     wl-clipboard
     xdg-utils
     trash-cli
