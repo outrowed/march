@@ -142,7 +142,9 @@ configure_swapfile() {
 
     # Capture resume= and resume_offset= from /swapfile for hibernation
     if command -v filefrag &>/dev/null; then
-        if resume_offset=$(filefrag -v /mnt/swapfile | awk '/ 0:/{print $4}' | cut -d. -f1); then
+        resume_offset=$(arch-chroot /mnt filefrag -v /swapfile | awk '/ 0:/{print $4}' | cut -d. -f1)
+        
+        if [[ -n "$resume_offset" && "$resume_offset" =~ ^[0-9]+$ && "$resume_offset" -gt 0 ]]; then
             RESUME_ARGS="resume=UUID=$(root-uuid) resume_offset=$resume_offset"
         else
             echo "Warning: unable to determine resume_offset for swapfile."
@@ -203,7 +205,7 @@ echo 'MODULES+=(amdgpu)' \
 # mkinitcpio HOOKS
 
 IS_SYSTEMD_HOOKS=false
-if [[ -f /etc/mkinitcpio.conf ]] && grep -Eq '^\s*HOOKS=.*\bsystemd\b' /etc/mkinitcpio.conf; then
+if [[ -f /mnt/etc/mkinitcpio.conf ]] && grep -Eq '^\s*HOOKS=.*\bsystemd\b' /etc/mkinitcpio.conf; then
     IS_SYSTEMD_HOOKS=true
 fi
 
