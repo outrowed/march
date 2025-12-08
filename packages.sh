@@ -247,12 +247,19 @@ IPACMAN_PACKAGES=(
     ttf-dejavu
     ttf-liberation
     ttf-roboto
-    ttf-cascadia-code
-    ttf-jetbrains-mono
+    gnu-free-fonts
+    ttf-ms-fonts
     noto-fonts
     noto-fonts-cjk
+    # Emoji / custom icon
     noto-fonts-emoji
+    nerd-fonts
     otf-font-awesome
+    # Mono
+    ttf-jetbrains-mono
+    ttf-cascadia-code
+    # Bitmap
+    bdf-unifont
 
     ## Virtualization
     qemu-desktop    # QEMU setup for desktop environment
