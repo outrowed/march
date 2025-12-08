@@ -52,8 +52,6 @@ ITEMS=(
     "IKERNEL_ZSWAP_CMDLINE|string|Kernel cmdline additions for zswap"
     "IINITRAMFS_TYPE|string|Initramfs type (busybox, systemd)"
     "IEXPLICIT_RESUME_ARGS|bool|Force resume args in systemd init"
-    "IVISUDO_EDITOR|string|visudo editor path"
-    "IPYLOLCAT|bool|Install pylolcat"
 )
 
 ask_value() {
@@ -158,9 +156,6 @@ write_config() {
         printf 'export IKERNEL_ZSWAP_CMDLINE=\"%s\"\n' "$(escape_val "$IKERNEL_ZSWAP_CMDLINE")"
         printf 'export IINITRAMFS_TYPE=\"%s\"\n' "$(escape_val "$IINITRAMFS_TYPE")"
         printf 'export IEXPLICIT_RESUME_ARGS=\"%s\"\n' "$(escape_val "$IEXPLICIT_RESUME_ARGS")"
-        echo
-        printf 'export IVISUDO_EDITOR=\"%s\"\n' "$(escape_val "$IVISUDO_EDITOR")"
-        printf 'export IPYLOLCAT=\"%s\"\n' "$(escape_val "$IPYLOLCAT")"
     } > "$outfile"
     echo "Saved configuration to $outfile"
 }
