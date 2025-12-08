@@ -285,6 +285,10 @@ IPACMAN_PACKAGES=(
 
     ## Fun
     c-lolcat
+    # opt: yumenikki-en
+    # opt: classicube
+    # opt: supertuxkart
+    # opt: kblocks
 )
 
 ## AUR packages
