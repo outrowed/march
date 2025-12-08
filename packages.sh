@@ -282,6 +282,9 @@ IPACMAN_PACKAGES=(
     gutenprint                  # High-quality drivers for Canon, Epson, etc.
     foomatic-db-gutenprint-ppds # PPD files for Gutenprint
     hplip                       # Drivers for HP printers
+
+    ## Fun
+    c-lolcat
 )
 
 ## AUR packages
