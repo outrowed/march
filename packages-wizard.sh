@@ -14,11 +14,14 @@ DEFAULT_PKGS_FILE="$SCRIPTDIR/packages.sh"
 DEFAULT_PKGS_GENERATED="$SCRIPTDIR/packages-user.sh"
 DEFAULT_FLATPAK_FILE="$SCRIPTDIR/flatpak-packages.sh"
 DEFAULT_FLATPAK_GENERATED="$SCRIPTDIR/flatpak-packages-user.sh"
+PACKAGES_BACKUP=""
+FLATPAK_BACKUP=""
 
 choose_defaults() {
     choose_defaults_common "$DEFAULT_PKGS_FILE" "$DEFAULT_PKGS_GENERATED" \
         "Packages file to load" "Packages file to save" \
         "PACKAGES_IN" "PACKAGES_OUT"
+    detect_backup_directive "$PACKAGES_IN" "PACKAGES_OUT" "PACKAGES_BACKUP"
     if [[ -f "$PACKAGES_IN" ]]; then
         # shellcheck disable=SC1090
         . "$PACKAGES_IN"
@@ -29,6 +32,7 @@ choose_defaults() {
     choose_defaults_common "$DEFAULT_FLATPAK_FILE" "$DEFAULT_FLATPAK_GENERATED" \
         "Flatpak file to load" "Flatpak file to save" \
         "FLATPAK_IN" "FLATPAK_OUT"
+    detect_backup_directive "$FLATPAK_IN" "FLATPAK_OUT" "FLATPAK_BACKUP"
     if [[ -f "$FLATPAK_IN" ]]; then
         # shellcheck disable=SC1090
         . "$FLATPAK_IN"
@@ -38,6 +42,7 @@ choose_defaults() {
 }
 
 write_packages() {
+    perform_backup_if_requested "$PACKAGES_OUT" "$PACKAGES_BACKUP"
     {
         echo "#!/usr/bin/bash"
         echo
@@ -50,6 +55,7 @@ write_packages() {
 }
 
 write_flatpaks() {
+    perform_backup_if_requested "$FLATPAK_OUT" "$FLATPAK_BACKUP"
     {
         echo "#!/usr/bin/bash"
         echo
@@ -66,6 +72,8 @@ show_menu() {
     echo "  Load flatpaks: $FLATPAK_IN"
     echo "  Save packages: $PACKAGES_OUT"
     echo "  Save flatpaks: $FLATPAK_OUT"
+    [[ -n "$PACKAGES_BACKUP" ]] && echo "  Backup packages: $PACKAGES_BACKUP"
+    [[ -n "$FLATPAK_BACKUP" ]] && echo "  Backup flatpaks: $FLATPAK_BACKUP"
     echo "  1) IPACSTRAP_PACKAGES    (${#IPACSTRAP_PACKAGES[@]} entries)"
     echo "  2) IPACMAN_PACKAGES      (${#IPACMAN_PACKAGES[@]} entries)"
     echo "  3) IAUR_PACKAGES         (${#IAUR_PACKAGES[@]} entries)"

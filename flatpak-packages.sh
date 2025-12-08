@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# wz-backup flatpak-packages.sh.bak
+
 ## Flatpak system-wide packages
 IFLATPAK_SYSTEM_PACKAGES=(
     ## Theme

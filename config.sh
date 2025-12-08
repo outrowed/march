@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# wz-backup config.sh.bak
+
 export ISUPER_USER=outrowed
 export IHOSTNAME=archie
 

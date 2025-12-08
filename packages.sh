@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# wz-backup packages.sh.bak
+
 ## Pacstrap packages
 # essential packages for "comfortable but minimal" base Arch Linux installation
 # -- that may be used for rescue or recovery mode

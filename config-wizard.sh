@@ -10,11 +10,13 @@ IFS=$'\n\t'
 
 DEFAULT_CONFIG_FILE="$SCRIPTDIR/config.sh"
 DEFAULT_CONFIG_GENERATED="$SCRIPTDIR/config-user.sh"
+CONFIG_BACKUP=""
 
 choose_defaults() {
     choose_defaults_common "$DEFAULT_CONFIG_FILE" "$DEFAULT_CONFIG_GENERATED" \
         "Config file to load" "Config file to save" \
         "CONFIG_IN" "CONFIG_OUT"
+    detect_backup_directive "$CONFIG_IN" "CONFIG_OUT" "CONFIG_BACKUP"
     if [[ -f "$CONFIG_IN" ]]; then
         # shellcheck disable=SC1090
         . "$CONFIG_IN"
@@ -113,6 +115,7 @@ edit_item() {
 
 write_config() {
     local outfile="$CONFIG_OUT"
+    perform_backup_if_requested "$outfile" "$CONFIG_BACKUP"
     {
         echo "#!/usr/bin/bash"
         echo
@@ -158,6 +161,7 @@ show_menu() {
     echo "Configuration menu:"
     echo "  Load: $CONFIG_IN"
     echo "  Save: $CONFIG_OUT"
+    [[ -n "$CONFIG_BACKUP" ]] && echo "  Backup: $CONFIG_BACKUP"
     local idx=1
     for item in "${ITEMS[@]}"; do
         local name type label

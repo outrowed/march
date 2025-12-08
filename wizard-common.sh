@@ -106,3 +106,45 @@ choose_defaults_common() {
     prompt_file "$prompt_load" "$load_default" "$out_load"
     prompt_file "$prompt_save" "$save_default" "$out_save"
 }
+
+# Detects an inline backup directive in a config file ("# wz-backup <path>").
+# If found, the output path is forced to the input file and the backup path
+# (absolute) is written to the provided variable for later use.
+detect_backup_directive() {
+    local source_file="$1"
+    local out_var="$2"
+    local backup_var="$3"
+
+    printf -v "$backup_var" '%s' ""
+    [[ -f "$source_file" ]] || return
+
+    local directive
+    directive=$(sed -n 's/^# *wz-backup[[:space:]]\+//p' "$source_file" | head -n1 || true)
+    [[ -z "$directive" ]] && return
+
+    # Trim surrounding whitespace without invoking external tools.
+    directive="${directive#"${directive%%[![:space:]]*}"}"
+    directive="${directive%"${directive##*[![:space:]]}"}"
+    [[ -z "$directive" ]] && return
+
+    if [[ "$directive" != /* ]]; then
+        directive="$(dirname "$source_file")/$directive"
+    fi
+
+    printf -v "$backup_var" '%s' "$directive"
+    printf -v "$out_var" '%s' "$source_file"
+    echo "Backup directive detected in $source_file -> $directive"
+}
+
+perform_backup_if_requested() {
+    local source="$1"
+    local backup_target="$2"
+    [[ -z "$backup_target" ]] && return
+
+    if [[ -f "$source" ]]; then
+        cp -a "$source" "$backup_target"
+        echo "Backed up $source to $backup_target"
+    else
+        echo "Backup requested but source $source does not exist; skipping."
+    fi
+}
