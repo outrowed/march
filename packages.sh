@@ -301,4 +301,5 @@ ILATE_PACKAGES=(
     ventoy-bin          # ventoy bootloader
     archiso             # archiso creation
     optimus-manager-git # NVIDIA optimus manager
+    elecwhat-bin        # electron whatsapp client
 )

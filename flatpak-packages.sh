@@ -42,7 +42,6 @@ IFLATPAK_SYSTEM_PACKAGES=(
     dev.vencord.Vesktop     # better discord
     org.kde.konversation
     org.kde.neochat
-    # ex: com.ktechpit.whatsie -- whatsapp on web is just better
 
     ## Internet
     org.mozilla.firefox
