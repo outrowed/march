@@ -35,6 +35,18 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 1. Run the installer: [`./install.sh`](install.sh) (will prompt before formatting and during paru build).
 1. Reboot into the installed system; post-install services will finish remaining packages/flatpaks.
 
+## CLI launcher
+
+You can also use the `march` launcher to run common tasks:
+
+- `./march detect-esp /dev/nvme0n1`
+- `./march format-esp /dev/nvme0n1p1`
+- `./march install /mnt`
+- `./march install-pacman-hooks /mnt`
+- `./march install-post-install /mnt`
+- `./march upgrade /mnt`
+- `./march post-install /`
+
 ## Post-boot services
 * `march-post-install-config.service`: one-time system config (firewall, samba groups, etc.).
 * `march-post-install-packages.service`: late paru packages + flatpaks.

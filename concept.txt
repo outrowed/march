@@ -1,0 +1,32 @@
+func/
+    autosudo.sh
+    detect-root-uuid.sh (root-uuid in common.sh)
+    chkpkg.sh
+    chkpkgroot.sh
+    retry.sh
+cmd/
+    <command>.sh
+    install.sh
+    install-pacman-hooks.sh
+    install-post-install.sh
+    detect-esp.sh
+    format-esp.sh
+env/
+    10-config.sh
+    10-packages.sh
+march # launcher
+
+march detect-esp
+march format-esp
+march upgrade
+march install /mnt
+march install-pacman-hooks /mnt
+march install-post-install /mnt
+march post-install /
+
+# using func/ scripts in cmd/ scripts
+
+retry
+chkpkg
+
+# maybe declare it like "$SCRIPT_NAME_WITHOUT_SH () { $SCRIPT_FILE $@ }"

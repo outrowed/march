@@ -1,0 +1,62 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+MARCH_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CMD_DIR="$MARCH_ROOT/cmd"
+
+. "$MARCH_ROOT/march.sh"
+
+HIDDEN_COMMANDS=(
+    common
+    wizard-common
+)
+
+is_hidden() {
+    local name="$1"
+    for hidden in "${HIDDEN_COMMANDS[@]}"; do
+        [[ "$name" == "$hidden" ]] && return 0
+    done
+    return 1
+}
+
+usage() {
+    echo "Usage: march <command> [args...]"
+    echo
+    echo "Commands:"
+    local cmd_path cmd
+    shopt -s nullglob
+    for cmd_path in "$CMD_DIR"/*.sh; do
+        cmd="$(basename "$cmd_path" .sh)"
+        is_hidden "$cmd" && continue
+        echo "  $cmd"
+    done
+    shopt -u nullglob
+}
+
+if [[ $# -lt 1 ]]; then
+    usage
+    exit 1
+fi
+
+case "$1" in
+    -h|--help|help)
+        usage
+        exit 0
+        ;;
+esac
+
+command_name="$1"
+shift || true
+
+command_path="$CMD_DIR/$command_name.sh"
+
+if [[ ! -x "$command_path" ]]; then
+    echo "Unknown command: $command_name"
+    echo
+    usage
+    exit 1
+fi
+
+cd "$MARCH_ROOT"
+
+exec "$command_path" "$@"
