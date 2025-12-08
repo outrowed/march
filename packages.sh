@@ -133,10 +133,6 @@ IPREPACMAN_PACKAGES=(
     pipewire-jack
     pipewire-pulse
     pipewire-alsa
-    phonon-qt6-vlc
-    alsa-utils
-    gst-plugin-pipewire
-    pavucontrol
 )
 
 ## Pacman packages
@@ -208,6 +204,12 @@ IPACMAN_PACKAGES=(
     # Extra
     network-manager-applet
     arch-audit-gtk
+
+    ## Audio
+    phonon-qt6-vlc
+    alsa-utils
+    gst-plugin-pipewire
+    pavucontrol
 
     ## Audio player
     mpv
