@@ -48,6 +48,10 @@ ITEMS=(
     "ISYSTEMD_BOOT_EFI_LABEL|string|systemd-boot EFI label"
     "IUKI_LABEL|string|UKI label"
     "IUKI_EXEC|string|UKI executable filename"
+    "IKERNEL_CMDLINE|string|Kernel command line additions"
+    "IKERNEL_ZSWAP_CMDLINE|string|Zswap cmdline additions (zram only)"
+    "IINITRAMFS_TYPE|string|Initramfs type (busybox/systemd)"
+    "IEXPLICIT_RESUME_ARGS|bool|Force resume args in systemd init"
     "IVISUDO_EDITOR|string|visudo editor path"
     "IPYLOLCAT|bool|Install pylolcat"
 )
@@ -149,6 +153,11 @@ write_config() {
         echo
         printf 'export IUKI_LABEL=\"%s\"\n' "$(escape_val "$IUKI_LABEL")"
         printf 'export IUKI_EXEC=\"%s\"\n' "$(escape_val "$IUKI_EXEC")"
+        echo
+        printf 'export IKERNEL_CMDLINE=\"%s\"\n' "$(escape_val "$IKERNEL_CMDLINE")"
+        printf 'export IKERNEL_ZSWAP_CMDLINE=\"%s\"\n' "$(escape_val "$IKERNEL_ZSWAP_CMDLINE")"
+        printf 'export IINITRAMFS_TYPE=\"%s\"\n' "$(escape_val "$IINITRAMFS_TYPE")"
+        printf 'export IEXPLICIT_RESUME_ARGS=\"%s\"\n' "$(escape_val "$IEXPLICIT_RESUME_ARGS")"
         echo
         printf 'export IVISUDO_EDITOR=\"%s\"\n' "$(escape_val "$IVISUDO_EDITOR")"
         printf 'export IPYLOLCAT=\"%s\"\n' "$(escape_val "$IPYLOLCAT")"
