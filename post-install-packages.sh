@@ -29,27 +29,21 @@ autosudo "$ISUPER_USER" / paru -Syu --needed --noconfirm \
 ## Flatpak setup
 
 if chkpkg flatpak; then
-    total_flatpak=$(( ${#IFLATPAK_SYSTEM_PACKAGES[@]} + ${#IFLATPAK_USER_PACKAGES[@]} ))
+    echo "Installing Flatpak packages..."
 
-    if (( total_flatpak == 0 )); then
-        echo "No Flatpak packages to install."
+    flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
+
+    if ((${#IFLATPAK_SYSTEM_PACKAGES[@]})); then
+        # Install them (non-interactively)
+        autosudo "$ISUPER_USER" / flatpak install --system flathub "${IFLATPAK_SYSTEM_PACKAGES[@]}" -y &
     else
-        echo "Installing Flatpak packages..."
+        echo "No system-wide Flatpak packages defined."
+    fi
 
-        flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
-
-        if ((${#IFLATPAK_SYSTEM_PACKAGES[@]})); then
-            # Install them (non-interactively)
-            autosudo "$ISUPER_USER" / flatpak install --system flathub "${IFLATPAK_SYSTEM_PACKAGES[@]}" -y &
-        else
-            echo "No system-wide Flatpak packages defined."
-        fi
-
-        if ((${#IFLATPAK_USER_PACKAGES[@]})); then
-            sudo -u "$ISUPER_USER" flatpak install --user flathub "${IFLATPAK_USER_PACKAGES[@]}" -y &
-        else
-            echo "No per-user Flatpak packages defined."
-        fi
+    if ((${#IFLATPAK_USER_PACKAGES[@]})); then
+        sudo -u "$ISUPER_USER" flatpak install --user flathub "${IFLATPAK_USER_PACKAGES[@]}" -y &
+    else
+        echo "No per-user Flatpak packages defined."
     fi
 else
     echo "Flatpak is not installed. Skipping Flatpak packages."
