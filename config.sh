@@ -59,7 +59,8 @@ export IUKI_EXEC=arch.efi
 export IKERNEL_CMDLINE="rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto systemd.gpt_auto=0"
 
 # Optional zswap tuning appended only when zram is enabled
-export IKERNEL_ZSWAP_CMDLINE="zswap.enabled=1 zswap.compressor=zstd zswap.zpool=z3fold zswap.max_pool_percent=20"
+# Let the kernel choose the default values
+export IKERNEL_ZSWAP_CMDLINE="zswap.enabled=1"
 
 # Which initramfs layout to use: busybox or systemd
 export IINITRAMFS_TYPE=systemd
