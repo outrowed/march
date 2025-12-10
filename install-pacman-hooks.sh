@@ -32,7 +32,7 @@ fi
 # NVIDIA Initramfs Hook
 
 # This hook ensures initramfs is rebuilt if ONLY the nvidia driver updates (without a kernel update)
-cat <<EOF > /mnt/etc/pacman.d/hooks/nvidia.hook
+cat <<EOF > /mnt/etc/pacman.d/hooks/90-nvidia.hook
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -52,7 +52,7 @@ EOF
 # Arch Audit Hook
 
 # Automatically runs arch-audit after package upgrades to check for vulnerabilities
-cat <<EOF > /mnt/etc/pacman.d/hooks/arch_audit.hook
+cat <<EOF > /mnt/etc/pacman.d/hooks/90-arch_audit.hook
 [Trigger]
 Operation = Install
 Operation = Upgrade
