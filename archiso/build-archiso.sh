@@ -13,6 +13,7 @@ SYNC_DEST="$PROFILE_DIR/airootfs/opt/march"
 LOCAL_REPO_DIR="$PROFILE_DIR/localrepo"
 LOCAL_REPO_DB="$LOCAL_REPO_DIR/march-local.db.tar.gz"
 PACMAN_CONF="$PROFILE_DIR/pacman.conf"
+CALAMARES_PKG_NAME="calamares"
 
 prefer_file() {
     local default="$1" alt="$2"
@@ -110,6 +111,11 @@ refresh_local_repo() {
     fi
 }
 
+pkg_name_from_file() {
+    local pkgfile="$1"
+    basename "$pkgfile" | sed -E 's/(.+)-[0-9][^-]*-[0-9]+(-x86_64)?\.pkg\.tar\..*/\1/'
+}
+
 build_calamares_aur() {
     local build_root="${AUR_BUILD_DIR:-$PROFILE_DIR/.aur-build}"
 
@@ -131,12 +137,13 @@ build_calamares_aur() {
     local pkg
     pkg=$(ls calamares-*.pkg.tar.* | sort -V | tail -n1)
     cp "$pkg" "$LOCAL_REPO_DIR/"
+    CALAMARES_PKG_NAME="$(pkg_name_from_file "$pkg")"
     popd >/dev/null
 }
 
 ensure_calamares_available() {
-    if "${PACMAN_CMD[@]}" -Sp --print-format '%n' calamares >/dev/null 2>&1; then
-        add_pkg calamares
+    if "${PACMAN_CMD[@]}" -Sp --print-format '%n' "$CALAMARES_PKG_NAME" >/dev/null 2>&1; then
+        add_pkg "$CALAMARES_PKG_NAME"
         return
     fi
 
@@ -144,12 +151,13 @@ ensure_calamares_available() {
     local repo_abs
     repo_abs="$(realpath "$LOCAL_REPO_DIR")"
     local cal_pkg=""
-    cal_pkg=$(ls "$LOCAL_REPO_DIR"/calamares-*.pkg.tar.* 2>/dev/null | sort -V | tail -n1 || true)
+    cal_pkg=$(ls "$LOCAL_REPO_DIR"/calamares*.pkg.tar.* 2>/dev/null | sort -V | tail -n1 || true)
 
     if [[ -n "$cal_pkg" ]]; then
+        CALAMARES_PKG_NAME="$(pkg_name_from_file "$cal_pkg")"
         refresh_local_repo "$repo_abs" "$LOCAL_REPO_DB"
         update_pacman_conf "$repo_abs"
-        add_pkg calamares
+        add_pkg "$CALAMARES_PKG_NAME"
         return
     fi
 
@@ -158,12 +166,12 @@ ensure_calamares_available() {
         repo_abs="$(realpath "$LOCAL_REPO_DIR")"
         refresh_local_repo "$repo_abs" "$LOCAL_REPO_DB"
         update_pacman_conf "$repo_abs"
-        add_pkg calamares
+        add_pkg "$CALAMARES_PKG_NAME"
         return
     fi
 
-    echo "Calamares is not available in the official repositories." >&2
-    echo "Provide a built calamares package in $LOCAL_REPO_DIR or set MARCH_BUILD_CALAMARES_AUR=1 to build from AUR." >&2
+    echo "Calamares is not available in the configured repositories." >&2
+    echo "Provide a built calamares*.pkg.tar.* in $LOCAL_REPO_DIR or set MARCH_BUILD_CALAMARES_AUR=1 to build from AUR." >&2
     exit 1
 }
 
