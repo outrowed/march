@@ -46,7 +46,7 @@ IFLATPAK_SYSTEM_PACKAGES=(
     ## Internet
     org.mozilla.firefox
     org.mozilla.Thunderbird
-    io.github.ungoogled_software.ungoogled_chromium
+    # ex: io.github.ungoogled_software.ungoogled_chromium -- helium-browser-bin in IAUR_PACKAGES
     org.qbittorrent.qBittorrent
     org.kde.kget
     org.kde.alligator

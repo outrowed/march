@@ -294,7 +294,9 @@ IPACMAN_PACKAGES=(
 ## AUR packages
 # run with no password sudo
 IAUR_PACKAGES=(
-    needrestart # automatically restart daemon after library update
+    needrestart         # automatically restart daemon after library update
+    helium-browser-bin  # ungoogled-chromium-based browser with convenient features
+    chromium-widevine   # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
     # ex: timeshift-systemd-timer
 )
 
