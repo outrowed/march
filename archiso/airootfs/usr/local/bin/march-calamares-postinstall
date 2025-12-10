@@ -1,0 +1,58 @@
+#!/usr/bin/bash
+
+set -euo pipefail
+
+REPO_DIR="/opt/march"
+ROOT="${ROOT:-/}"
+
+# shellcheck source=/dev/null
+. "$REPO_DIR/config.sh"
+
+if [[ ! -d "$REPO_DIR" ]]; then
+    echo "march repo not found at $REPO_DIR"
+    exit 1
+fi
+
+if [[ ! -x "$REPO_DIR/install-post-install-setup.sh" ]]; then
+    echo "install-post-install-setup.sh missing or not executable in $REPO_DIR"
+    exit 1
+fi
+
+SUPERUSER="${MARCH_MAIN_USER:-}"
+if [[ -z "$SUPERUSER" ]]; then
+    SUPERUSER=$(awk -F: '$3>=1000 && $1!="nobody"{print $1; exit}' /etc/passwd || true)
+fi
+SUPERUSER="${SUPERUSER:-$ISUPER_USER}"
+
+echo "Installing paru for AUR support (user: $SUPERUSER)..."
+if ping -c1 archlinux.org &>/dev/null; then
+    if ! MARCH_ROOT="$ROOT" "$REPO_DIR/install-paru.sh" "$SUPERUSER"; then
+        echo "Warning: paru installation failed; AUR packages will be skipped on first boot."
+    fi
+else
+    echo "Network unavailable; skipping paru installation (AUR installs will be skipped)."
+fi
+
+echo "Running march post-install setup inside target..."
+MARCH_ROOT="$ROOT" "$REPO_DIR/install-post-install-setup.sh"
+
+# Match mkinitcpio tweaks from march install.sh
+echo "Writing mkinitcpio module snippets..."
+mkdir -p /etc/mkinitcpio.conf.d
+cat > /etc/mkinitcpio.conf.d/usb.conf <<'EOF'
+MODULES+=(usbhid xhci_pci)
+EOF
+cat > /etc/mkinitcpio.conf.d/nvidia.conf <<'EOF'
+MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+EOF
+cat > /etc/mkinitcpio.conf.d/intel.conf <<'EOF'
+MODULES+=(i915 vmd)
+EOF
+cat > /etc/mkinitcpio.conf.d/amd.conf <<'EOF'
+MODULES+=(amdgpu)
+EOF
+cat > /etc/mkinitcpio.conf.d/hooks.conf <<'EOF'
+HOOKS=(base systemd plymouth autodetect microcode modconf kms keyboard sd-vconsole block filesystems fsck)
+EOF
+
+echo "Done."

@@ -1,0 +1,83 @@
+#!/usr/bin/bash
+
+set -euo pipefail
+
+ROOT="${ROOT:-/mnt}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="/opt/march"
+
+# shellcheck source=/dev/null
+. "$REPO_DIR/config.sh"
+
+if [[ ! -d "$REPO_DIR" ]]; then
+    echo "march repo not found at $REPO_DIR"
+    exit 1
+fi
+
+# shellcheck source=/dev/null
+. "$REPO_DIR/packages.sh"
+
+prefer_file() {
+    local default="$1" alt="$2"
+    if [[ -n "${MARCH_PREFER_USER_CONFIG:-}" && -f "$alt" ]]; then
+        echo "$alt"
+    elif [[ -f "$alt" ]]; then
+        echo "$alt"
+    else
+        echo "$default"
+    fi
+}
+
+PACKAGES_FILE="${MARCH_PACKAGES_FILE:-$(prefer_file "$REPO_DIR/packages.sh" "$REPO_DIR/packages-user.sh")}"
+
+if [[ -f "$PACKAGES_FILE" ]]; then
+    # shellcheck source=/dev/null
+    . "$PACKAGES_FILE"
+fi
+
+declare -a ALL_PKGS=()
+ALL_PKGS+=("${IPACSTRAP_PACKAGES[@]}")
+ALL_PKGS+=("${IPREPACMAN_PACKAGES[@]}")
+ALL_PKGS+=("${IPACMAN_PACKAGES[@]}")
+
+echo "Resolving packages for pacstrap..."
+mapfile -t UNIQUE_PKGS < <(printf "%s\n" "${ALL_PKGS[@]}" | awk 'NF' | sort -u)
+
+missing=()
+installable=()
+for pkg in "${UNIQUE_PKGS[@]}"; do
+    if pacman -Sp --print-format '%n' "$pkg" >/dev/null 2>&1; then
+        installable+=("$pkg")
+    else
+        missing+=("$pkg")
+    fi
+done
+
+if ((${#missing[@]})); then
+    echo "Skipping packages not in repositories: ${missing[*]}"
+fi
+
+if ! mountpoint -q "$ROOT"; then
+    echo "Target root $ROOT is not a mountpoint."
+    exit 1
+fi
+
+echo "Running pacstrap into $ROOT..."
+pacstrap -K -M --noconfirm "$ROOT" "${installable[@]}"
+
+echo "Syncing march repo into target at $ROOT$REPO_DIR..."
+rsync -a --delete \
+    --exclude '.git' \
+    --exclude 'archiso/out' \
+    --exclude 'archiso/work' \
+    --exclude 'archiso/localrepo' \
+    --exclude 'archiso/.aur-build' \
+    "$REPO_DIR/" "$ROOT$REPO_DIR/"
+
+echo "Installing pacman hooks..."
+MARCH_ROOT="$ROOT" "$ROOT$REPO_DIR/install-pacman-hooks.sh"
+
+echo "Setting up post-install services..."
+MARCH_ROOT="$ROOT" "$ROOT$REPO_DIR/install-post-install-setup.sh"
+
+echo "march pacstrap completed."

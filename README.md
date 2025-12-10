@@ -36,9 +36,13 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 1. Reboot into the installed system; post-install services will finish remaining packages/flatpaks.
 
 ## Calamares ISO (mkarchiso)
-* Calamares is not in the official repos; build the AUR package and drop the resulting `calamares-*.pkg.tar.zst` into `archiso/localrepo/`, or let the build script do it with `MARCH_BUILD_CALAMARES_AUR=1` (requires `git`, `base-devel`, and pacman access to install build deps).
-* Build: `archiso/build-archiso.sh` (prefers `packages-user.sh` / `flatpak-packages-user.sh` when present). It regenerates `archiso/packages.x86_64` from `packages.sh`, syncs this repo into the ISO at `/opt/march`, wires `archiso/localrepo/` as a local repo when needed, and runs `mkarchiso` (output in `archiso/out/`). Set `SKIP_MKARCHISO=1` to just regenerate the package list and sync files.
-* Live session: autologins the `liveuser` account (passwordless sudo) into Plasma and auto-starts Calamares. Calamares runs the `shellprocess` job that executes `/usr/local/bin/march-calamares-install`, which wraps `install.sh` with `MARCH_ASSUME_YES=1` so your `config.sh`, `packages.sh`, and `flatpak-packages.sh` drive the install.
+* Calamares still needs to be built from AUR; drop `calamares-*.pkg.tar.zst` into `archiso/localrepo/`, or let `MARCH_BUILD_CALAMARES_AUR=1 archiso/build-archiso.sh` build it (requires `git`, `base-devel`, and network to fetch deps).
+* Build: `archiso/build-archiso.sh` (prefers `packages-user.sh` / `flatpak-packages-user.sh` when present). It regenerates `archiso/packages.x86_64`, syncs this repo into the ISO at `/opt/march`, wires `archiso/localrepo/` if needed, and runs `mkarchiso` (output in `archiso/out/`). Set `SKIP_MKARCHISO=1` to only regenerate configs/sync files.
+* Live session: autologins `liveuser` into Plasma and auto-starts Calamares.
+  * GUI modules handle locale, keyboard, partitioning, users, bootloader, and services.
+  * `shellprocess@march-pacstrap` runs `/usr/local/bin/march-calamares-pacstrap` (pacstrap using `packages.sh`/`packages-user.sh`, then installs pacman hooks + first-boot services into the target).
+  * `shellprocess@march-postinstall` runs inside the target and wires the march post-install services (`post-install-config`, `post-install-packages`, Flatpak install, late AUR/paru bootstrap).
+* Package lists (`packages.sh` / `flatpak-packages.sh`) are respected; packages not in the repos (AUR) are skipped during pacstrap and handled later by the post-install services once paru is available.
 
 ## Post-boot services
 * `march-post-install-config.service`: one-time system config (firewall, samba groups, etc.).

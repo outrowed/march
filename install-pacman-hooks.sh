@@ -3,20 +3,21 @@
 
 SCRIPTDIR="$(dirname ${BASH_SOURCE[0]})"
 . "$SCRIPTDIR/config.sh"
+ROOT="${MARCH_ROOT:-/mnt}"
 
 ## Configure Pacman Hooks
 
-echo "Configuring system maintenance hooks..."
+echo "Configuring system maintenance hooks at $ROOT..."
 
 # Create the hooks directory
-mkdir -p /mnt/etc/pacman.d/hooks
+mkdir -p "$ROOT/etc/pacman.d/hooks"
 
 # Systemd-boot Update Hook
 
 if [[ "$IBOOTLOADER" == "systemd-boot" ]]; then
     # Automatically updates the bootloader binary (BOOTX64.EFI) when systemd is updated
     # https://wiki.archlinux.org/title/Systemd-boot#pacman_hook
-    cat <<EOF > /mnt/etc/pacman.d/hooks/95-systemd-boot.hook
+    cat <<EOF > "$ROOT/etc/pacman.d/hooks/95-systemd-boot.hook"
 [Trigger]
 Type = Package
 Operation = Upgrade
@@ -32,7 +33,7 @@ fi
 # NVIDIA Initramfs Hook
 
 # This hook ensures initramfs is rebuilt if ONLY the nvidia driver updates (without a kernel update)
-cat <<EOF > /mnt/etc/pacman.d/hooks/90-nvidia.hook
+cat <<EOF > "$ROOT/etc/pacman.d/hooks/90-nvidia.hook"
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -52,7 +53,7 @@ EOF
 # Arch Audit Hook
 
 # Automatically runs arch-audit after package upgrades to check for vulnerabilities
-cat <<EOF > /mnt/etc/pacman.d/hooks/90-arch_audit.hook
+cat <<EOF > "$ROOT/etc/pacman.d/hooks/90-arch_audit.hook"
 [Trigger]
 Operation = Install
 Operation = Upgrade
