@@ -1,0 +1,30 @@
+#!/usr/bin/bash
+
+set -euo pipefail
+
+REPO_DIR="${MARCH_REPO_DIR:-/opt/march}"
+LOG_DIR="/var/log/march"
+LOG_FILE="${LOG_DIR}/calamares-install.log"
+
+mkdir -p "$LOG_DIR"
+touch "$LOG_FILE"
+chmod 0644 "$LOG_FILE"
+
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+if [[ ! -d "$REPO_DIR" ]]; then
+    echo "march repository not found at $REPO_DIR"
+    exit 1
+fi
+
+if [[ ! -x "$REPO_DIR/install.sh" ]]; then
+    echo "install.sh is missing or not executable in $REPO_DIR"
+    exit 1
+fi
+
+export MARCH_ASSUME_YES="${MARCH_ASSUME_YES:-1}"
+
+cd "$REPO_DIR"
+echo "Launching march installer from $REPO_DIR..."
+
+./install.sh

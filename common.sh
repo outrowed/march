@@ -53,6 +53,16 @@ bakup() {
 }
 
 prompt() {
+    if [[ "${MARCH_ASSUME_NO:-}" =~ ^(1|y|yes|true)$ ]]; then
+        echo "$1 [YyNn]: n (auto)"
+        return 1
+    fi
+
+    if [[ "${MARCH_ASSUME_YES:-}" =~ ^(1|y|yes|true)$ ]]; then
+        echo "$1 [YyNn]: y (auto)"
+        return 0
+    fi
+
     while true; do
         read -p "$1 [YyNn]: " yn
         case $yn in

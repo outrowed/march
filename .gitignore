@@ -12,3 +12,10 @@ passwords/**/*
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Generated archiso artifacts
+archiso/out/
+archiso/work/
+archiso/airootfs/opt/march/
+archiso/localrepo/
+archiso/.aur-build/

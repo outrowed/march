@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Calamares Installer
+Comment=Graphical installer for march
+Exec=sh -c "xhost +SI:localuser:root >/dev/null && env MARCH_ASSUME_YES=1 sudo -E calamares -d"
+Icon=system-software-install
+Terminal=false
+X-GNOME-Autostart-enabled=true
