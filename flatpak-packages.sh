@@ -8,6 +8,8 @@ IFLATPAK_SYSTEM_PACKAGES=(
     org.gtk.Gtk3theme.Breeze
 
     ## Util
+    # Admin
+    # opt: io.github.mfat.sshpilot
     # Camera
     org.kde.kamoso
     io.github.webcamoid.Webcamoid
