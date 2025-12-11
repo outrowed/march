@@ -246,6 +246,7 @@ IPACMAN_PACKAGES=(
     yt-dlp      # youtube download
     bat         # cat clone
     fuse3       # Filesystem in Userspace -- mount filesystem without root
+    sshfs
 
     ## Fonts
     ttf-dejavu
