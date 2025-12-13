@@ -75,6 +75,7 @@ IPACSTRAP_PACKAGES=(
 
     ## Network
     # Core
+    iptables-nft
     systemd-resolvconf
     networkmanager
     ufw                 # firewall
@@ -112,6 +113,14 @@ IPACSTRAP_PACKAGES=(
     ## Multimedia
     ffmpeg
 
+    ## Audio
+    # required to avoid conflict with jack2
+    pipewire
+    wireplumber
+    pipewire-jack
+    pipewire-pulse
+    pipewire-alsa
+
     ## Audio firmware
     sof-firmware
     alsa-firmware
@@ -129,12 +138,6 @@ IPACSTRAP_PACKAGES=(
 # packages that are before IPACMAN_PACKAGES
 # usually this is required because of dependency conflict and explicitly choosing which one to install
 IPREPACMAN_PACKAGES=(
-    ## Audio
-    pipewire
-    wireplumber
-    pipewire-jack
-    pipewire-pulse
-    pipewire-alsa
 )
 
 ## Pacman packages
@@ -246,7 +249,7 @@ IPACMAN_PACKAGES=(
     yt-dlp      # youtube download
     bat         # cat clone
     fuse3       # Filesystem in Userspace -- mount filesystem without root
-    sshfs
+    sshfs       # SSH FUSE
 
     ## Fonts
     ttf-dejavu
@@ -312,4 +315,5 @@ ILATE_PACKAGES=(
     archiso             # archiso creation
     optimus-manager-git # NVIDIA optimus manager
     elecwhat-bin        # electron whatsapp client
+    pwvucontrol         # native pavucontrol for PipeWire
 )
