@@ -226,78 +226,24 @@ IPACMAN_PACKAGES=(
     ## Network
     avahi       # Network discovery (mDNS/Bonjour)
     nss-mdns    # Hostname resolution for .local domains
-    # Hack
-    nmap
-    metasploit
-    aircrack-ng
-    hydra
-    dsniff
-    tor
-    torbrowser-launcher
-    whois
-    arp-scan
-    wireshark-qt
-    wireshark-cli
-    termshark
-    hcxdumptool
-    hcxkeys
-    hcxtools
-    nikto
-    tcpdump
-    hashcat
-    hashcat-utils
-    macchanger
-    sqlmap
-    bettercap
-    ettercap-gtk
-    cowpatty
-    proxychains-ng
-    john
-    impacket
-    net-tools
-    gemini-cli
 
     ## Localization
     hunspell
     hyphen
 
-    ## Devel
-    # AUR VSCode
-    code
-    code-features
-    code-marketplace
-    # NodeJS
-    nodejs
-    npm
-    pnpm
-
     ## Package manager
     flatpak     # mostly user-space GUI-based applications
-
-    ## User software
-    syncthing   # syncthing
-    yt-dlp      # youtube download
-    bat         # cat clone
-    fuse3       # Filesystem in Userspace -- mount filesystem without root
-    sshfs       # SSH FUSE
 
     ## Fonts
     ttf-dejavu
     ttf-liberation
     ttf-roboto
-    gnu-free-fonts
-    ttf-ms-fonts
+    # gnu-free-fonts
+    # ttf-ms-fonts
     noto-fonts
     noto-fonts-cjk
     # Emoji / custom icon
     noto-fonts-emoji
-    nerd-fonts
-    otf-font-awesome
-    # Mono
-    ttf-jetbrains-mono
-    ttf-cascadia-code
-    # Bitmap
-    bdf-unifont
 
     ## Virtualization
     # qemu-desktop    # QEMU setup for desktop environment
@@ -352,4 +298,60 @@ ILATE_PACKAGES=(
     # optimus-manager-git # NVIDIA optimus manager
     elecwhat-bin        # electron whatsapp client
     # pwvucontrol         # native pavucontrol for PipeWire
+
+    ## User software
+    syncthing   # syncthing
+    yt-dlp      # youtube download
+    bat         # cat clone
+    fuse3       # Filesystem in Userspace -- mount filesystem without root
+    sshfs       # SSH FUSE
+
+    ## Devel
+    # AUR VSCode
+    code
+    code-features
+    code-marketplace
+    # NodeJS
+    nodejs
+    npm
+    pnpm
+
+    # Hack
+    nmap
+    metasploit
+    aircrack-ng
+    hydra
+    dsniff
+    tor
+    torbrowser-launcher
+    whois
+    arp-scan
+    wireshark-qt
+    wireshark-cli
+    termshark
+    hcxdumptool
+    hcxkeys
+    hcxtools
+    nikto
+    tcpdump
+    hashcat
+    hashcat-utils
+    macchanger
+    sqlmap
+    bettercap
+    ettercap-gtk
+    cowpatty
+    proxychains-ng
+    john
+    impacket
+    net-tools
+    gemini-cli
+    
+    # nerd-fonts
+    otf-font-awesome
+    # Mono
+    # ttf-jetbrains-mono
+    ttf-cascadia-code
+    # Bitmap
+    bdf-unifont
 )
