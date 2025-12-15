@@ -43,7 +43,7 @@ export ISWAP_TYPE=zram+swapfile
 
 # EFI System Partition location
 # IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_PARTITION.
-export IEFI_PARTITION=/dev/nvme0n1p1
+export IEFI_PARTITION=/dev/sda1
 # IEFI_LINUNX_DIRNAME is the directory stored in the ESP, must be safe non-space characters (regex: /[a-zA-Z-_]+/)
 export IEFI_LINUX_DIRNAME=arch-linux
 
