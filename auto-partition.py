@@ -3,12 +3,13 @@
 Auto-create root/home partitions for march on an empty disk.
 
 Usage:
-    sudo python3 auto-partition.py /dev/sdX [root_percent]
+    sudo python3 auto-partition.py /dev/sdX [root_percent] [--add-efi sizeMiB]
 
 Notes:
-- Requires an empty disk (no existing partitions). Will create a GPT and two ext4 partitions.
+- Requires an empty disk (no existing partitions). Will create a GPT and partitions.
 - Labels and filesystem types are read from config.sh (IROOT_PARTITION_LABEL/IHOME_PARTITION_LABEL and *_FSTYPE).
 - root_percent defaults to 60; the remainder goes to home.
+- Optional EFI partition is created if --add-efi is provided and no existing ESP is on the disk.
 """
 
 from __future__ import annotations
@@ -17,7 +18,6 @@ import json
 import os
 import re
 import shlex
-import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -73,7 +73,7 @@ def lsblk_info(disk: str) -> Tuple[List[Dict], List[Dict]]:
             "--json",
             "--bytes",
             "-o",
-            "NAME,PATH,TYPE,SIZE,START,PKNAME",
+            "NAME,PATH,TYPE,SIZE,START,PKNAME,FSTYPE,PARTTYPE",
         ],
         text=True,
     )
@@ -119,15 +119,22 @@ def main() -> None:
         print("Run as root.")
         sys.exit(1)
     if len(sys.argv) < 2:
-        print("Usage: sudo python3 auto-partition.py /dev/sdX [root_percent]")
+        print("Usage: sudo python3 auto-partition.py /dev/sdX [root_percent] [--add-efi sizeMiB]")
         sys.exit(1)
     disk = sys.argv[1]
     root_percent = 60
+    efi_mib = None
     if len(sys.argv) >= 3:
         try:
             root_percent = int(sys.argv[2])
         except ValueError:
             print("root_percent must be an integer (e.g., 60).")
+            sys.exit(1)
+    if len(sys.argv) >= 4 and sys.argv[3].startswith("--add-efi"):
+        try:
+            efi_mib = int(sys.argv[3].split("=")[1])
+        except Exception:
+            print("Use --add-efi=<sizeMiB>, e.g., --add-efi=512")
             sys.exit(1)
     if root_percent <= 0 or root_percent >= 100:
         print("root_percent must be between 1 and 99.")
@@ -144,6 +151,10 @@ def main() -> None:
     if any(p["type"] == "part" for p in parts):
         print(f"{disk} already has partitions; aborting.")
         sys.exit(1)
+    has_esp = any(p.get("fstype") == "vfat" and (p.get("parttype") or "").lower() in ("ef00", "c12a7328-f81f-11d2-ba4b-00a0c93ec93b") for p in parts)
+    if efi_mib and has_esp:
+        print("EFI partition requested but ESP already exists on disk; skipping EFI creation.")
+        efi_mib = None
 
     cfg = load_config()
     if cfg["IROOT_PARTITION_FSTYPE"] != "ext4" or cfg["IHOME_PARTITION_FSTYPE"] != "ext4":
@@ -156,26 +167,47 @@ Target disk: {disk}
 Root label: {cfg['IROOT_PARTITION_LABEL']} ({cfg['IROOT_PARTITION_FSTYPE']})
 Home label: {cfg['IHOME_PARTITION_LABEL']} ({cfg['IHOME_PARTITION_FSTYPE']})
 Root percent: {root_percent}%, Home percent: {100 - root_percent}%
+EFI size: {f"{efi_mib} MiB" if efi_mib else "none"}
 """
     )
-    if not confirm("This will wipe the disk and create two partitions. Continue?"):
+    if not confirm("This will wipe the disk and create partitions. Continue?"):
         sys.exit(1)
 
     try:
         run(["wipefs", "-af", disk])
         run(["parted", "-s", disk, "mklabel", "gpt"])
-        run(["parted", "-s", disk, "mkpart", "primary", "ext4", "1MiB", f"{root_percent}%"])
-        run(["parted", "-s", disk, "name", "1", cfg["IROOT_PARTITION_LABEL"]])
+        cur_start = "1MiB"
+        part_num = 1
+        if efi_mib:
+            efi_end = f"{efi_mib}MiB"
+            run(["parted", "-s", disk, "mkpart", "primary", "fat32", cur_start, efi_end])
+            run(["parted", "-s", disk, "name", str(part_num), "EFI"])
+            run(["parted", "-s", disk, "set", str(part_num), "esp", "on"])
+            cur_start = efi_end
+            part_num += 1
+
+        run(["parted", "-s", disk, "mkpart", "primary", "ext4", cur_start, f"{root_percent}%"])
+        run(["parted", "-s", disk, "name", str(part_num), cfg["IROOT_PARTITION_LABEL"]])
+        part_num += 1
         run(["parted", "-s", disk, "mkpart", "primary", "ext4", f"{root_percent}%", "100%"])
-        run(["parted", "-s", disk, "name", "2", cfg["IHOME_PARTITION_LABEL"]])
+        run(["parted", "-s", disk, "name", str(part_num), cfg["IHOME_PARTITION_LABEL"]])
         run(["partprobe", disk])
         paths = derive_partition_paths(disk)
-        if len(paths) < 2:
+        expected_parts = 3 if efi_mib else 2
+        if len(paths) < expected_parts:
             raise RuntimeError("Could not find new partitions after creation.")
-        root_part = sorted(paths)[0]
-        home_part = sorted(paths)[1]
+        paths = sorted(paths)
+        idx = 0
+        if efi_mib:
+            efi_part = paths[idx]
+            idx += 1
+            run(["mkfs.vfat", "-F32", "-n", "EFI", efi_part])
+        root_part = paths[idx]
+        idx += 1
+        home_part = paths[idx] if idx < len(paths) else None
         run(["mkfs.ext4", "-F", "-L", cfg["IROOT_PARTITION_LABEL"], root_part])
-        run(["mkfs.ext4", "-F", "-L", cfg["IHOME_PARTITION_LABEL"], home_part])
+        if home_part:
+            run(["mkfs.ext4", "-F", "-L", cfg["IHOME_PARTITION_LABEL"], home_part])
         print("Partitions created:")
         run(["lsblk", "-o", "NAME,PATH,PARTLABEL,FSTYPE,SIZE", disk])
     except Exception as exc:  # noqa: BLE001
