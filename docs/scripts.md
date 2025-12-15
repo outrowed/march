@@ -6,6 +6,8 @@ This repository is mostly shell scripts run directly from the live Arch ISO. The
 - `common.sh`: defensive shell settings, run-directory guard, helpers (retry, prompt, autosudo, package checkers, root UUID discovery, EFI device derivation). Sourced by most scripts.
 - `config.sh`: installer inputs (usernames, locale/timezone, partition labels/paths, swap, bootloader, kernel cmdline). Wizards can generate `config-user.sh` while preserving `config.sh` as canonical defaults.
 - `packages.sh` / `flatpak-packages.sh`: package arrays consumed during install and first-boot services. Optional overlays `packages_user.sh`/`flatpak-packages-user.sh` can be created by the wizard.
+- `config_wizard_cli.py`: Python CLI menu for editing `config.sh` fields, managing user password hashes, and launching the partition wizard (no Tk needed).
+- `installer.py`: higher-level CLI front-end to set hostname, swap type, locales, manage users, open the partition wizard, launch the legacy config-wizard.sh, and optionally run `install.sh` for an all-in-one flow.
 
 ## Main installation chain
 - `install.sh`: orchestrator. Verifies network, runs reflector, formats and mounts partitions, clears `/mnt/boot`, runs pacstrap (idempotent via `pacstrap.done`), writes fstab/hostname/locale/timezone/keymap, configures swap (zram/swapfile), composes mkinitcpio fragments + HOOKS and rebuilds initramfs, installs bootloader (`install-systemd-boot.sh` or `install-uki.sh`), tweaks shells/sudoers/bashrc, provisions users from `passwords/`, tunes pacman, installs paru (`install-paru.sh`), installs pacman hooks, runs post-bootstrap package/service setup (`install-paru-packages-systemd.sh`), and schedules post-boot tasks (`install-post-install-setup.sh`).
@@ -35,6 +37,7 @@ This repository is mostly shell scripts run directly from the live Arch ISO. The
 - `format-esp.sh`: formats a specific partition as FAT32 ESP (with GUID sanity check).
 - `set-partlabel.sh`: renames a partition label using `sgdisk`.
 - `reformat-partitions.sh` / `mount-partitions.sh` / `cleanup-boot.sh`: used in the main flow but also runnable standalone for manual prep.
+- `partitions-wizard.py`: CLI (no desktop needed) planner to stage/create/delete/move/resize/label partitions, assign root/home/EFI/swap roles, and write the chosen labels/paths back into `config.sh`. Uses lsblk/parted/sgdisk and Python stdlib.
 
 ## Desktop variants and extras
 - `packages_gnome.sh`, `packages_cosmic.sh`: optional scripts to append GNOME/COSMIC package groups to `IPACMAN_PACKAGES`/`IAUR_PACKAGES`.
