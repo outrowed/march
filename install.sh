@@ -325,8 +325,8 @@ fi
 ./install-users.sh
 
 if ! arch-chroot /mnt id "$ISUPER_USER" &>/dev/null; then
-    echo "CRITICAL ERROR: Main user '$ISUPER_USER' was not created!"
-    exit 1
+    echo "ERROR: Main user '$ISUPER_USER' was not created!"
+    ./users-wizard.sh "$ISUPER_USER"
 fi
 
 arch-chroot /mnt usermod -aG wheel "$ISUPER_USER"
