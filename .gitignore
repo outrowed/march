@@ -2,6 +2,7 @@ passwords/**/*
 *-user.sh
 *-user-*.sh
 .mkarchiso-work
+cache
 out
 
 .vscode/*
