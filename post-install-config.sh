@@ -165,37 +165,41 @@ Background=${bg}
 EOF
     fi
 
-    # KDE wallpaper defaults (system-wide)
-    local wp_dir="/usr/share/wallpapers/TopoOS"
-    mkdir -p "$wp_dir/contents/images"
-    if [[ -f "$assets_dir/wallpaper.png" ]]; then
-        cp "$assets_dir/wallpaper.png" "$wp_dir/contents/images/3840x2160.png"
-        cp "$assets_dir/wallpaper.png" "$wp_dir/contents/images/1920x1080.png"
-    fi
+    # KDE wallpaper apply via plasma-apply-wallpaperimage (autostart per user)
+    local wallpaper_img="$assets_dir/wallpaper.png"
     if [[ -f "$assets_dir/wallpaper-dark.png" ]]; then
-        cp "$assets_dir/wallpaper-dark.png" "$wp_dir/contents/images/3840x2160-dark.png"
-        cp "$assets_dir/wallpaper-dark.png" "$wp_dir/contents/images/1920x1080-dark.png"
+        wallpaper_img="$assets_dir/wallpaper-dark.png"
     fi
-    cat <<EOF > "$wp_dir/metadata.desktop"
+    if [[ -f "$wallpaper_img" ]]; then
+        local wp_script="/usr/local/bin/topo-apply-wallpaper.sh"
+        cat <<EOF > "$wp_script"
+#!/usr/bin/bash
+img="$wallpaper_img"
+if command -v plasma-apply-wallpaperimage &>/dev/null && [[ -f "\$img" ]]; then
+    plasma-apply-wallpaperimage "\$img" || true
+fi
+rm -f "\$HOME/.config/autostart/topo-wallpaper.desktop"
+EOF
+        chmod +x "$wp_script"
+
+        mkdir -p /etc/skel/.config/autostart
+        cat <<EOF > /etc/skel/.config/autostart/topo-wallpaper.desktop
 [Desktop Entry]
-Name=TopoOS
-X-KDE-PluginInfo-Name=TopoOS
-X-KDE-PluginInfo-Author=Topo Team
-X-KDE-PluginInfo-Category=Wallpaper
-X-KDE-PluginInfo-Version=1.0
-X-KDE-PluginInfo-License=CC-BY
-X-Plasma-Wallpaper-MainImage=contents/images/1920x1080.png
-X-Plasma-Wallpaper-MainImageDark=contents/images/1920x1080-dark.png
+Type=Application
+Exec=$wp_script
+X-GNOME-Autostart-enabled=true
+Name=Topo Wallpaper
+OnlyShowIn=KDE;
 EOF
 
-    # Plasma look-and-feel default wallpaper (Breeze) via kwriteconfig5
-    local lnf_defaults="/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/defaults"
-    if [[ -f "$lnf_defaults" ]]; then
-        cp "$lnf_defaults" "${lnf_defaults}.bak" || true
+        # Add autostart for existing users
+        for home in /home/*; do
+            [[ -d "$home" ]] || continue
+            mkdir -p "$home/.config/autostart"
+            cp /etc/skel/.config/autostart/topo-wallpaper.desktop "$home/.config/autostart/topo-wallpaper.desktop"
+            chown "$(stat -c '%u:%g' "$home")" "$home/.config/autostart/topo-wallpaper.desktop"
+        done
     fi
-    mkdir -p "$(dirname "$lnf_defaults")"
-    kwriteconfig5 --file "$lnf_defaults" --group Wallpaper --key Image "file://$wp_dir/contents/images/1920x1080.png" || true
-    kwriteconfig5 --file "$lnf_defaults" --group Wallpaper --key ImageDark "file://$wp_dir/contents/images/1920x1080-dark.png" || true
 
     # Fastfetch logo
     if [[ -f "$assets_dir/icon-ascii.txt" ]]; then
