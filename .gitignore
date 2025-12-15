@@ -2,6 +2,7 @@ passwords/**/*
 *-user.sh
 *-user-*.sh
 .mkarchiso-work
+out
 
 .vscode/*
 !.vscode/settings.json
