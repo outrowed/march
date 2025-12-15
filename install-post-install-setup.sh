@@ -51,3 +51,11 @@ WantedBy=multi-user.target
 EOF
 
 arch-chroot /mnt systemctl enable march-post-install-packages.service
+
+# Copy branding assets for post-install branding step
+if [[ -d "$SCRIPTDIR/os-assets" ]]; then
+    mkdir -p /mnt/usr/local/share
+    cp -r "$SCRIPTDIR/os-assets" /mnt/usr/local/share/topoos-assets
+else
+    echo "Warning: os-assets directory not found; branding assets not copied."
+fi

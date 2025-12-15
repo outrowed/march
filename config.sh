@@ -62,6 +62,16 @@ export IKERNEL_CMDLINE="rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash r
 # Let the kernel choose the default values
 export IKERNEL_ZSWAP_CMDLINE="zswap.enabled=1"
 
+# Branding (applied post-install; defaults set by developer)
+export IBRAND_NAME="Topo OS"
+export IBRAND_PRETTY="Topo OS"
+export IBRAND_LOGO_ASCII="/usr/local/share/topoos-assets/icon-ascii.txt"
+export IBRAND_PLYMOUTH_BG="#111111"
+export IBRAND_PLYMOUTH_FG="#f2f2f2"
+# Keep ID aligned with Arch for compatibility; extend ID_LIKE for branding.
+export IBRAND_ID="arch"
+export IBRAND_ID_LIKE="arch topo"
+
 # Which initramfs layout to use: busybox or systemd
 export IINITRAMFS_TYPE=systemd
 
