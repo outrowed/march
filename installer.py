@@ -401,176 +401,6 @@ def choose_partition(rows: List[Dict[str, object]], title: str, default: str = "
     return default
 
 
-def parse_parted_free(disk: str) -> List[Dict[str, int]]:
-    """Return free ranges from parted -m output as list of dicts with start/end/size bytes."""
-    try:
-        out = subprocess.check_output(["parted", "-m", disk, "unit", "B", "print", "free"], text=True)
-    except Exception as exc:  # noqa: BLE001
-        print("parted failed:", exc)
-        return []
-    free_ranges: List[Dict[str, int]] = []
-    for line in out.splitlines():
-        if not line or line.startswith("BYT;") or line.startswith("Model:"):
-            continue
-        parts = line.strip().split(":")
-        if len(parts) < 5:
-            continue
-        num, start_s, end_s, size_s, fstype = parts[:5]
-        if "free" not in fstype.lower():
-            continue
-
-        def to_bytes(val: str) -> int:
-            m = re.match(r"([0-9]+)", val)
-            return int(m.group(1)) if m else 0
-
-        start = to_bytes(start_s)
-        end = to_bytes(end_s)
-        size = to_bytes(size_s)
-        if size > 0 and end > start:
-            free_ranges.append({"start": start, "end": end, "size": size})
-    return free_ranges
-
-
-def bytes_to_gib(size: int) -> float:
-    return round(size / (1024**3), 2)
-
-
-def align_mib(value: int) -> int:
-    mib = 1024 * 1024
-    return ((value + mib - 1) // mib) * mib
-
-
-def create_partitions_in_free_space(values: Dict[str, object]) -> Dict[str, object]:
-    if os.geteuid() != 0:
-        print("Auto-partition requires root privileges.")
-        return values
-    disks = [r["path"] for r in lsblk_rows() if r.get("type") == "disk"]
-    default_disk = disks[0] if disks else ""
-    disk = prompt("Target disk for auto-partition (e.g., /dev/nvme0n1)", default_disk)
-    if not disk:
-        print("Cancelled.")
-        return values
-    if not Path(disk).exists():
-        print("Disk not found.")
-        return values
-
-    free_spaces = parse_parted_free(disk)
-    if not free_spaces:
-        print("No free space detected on that disk.")
-        return values
-    largest = max(free_spaces, key=lambda r: r["size"])
-    print(
-        f"Found free region: start={bytes_to_gib(largest['start'])} GiB "
-        f"end={bytes_to_gib(largest['end'])} GiB "
-        f"size={bytes_to_gib(largest['size'])} GiB"
-    )
-
-    need_efi = not values.get("IEFI_PARTITION")
-    try:
-        root_gib = float(prompt("Root size in GiB", "40"))
-    except ValueError:
-        print("Invalid root size.")
-        return values
-
-    efi_size = 512 * 1024 * 1024 if need_efi else 0
-    root_size = int(root_gib * (1024**3))
-    start = align_mib(largest["start"])
-    end = largest["end"]
-    remaining = end - start
-    if remaining < (efi_size + root_size + (1024**3)):  # leave at least 1GiB for home
-        print("Not enough free space for the requested layout.")
-        return values
-
-    plan = []
-    cur = start
-    if need_efi:
-        efi_start = cur
-        efi_end = cur + efi_size
-        plan.append(("efi", efi_start, efi_end))
-        cur = align_mib(efi_end)
-
-    root_start = cur
-    root_end = root_start + root_size
-    plan.append(("root", root_start, root_end))
-    cur = align_mib(root_end)
-
-    home_start = cur
-    home_end = end
-    plan.append(("home", home_start, home_end))
-
-    print("\nPlanned partitions on", disk)
-    for role, s, e in plan:
-        print(f"  {role:4}: {bytes_to_gib(e - s)} GiB (start {bytes_to_gib(s)} GiB)")
-
-    if prompt("Proceed with creating these partitions? (y/N)", "n").lower() != "y":
-        print("Cancelled.")
-        return values
-
-    pre_parts = {p["path"] for p in lsblk_rows() if p.get("type") == "part" and p.get("path", "").startswith(disk)}
-    part_nums = []
-    for p in lsblk_rows():
-        path = p.get("path", "")
-        if p.get("type") == "part" and path.startswith(disk):
-            m = re.search(r"(\d+)$", path)
-            if m:
-                part_nums.append(int(m.group(1)))
-    part_index = max(part_nums) + 1 if part_nums else 1
-
-    def part_bounds(start_b: int, end_b: int) -> tuple[str, str]:
-        return f"{start_b}B", f"{end_b}B"
-
-    try:
-        for role, s, e in plan:
-            start_s, end_s = part_bounds(s, e)
-            if role == "efi":
-                subprocess.check_call(["parted", "-s", disk, "mkpart", "primary", "fat32", start_s, end_s])
-                subprocess.check_call(["parted", "-s", disk, "name", str(part_index), "EFI"])
-                subprocess.check_call(["parted", "-s", disk, "set", str(part_index), "esp", "on"])
-                part_index += 1
-            elif role == "root":
-                subprocess.check_call(["parted", "-s", disk, "mkpart", "primary", "ext4", start_s, end_s])
-                subprocess.check_call(["parted", "-s", disk, "name", str(part_index), values.get("IROOT_PARTITION_LABEL", "root") or "root"])
-                part_index += 1
-            elif role == "home":
-                subprocess.check_call(["parted", "-s", disk, "mkpart", "primary", "ext4", start_s, end_s])
-                subprocess.check_call(["parted", "-s", disk, "name", str(part_index), values.get("IHOME_PARTITION_LABEL", "home") or "home"])
-                part_index += 1
-
-        subprocess.check_call(["partprobe", disk])
-
-        post_rows = [p for p in lsblk_rows() if p.get("type") == "part" and p.get("path", "").startswith(disk)]
-
-        def find_by_label(label: str) -> str:
-            for row in post_rows:
-                if row.get("partlabel") == label or row.get("fstype") == label or row.get("label") == label:
-                    if row.get("path") not in pre_parts:
-                        return row.get("path", "")
-            return ""
-
-        efi_path = find_by_label("EFI") if need_efi else ""
-        root_label = values.get("IROOT_PARTITION_LABEL", "root") or "root"
-        home_label = values.get("IHOME_PARTITION_LABEL", "home") or "home"
-        root_path = find_by_label(root_label)
-        home_path = find_by_label(home_label)
-
-        if efi_path:
-            subprocess.check_call(["mkfs.vfat", "-F32", "-n", "EFI", efi_path])
-            values["IEFI_PARTITION"] = efi_path
-            print("Formatted EFI partition at", efi_path)
-        if root_path:
-            subprocess.check_call(["mkfs.ext4", "-F", "-L", values.get("IROOT_PARTITION_LABEL", "root") or "root", root_path])
-            print("Formatted root partition at", root_path)
-        if home_path:
-            subprocess.check_call(["mkfs.ext4", "-F", "-L", values.get("IHOME_PARTITION_LABEL", "home") or "home", home_path])
-            print("Formatted home partition at", home_path)
-
-    except subprocess.CalledProcessError as exc:
-        print("Partitioning/formatting failed:", exc)
-        return values
-
-    return values
-
-
 def partitions_menu(values: Dict[str, object]) -> Dict[str, object]:
     rows = lsblk_rows()
     while True:
@@ -587,7 +417,6 @@ Swap type: {values.get("ISWAP_TYPE")}
 3) Set root PARTLABEL
 4) Set home PARTLABEL
 5) Set swap type
-6) Auto-create partitions in free space (destructive)
 Q) Back
 """
         )
@@ -604,8 +433,6 @@ Q) Back
         elif choice == "5":
             current = values.get("ISWAP_TYPE", CHOICES["ISWAP_TYPE"][0])
             values["ISWAP_TYPE"] = choose_from_list("Swap type", CHOICES["ISWAP_TYPE"], CHOICES["ISWAP_TYPE"].index(current))
-        elif choice == "6":
-            values = create_partitions_in_free_space(values)
         elif choice == "q":
             return values
 
