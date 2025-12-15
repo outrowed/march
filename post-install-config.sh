@@ -144,15 +144,10 @@ progress = ProgressBar();
 progress.SetPosition(Screen.Width * 0.25, Screen.Height * 0.8);
 progress.SetSize(Screen.Width * 0.5, 10);
 EOF
-        cat <<EOF > /etc/plymouth/plymouthd.conf
-[Daemon]
-Theme=topoos
-ShowDelay=0
-DeviceTimeout=8
-BackgroundColor=${ply_bg}
-ForegroundColor=${ply_fg}
-EOF
-        plymouth-set-default-theme -R topoos || true
+        plymouth-set-default-theme topoos || true
+        if command -v mkinitcpio &>/dev/null; then
+            plymouth-set-default-theme -R topoos || true
+        fi
     fi
 
     # SDDM (Breeze) background
@@ -193,27 +188,14 @@ X-Plasma-Wallpaper-MainImage=contents/images/1920x1080.png
 X-Plasma-Wallpaper-MainImageDark=contents/images/1920x1080-dark.png
 EOF
 
-    # Plasma look-and-feel default wallpaper (Breeze)
+    # Plasma look-and-feel default wallpaper (Breeze) via kwriteconfig5
     local lnf_defaults="/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/defaults"
     if [[ -f "$lnf_defaults" ]]; then
         cp "$lnf_defaults" "${lnf_defaults}.bak" || true
     fi
     mkdir -p "$(dirname "$lnf_defaults")"
-    cat <<EOF > "$lnf_defaults"
-[Wallpaper]
-Image=file://$wp_dir/contents/images/1920x1080.png
-ImageDark=file://$wp_dir/contents/images/1920x1080-dark.png
-EOF
-
-    # Update existing users' wallpaper configs if present
-    for home in /home/*; do
-        [[ -d "$home" ]] || continue
-        cfg="$home/.config/plasma-org.kde.plasma.desktop-appletsrc"
-        if [[ -f "$cfg" ]]; then
-            sed -i "s|^Image=.*|Image=file://$wp_dir/contents/images/1920x1080.png|g" "$cfg" || true
-            sed -i "s|^ImageDark=.*|ImageDark=file://$wp_dir/contents/images/1920x1080-dark.png|g" "$cfg" || true
-        fi
-    done
+    kwriteconfig5 --file "$lnf_defaults" --group Wallpaper --key Image "file://$wp_dir/contents/images/1920x1080.png" || true
+    kwriteconfig5 --file "$lnf_defaults" --group Wallpaper --key ImageDark "file://$wp_dir/contents/images/1920x1080-dark.png" || true
 
     # Fastfetch logo
     if [[ -f "$assets_dir/icon-ascii.txt" ]]; then
