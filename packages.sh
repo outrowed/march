@@ -162,13 +162,13 @@ IPACMAN_PACKAGES=(
     vulkan-radeon
 
     ## Thunderbolt
-    bolt
+    # bolt
 
     ## Admin
     gparted
-    smartmontools
-    nvtop
-    iotop
+    # smartmontools
+    # nvtop
+    # iotop
     vulkan-tools
     # ex: timeshift
 
@@ -226,6 +226,36 @@ IPACMAN_PACKAGES=(
     ## Network
     avahi       # Network discovery (mDNS/Bonjour)
     nss-mdns    # Hostname resolution for .local domains
+    # Hack
+    nmap
+    metasploit
+    aircrack-ng
+    hydra
+    dsniff
+    tor
+    torbrowser-launcher
+    whois
+    arp-scan
+    wireshark-qt
+    wireshark-cli
+    termshark
+    hcxdumptool
+    hcxkeys
+    hcxtools
+    nikto
+    tcpdump
+    hashcat
+    hashcat-utils
+    macchanger
+    sqlmap
+    bettercap
+    ettercap-gtk
+    cowpatty
+    proxychains-ng
+    john
+    impacket
+    net-tools
+    gemini-cli
 
     ## Localization
     hunspell
@@ -270,22 +300,22 @@ IPACMAN_PACKAGES=(
     bdf-unifont
 
     ## Virtualization
-    qemu-desktop    # QEMU setup for desktop environment
-    virt-manager    # GUI front end for virtualization
-    libvirt         # virtualizatin API
-    edk2-ovmf       # UEFI firmware for virtual machines
-    virt-viewer     # graphical display required by virt-manager
+    # qemu-desktop    # QEMU setup for desktop environment
+    # virt-manager    # GUI front end for virtualization
+    # libvirt         # virtualizatin API
+    # edk2-ovmf       # UEFI firmware for virtual machines
+    # virt-viewer     # graphical display required by virt-manager
     
-    ## Virtualization utility
-    dnsmasq         # DNS + DHCP server
-    dmidecode       # system hardware report via SMBIOS/DMI standard
+    # ## Virtualization utility
+    # dnsmasq         # DNS + DHCP server
+    # dmidecode       # system hardware report via SMBIOS/DMI standard
 
     ## Print support
-    cups                        # The core printing system
-    cups-pdf                    # Print to PDF support
-    gutenprint                  # High-quality drivers for Canon, Epson, etc.
-    foomatic-db-gutenprint-ppds # PPD files for Gutenprint
-    hplip                       # Drivers for HP printers
+    # cups                        # The core printing system
+    # cups-pdf                    # Print to PDF support
+    # gutenprint                  # High-quality drivers for Canon, Epson, etc.
+    # foomatic-db-gutenprint-ppds # PPD files for Gutenprint
+    # hplip                       # Drivers for HP printers
 
     ## Fun
     c-lolcat
@@ -301,19 +331,25 @@ IAUR_PACKAGES=(
     needrestart         # automatically restart daemon after library update
     helium-browser-bin  # ungoogled-chromium-based browser with convenient features
     chromium-widevine   # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
+    packettracer
+    powershell
+    sherlock-git
+    dirb
+    whatweb
+    beef-xss
     # ex: timeshift-systemd-timer
 )
 
 ## Late AUR / Pacman packages
 # some packages have very long compile time and thus needs to be deferred / ran in background after KDE Plasma installation
 ILATE_PACKAGES=(
-    cuda                # big boi NVIDIA driver
-    maliit-keyboard     # virtual keyboard
+    # cuda                # big boi NVIDIA driver
+    # maliit-keyboard     # virtual keyboard
     topgrade            # all-in-one universal system upgrade
-    sunshine-bin        # remote server
-    ventoy-bin          # ventoy bootloader
-    archiso             # archiso creation
-    optimus-manager-git # NVIDIA optimus manager
+    # sunshine-bin        # remote server
+    # ventoy-bin          # ventoy bootloader
+    # archiso             # archiso creation
+    # optimus-manager-git # NVIDIA optimus manager
     elecwhat-bin        # electron whatsapp client
-    pwvucontrol         # native pavucontrol for PipeWire
+    # pwvucontrol         # native pavucontrol for PipeWire
 )
