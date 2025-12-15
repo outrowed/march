@@ -43,7 +43,7 @@ logging = systemd
 EOF
 
     # Add user to sambashare
-    groupadd -r sambashare
+    groupadd -r sambashare 2>/dev/null || true
     gpasswd -a "$ISUPER_USER" sambashare
 
     # UFW
@@ -89,19 +89,20 @@ apply_branding() {
     echo "Applying branding for ${brand_pretty}..."
 
     # os-release
-    if [[ -f /etc/os-release ]]; then
-        cp /etc/os-release /etc/os-release.bak || true
+    for osrel in /etc/os-release /usr/lib/os-release; do
+        [[ -f "$osrel" ]] || continue
+        cp "$osrel" "$osrel.bak" || true
         sed -i \
             -e "s/^NAME=.*/NAME=\"${brand_name}\"/" \
             -e "s/^PRETTY_NAME=.*/PRETTY_NAME=\"${brand_pretty}\"/" \
-            /etc/os-release
-        if grep -q "^ID_LIKE=" /etc/os-release; then
-            sed -i "s/^ID_LIKE=.*/ID_LIKE=\"${IBRAND_ID_LIKE:-arch topo}\"/" /etc/os-release
+            "$osrel"
+        if grep -q "^ID_LIKE=" "$osrel"; then
+            sed -i "s/^ID_LIKE=.*/ID_LIKE=\"${IBRAND_ID_LIKE:-arch topo}\"/" "$osrel"
         else
-            echo "ID_LIKE=\"${IBRAND_ID_LIKE:-arch topo}\"" >> /etc/os-release
+            echo "ID_LIKE=\"${IBRAND_ID_LIKE:-arch topo}\"" >> "$osrel"
         fi
         # Leave ID untouched (defaults to 'arch') for repository compatibility.
-    fi
+    done
 
     # systemd-boot entry title (if present)
     if [[ -d /efi/loader/entries ]]; then
@@ -115,10 +116,14 @@ apply_branding() {
     if chkpkg plymouth; then
         local ply_theme_dir="/usr/share/plymouth/themes/topoos"
         mkdir -p "$ply_theme_dir"
+        local logo_src=""
         if [[ -f "$assets_dir/icon.png" ]]; then
-            cp "$assets_dir/icon.png" "$ply_theme_dir/logo.png"
+            logo_src="$assets_dir/icon.png"
         elif [[ -f "$assets_dir/icon-wordmark.png" ]]; then
-            cp "$assets_dir/icon-wordmark.png" "$ply_theme_dir/logo.png"
+            logo_src="$assets_dir/icon-wordmark.png"
+        fi
+        if [[ -n "$logo_src" ]]; then
+            cp "$logo_src" "$ply_theme_dir/logo.png"
         fi
         cat <<EOF > "$ply_theme_dir/topoos.plymouth"
 [Plymouth Theme]
@@ -131,8 +136,10 @@ ImageDir=$ply_theme_dir
 ScriptFile=$ply_theme_dir/topoos.script
 EOF
         cat <<'EOF' > "$ply_theme_dir/topoos.script"
-wallpaper_image = Image("logo.png");
-message_sprite = Sprite(wallpaper_image);
+if (FileExists(ImageDir + "/logo.png")) {
+    wallpaper_image = Image("logo.png");
+    message_sprite = Sprite(wallpaper_image);
+}
 progress = ProgressBar();
 progress.SetPosition(Screen.Width * 0.25, Screen.Height * 0.8);
 progress.SetSize(Screen.Width * 0.5, 10);
@@ -183,17 +190,16 @@ X-KDE-PluginInfo-Category=Wallpaper
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-License=CC-BY
 X-Plasma-Wallpaper-MainImage=contents/images/1920x1080.png
+X-Plasma-Wallpaper-MainImageDark=contents/images/1920x1080-dark.png
 EOF
 
     # Plasma look-and-feel default wallpaper (Breeze)
-    local lnf_defaults="/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/defaults"
-    if [[ -f "$lnf_defaults" ]]; then
-        cp "$lnf_defaults" "${lnf_defaults}.bak" || true
-    fi
-    mkdir -p "$(dirname "$lnf_defaults")"
-    cat <<EOF > "$lnf_defaults"
+    local lnf_dir="/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents"
+    mkdir -p "$lnf_dir/defaults.d"
+    cat <<EOF > "$lnf_dir/defaults.d/10-topo.conf"
 [Wallpaper]
 Image=file://$wp_dir/contents/images/1920x1080.png
+ImageDark=file://$wp_dir/contents/images/1920x1080-dark.png
 EOF
 
     # Fastfetch logo
