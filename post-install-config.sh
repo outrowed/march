@@ -194,26 +194,71 @@ X-Plasma-Wallpaper-MainImageDark=contents/images/1920x1080-dark.png
 EOF
 
     # Plasma look-and-feel default wallpaper (Breeze)
-    local lnf_dir="/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents"
-    mkdir -p "$lnf_dir/defaults.d"
-    cat <<EOF > "$lnf_dir/defaults.d/10-topo.conf"
+    local lnf_defaults="/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/defaults"
+    if [[ -f "$lnf_defaults" ]]; then
+        cp "$lnf_defaults" "${lnf_defaults}.bak" || true
+    fi
+    mkdir -p "$(dirname "$lnf_defaults")"
+    cat <<EOF > "$lnf_defaults"
 [Wallpaper]
 Image=file://$wp_dir/contents/images/1920x1080.png
 ImageDark=file://$wp_dir/contents/images/1920x1080-dark.png
 EOF
 
+    # Update existing users' wallpaper configs if present
+    for home in /home/*; do
+        [[ -d "$home" ]] || continue
+        cfg="$home/.config/plasma-org.kde.plasma.desktop-appletsrc"
+        if [[ -f "$cfg" ]]; then
+            sed -i "s|^Image=.*|Image=file://$wp_dir/contents/images/1920x1080.png|g" "$cfg" || true
+            sed -i "s|^ImageDark=.*|ImageDark=file://$wp_dir/contents/images/1920x1080-dark.png|g" "$cfg" || true
+        fi
+    done
+
     # Fastfetch logo
     if [[ -f "$assets_dir/icon-ascii.txt" ]]; then
         mkdir -p /usr/share/fastfetch
         cp "$assets_dir/icon-ascii.txt" /usr/share/fastfetch/logo.txt
-        mkdir -p /etc/fastfetch
-        cat <<EOF > /etc/fastfetch/config.jsonc
+        mkdir -p /etc/fastfetch /etc/xdg/fastfetch /etc/fastfetch/presets /etc/skel/.config/fastfetch
+        cat <<'EOF' | tee /etc/fastfetch/config.jsonc /etc/fastfetch/presets/default.jsonc /etc/xdg/fastfetch/config.jsonc > /etc/skel/.config/fastfetch/config.jsonc
 {
     "logo": {
         "source": "/usr/share/fastfetch/logo.txt"
-    }
+    },
+    "modules": [
+        "title",
+        "os",
+        "host",
+        "kernel",
+        "uptime",
+        "packages",
+        "shell",
+        "resolution",
+        "de",
+        "wm",
+        "theme",
+        "icons",
+        "terminal",
+        "cpu",
+        "gpu",
+        "memory"
+    ]
 }
 EOF
+    fi
+
+    # System icons (About/launcher branding)
+    if [[ -f "$assets_dir/icon.png" ]]; then
+        for sz in 64 128 256 512; do
+            mkdir -p "/usr/share/icons/hicolor/${sz}x${sz}/apps"
+            cp "$assets_dir/icon.png" "/usr/share/icons/hicolor/${sz}x${sz}/apps/start-here-kde.png"
+            cp "$assets_dir/icon.png" "/usr/share/icons/hicolor/${sz}x${sz}/apps/start-here.png"
+        done
+        mkdir -p /usr/share/pixmaps
+        cp "$assets_dir/icon.png" /usr/share/pixmaps/archlinux-logo.png
+        if command -v gtk-update-icon-cache &>/dev/null; then
+            gtk-update-icon-cache -q /usr/share/icons/hicolor || true
+        fi
     fi
 
     echo "Branding applied."
