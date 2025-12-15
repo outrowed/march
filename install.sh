@@ -37,6 +37,19 @@ fi
 
 MARCH_INSTALL_STATE_DIR="/mnt/var/lib/march-install"
 
+PACMAN_CACHE_SRC="${LOCAL_PACMAN_CACHE:-$SCRIPTDIR/cache/pacman}"
+
+seed_pacman_cache() {
+    local src="$1" dest="$2"
+    [[ -d "$src" ]] || return 0
+    mkdir -p "$dest"
+    if command -v rsync &>/dev/null; then
+        rsync -a --ignore-existing "$src"/ "$dest"/ || true
+    else
+        cp -a "$src"/. "$dest"/ 2>/dev/null || true
+    fi
+}
+
 PACSTRAP_FLAG="$MARCH_INSTALL_STATE_DIR/pacstrap.done"
 RUN_PACSTRAP=1
 
@@ -56,11 +69,15 @@ fi
 
 if [[ "$RUN_PACSTRAP" -eq 1 ]]; then
     echo Running pacstrap on /mnt...
+    seed_pacman_cache "$PACMAN_CACHE_SRC" /var/cache/pacman/pkg
     rm -f "$PACSTRAP_FLAG"
     retry pacstrap -K /mnt "${IPACSTRAP_PACKAGES[@]}"
     mkdir -p "$MARCH_INSTALL_STATE_DIR"
     date -Iseconds > "$PACSTRAP_FLAG"
 fi
+
+# Seed cache inside target for later package installs (paru/pacman inside chroot).
+seed_pacman_cache "$PACMAN_CACHE_SRC" /mnt/var/cache/pacman/pkg
 
 # Generate fstab to Arch Linux
 
