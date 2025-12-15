@@ -18,6 +18,7 @@ WORKDIR="${WORKDIR:-$SCRIPTDIR/.mkarchiso-work}"
 OUTDIR="${OUTDIR:-$SCRIPTDIR/out}"
 PROFILE_DIR="$WORKDIR/profile"
 ISO_LABEL="${ISO_LABEL:-MARCH_$(date +%Y%m%d)}"
+CACHE_SRC="${CACHE_SRC:-$SCRIPTDIR/cache/pacman}"
 
 command -v mkarchiso >/dev/null 2>&1 || { echo "mkarchiso not found. Install archiso."; exit 1; }
 command -v rsync >/dev/null 2>&1 || { echo "rsync required."; exit 1; }
@@ -26,7 +27,7 @@ echo "Working dir: $WORKDIR"
 echo "Output dir:  $OUTDIR"
 echo "ISO label:   $ISO_LABEL"
 
-rm -rf "$PROFILE_DIR"
+rm -rf "$PROFILE_DIR" "$WORKDIR/work" "$OUTDIR"
 mkdir -p "$WORKDIR" "$OUTDIR"
 
 echo "Copying releng profile..."
@@ -34,6 +35,23 @@ cp -r /usr/share/archiso/configs/releng "$PROFILE_DIR"
 
 echo "Adding git to packages..."
 echo "git" >> "$PROFILE_DIR/packages.x86_64"
+
+# Pre-seed pacman cache into the ISO to speed up installs.
+PACMAN_CACHE="$PROFILE_DIR/airootfs/var/cache/pacman/pkg"
+mkdir -p "$PACMAN_CACHE"
+if [[ -d "$CACHE_SRC" ]]; then
+    echo "Copying existing cache from $CACHE_SRC ..."
+    rsync -a "$CACHE_SRC"/ "$PACMAN_CACHE"/
+elif command -v pacman >/dev/null 2>&1; then
+    echo "No local cache found; attempting to prefetch repo packages into ISO cache..."
+    if [[ -x "$SCRIPTDIR/generate-pacman-cache.sh" ]]; then
+        if ! bash -lc "cd \"$SCRIPTDIR\" && ./generate-pacman-cache.sh \"$PACMAN_CACHE\""; then
+            echo "Warning: prefetch failed; continuing without cached packages."
+        fi
+    else
+        echo "Warning: generate-pacman-cache.sh not found; skipping cache prefetch."
+    fi
+fi
 
 echo "Copying march repo into ISO (/root/march)..."
 mkdir -p "$PROFILE_DIR/airootfs/root/march"
