@@ -628,7 +628,11 @@ def set_main_user(values: Dict[str, object]) -> Dict[str, object]:
 
 def save_config(values: Dict[str, object]) -> bool:
     try:
-        rewrite_config(values)
+        # Merge with current config to avoid losing unrelated values.
+        current = parse_config()
+        merged = current.copy()
+        merged.update(values)
+        rewrite_config(merged)
         print("Saved to config.sh")
         return True
     except Exception as exc:  # noqa: BLE001
