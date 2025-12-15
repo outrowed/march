@@ -1,6 +1,7 @@
 passwords/**/*
 *-user.sh
 *-user-*.sh
+.mkarchiso-work
 
 .vscode/*
 !.vscode/settings.json
@@ -12,7 +13,6 @@ passwords/**/*
 
 # Built Visual Studio Code Extensions
 *.vsix
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
