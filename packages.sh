@@ -332,7 +332,6 @@ IAUR_PACKAGES=(
     helium-browser-bin  # ungoogled-chromium-based browser with convenient features
     chromium-widevine   # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
     packettracer
-    powershell
     sherlock-git
     dirb
     whatweb
