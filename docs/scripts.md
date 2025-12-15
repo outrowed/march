@@ -38,6 +38,7 @@ This repository is mostly shell scripts run directly from the live Arch ISO. The
 - `set-partlabel.sh`: renames a partition label using `sgdisk`.
 - `reformat-partitions.sh` / `mount-partitions.sh` / `cleanup-boot.sh`: used in the main flow but also runnable standalone for manual prep.
 - `partitions-wizard.py`: CLI (no desktop needed) planner to stage/create/delete/move/resize/label partitions, assign root/home/EFI/swap roles, and write the chosen labels/paths back into `config.sh`. Uses lsblk/parted/sgdisk and Python stdlib.
+- `auto-partition.py`: quickly wipe an empty disk and create two ext4 partitions (root/home) using labels from `config.sh` (default root 60%, rest home).
 
 ## Desktop variants and extras
 - `packages_gnome.sh`, `packages_cosmic.sh`: optional scripts to append GNOME/COSMIC package groups to `IPACMAN_PACKAGES`/`IAUR_PACKAGES`.
