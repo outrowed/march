@@ -5,6 +5,8 @@
 . "$SCRIPTDIR/packages.sh"
 . "$SCRIPTDIR/config.sh"
 
+BRAND_ASSETS_DIR="/mnt/usr/local/share/topoos-assets"
+
 echo "Starting Arch Linux installation..."
 
 if ! ping -c 1 archlinux.org &>/dev/null; then
@@ -197,6 +199,168 @@ case "$ISWAP_TYPE" in
         ;;
 esac
 
+sync_brand_assets() {
+    local assets_src="$SCRIPTDIR/os-assets"
+    local assets_dest="$BRAND_ASSETS_DIR"
+
+    if [[ ! -d "$assets_src" ]]; then
+        echo "Branding assets not found at $assets_src; skipping branding assets sync."
+        return 1
+    fi
+
+    mkdir -p "$assets_dest"
+    cp -r "$assets_src"/. "$assets_dest"/
+}
+
+escape_sed_repl() {
+    echo "$1" | sed -e 's/[\\/&]/\\&/g'
+}
+
+apply_branding() {
+    sync_brand_assets || return
+
+    local assets_dir="$BRAND_ASSETS_DIR"
+    local brand_name="${IBRAND_NAME:-Topo OS}"
+    local brand_id="${IBRAND_ID:-topo}"
+    local brand_pretty="${IBRAND_PRETTY:-Topo OS}"
+    local brand_id_like="${IBRAND_ID_LIKE:-arch topo}"
+
+    local esc_name esc_pretty esc_like
+    esc_name=$(escape_sed_repl "$brand_name")
+    esc_pretty=$(escape_sed_repl "$brand_pretty")
+    esc_like=$(escape_sed_repl "$brand_id_like")
+
+    # os-release
+    for osrel in /mnt/etc/os-release /mnt/usr/lib/os-release; do
+        [[ -f "$osrel" ]] || continue
+        cp "$osrel" "$osrel.bak" || true
+        sed -i \
+            -e "s/^NAME=.*/NAME=\"${esc_name}\"/" \
+            -e "s/^PRETTY_NAME=.*/PRETTY_NAME=\"${esc_pretty}\"/" \
+            "$osrel"
+        if grep -q "^ID_LIKE=" "$osrel"; then
+            sed -i "s/^ID_LIKE=.*/ID_LIKE=\"${esc_like}\"/" "$osrel"
+        else
+            echo "ID_LIKE=\"${brand_id_like}\"" >> "$osrel"
+        fi
+        # Leave ID untouched (defaults to 'arch') for repository compatibility.
+    done
+
+    # Plymouth theme
+    if arch-chroot /mnt pacman -Q plymouth &>/dev/null; then
+        local ply_theme_dir="/usr/share/plymouth/themes/topoos"
+        mkdir -p "/mnt${ply_theme_dir}"
+        local logo_src=""
+        if [[ -f "$assets_dir/icon.png" ]]; then
+            logo_src="$assets_dir/icon.png"
+        elif [[ -f "$assets_dir/icon-wordmark.png" ]]; then
+            logo_src="$assets_dir/icon-wordmark.png"
+        fi
+        if [[ -n "$logo_src" ]]; then
+            cp "$logo_src" "/mnt${ply_theme_dir}/logo.png"
+        fi
+        cat <<EOF > "/mnt${ply_theme_dir}/topoos.plymouth"
+[Plymouth Theme]
+Name=${brand_pretty}
+Description=${brand_pretty} Splash
+ModuleName=script
+
+[script]
+ImageDir=$ply_theme_dir
+ScriptFile=$ply_theme_dir/topoos.script
+EOF
+        cat <<'EOF' > "/mnt${ply_theme_dir}/topoos.script"
+if (FileExists(ImageDir + "/logo.png")) {
+    wallpaper_image = Image("logo.png");
+    message_sprite = Sprite(wallpaper_image);
+}
+progress = ProgressBar();
+progress.SetPosition(Screen.Width * 0.25, Screen.Height * 0.8);
+progress.SetSize(Screen.Width * 0.5, 10);
+EOF
+        arch-chroot /mnt plymouth-set-default-theme topoos || true
+    fi
+
+    # SDDM (Breeze) background
+    if arch-chroot /mnt pacman -Q sddm &>/dev/null; then
+        mkdir -p /mnt/etc/sddm.conf.d
+        local bg="$assets_dir/wallpaper.png"
+        if [[ -f "$assets_dir/wallpaper-dark.png" ]]; then
+            bg="$assets_dir/wallpaper-dark.png"
+        fi
+        cat <<EOF > /mnt/etc/sddm.conf.d/10-topo.conf
+[Theme]
+Current=breeze
+CursorTheme=breeze_cursors
+Background=${bg}
+EOF
+    fi
+
+    # Fastfetch logo
+    local ff_logo_source=""
+    local ff_logo_type="auto"
+    if [[ -f "$assets_dir/icon.png" ]]; then
+        mkdir -p /mnt/usr/share/fastfetch
+        cp "$assets_dir/icon.png" /mnt/usr/share/fastfetch/logo.png
+        ff_logo_source="/usr/share/fastfetch/logo.png"
+    elif [[ -f "$assets_dir/icon-ascii.txt" ]]; then
+        mkdir -p /mnt/usr/share/fastfetch
+        cp "$assets_dir/icon-ascii.txt" /mnt/usr/share/fastfetch/logo.txt
+        ff_logo_source="/usr/share/fastfetch/logo.txt"
+    fi
+    if [[ -n "$ff_logo_source" ]]; then
+        mkdir -p /mnt/etc/fastfetch /mnt/etc/xdg/fastfetch /mnt/etc/fastfetch/presets /mnt/etc/skel/.config/fastfetch
+        cat <<EOF | tee /mnt/etc/fastfetch/config.jsonc /mnt/etc/fastfetch/presets/default.jsonc /mnt/etc/xdg/fastfetch/config.jsonc > /mnt/etc/skel/.config/fastfetch/config.jsonc
+{
+    "logo": {
+        "type": "${ff_logo_type}",
+        "source": "${ff_logo_source}"
+    },
+    "modules": [
+        "title",
+        "os",
+        "host",
+        "kernel",
+        "uptime",
+        "packages",
+        "shell",
+        "resolution",
+        "de",
+        "wm",
+        "theme",
+        "icons",
+        "terminal",
+        "cpu",
+        "gpu",
+        "memory"
+    ]
+}
+EOF
+    fi
+
+    # System icons (About/launcher branding)
+    if [[ -f "$assets_dir/icon.png" ]]; then
+        for sz in 64 128 256 512; do
+            mkdir -p "/mnt/usr/share/icons/hicolor/${sz}x${sz}/apps"
+            cp "$assets_dir/icon.png" "/mnt/usr/share/icons/hicolor/${sz}x${sz}/apps/start-here-kde.png"
+            cp "$assets_dir/icon.png" "/mnt/usr/share/icons/hicolor/${sz}x${sz}/apps/start-here.png"
+        done
+        mkdir -p /mnt/usr/share/pixmaps
+        cp "$assets_dir/icon.png" /mnt/usr/share/pixmaps/archlinux-logo.png
+        arch-chroot /mnt sh -c 'if command -v gtk-update-icon-cache &>/dev/null; then gtk-update-icon-cache -q /usr/share/icons/hicolor || true; fi'
+    fi
+}
+
+brand_boot_entries() {
+    local brand_pretty="${IBRAND_PRETTY:-Topo OS}"
+    if [[ -d /mnt/efi/loader/entries ]]; then
+        for entry in /mnt/efi/loader/entries/*.conf; do
+            [[ -f "$entry" ]] || continue
+            sed -i "s/^title.*/title   ${brand_pretty}/" "$entry"
+        done
+    fi
+}
+
 # Bootloader and initramfs config
 
 # Adding essential modules and hooks to mkinitcpio config
@@ -248,6 +412,9 @@ fi
     printf ')\n'
 } > /mnt/etc/mkinitcpio.conf.d/hooks.conf
 
+# Apply branding (os-release, Plymouth, SDDM, fastfetch, system icons)
+apply_branding
+
 # Regenerate the initramfs
 retry arch-chroot /mnt mkinitcpio -p linux
 
@@ -279,6 +446,8 @@ else
     echo "Unsupported bootloader: $IBOOTLOADER"
     exit 1
 fi
+
+brand_boot_entries
 
 ## Shell global config
 
@@ -312,23 +481,18 @@ fi
 ## User configuration
 
 setup_wallpaper_autostart() {
-    local assets_src="$SCRIPTDIR/os-assets"
-    local assets_target="/usr/local/share/topoos-assets"
+    local assets_dir="$BRAND_ASSETS_DIR"
 
-    if [[ ! -d "$assets_src" ]]; then
-        echo "Wallpaper assets not found at $assets_src; skipping wallpaper autostart."
+    if [[ ! -d "$assets_dir" ]]; then
+        echo "Wallpaper assets not found at $assets_dir; skipping wallpaper autostart."
         return
     fi
 
-    mkdir -p "/mnt${assets_target}"
-    cp -r "$assets_src"/. "/mnt${assets_target}/"
-
-    local wallpaper_img="${assets_target}/wallpaper.png"
-    if [[ -f "/mnt${assets_target}/wallpaper-dark.png" ]]; then
-        wallpaper_img="${assets_target}/wallpaper-dark.png"
-    fi
-    if [[ ! -f "/mnt${wallpaper_img}" ]]; then
-        echo "No wallpaper image found in ${assets_target}; skipping wallpaper autostart."
+    local wallpaper_img="/usr/local/share/topoos-assets/wallpaper.png"
+    if [[ -f "$assets_dir/wallpaper-dark.png" ]]; then
+        wallpaper_img="/usr/local/share/topoos-assets/wallpaper-dark.png"
+    elif [[ ! -f "$assets_dir/wallpaper.png" ]]; then
+        echo "No wallpaper image found in $assets_dir; skipping wallpaper autostart."
         return
     fi
 
