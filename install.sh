@@ -311,6 +311,62 @@ fi
 
 ## User configuration
 
+setup_wallpaper_autostart() {
+    local assets_src="$SCRIPTDIR/os-assets"
+    local assets_target="/usr/local/share/topoos-assets"
+
+    if [[ ! -d "$assets_src" ]]; then
+        echo "Wallpaper assets not found at $assets_src; skipping wallpaper autostart."
+        return
+    fi
+
+    mkdir -p "/mnt${assets_target}"
+    cp -r "$assets_src"/. "/mnt${assets_target}/"
+
+    local wallpaper_img="${assets_target}/wallpaper.png"
+    if [[ -f "/mnt${assets_target}/wallpaper-dark.png" ]]; then
+        wallpaper_img="${assets_target}/wallpaper-dark.png"
+    fi
+    if [[ ! -f "/mnt${wallpaper_img}" ]]; then
+        echo "No wallpaper image found in ${assets_target}; skipping wallpaper autostart."
+        return
+    fi
+
+    local wp_script="/mnt/usr/local/bin/topo-apply-wallpaper.sh"
+    cat <<EOF > "$wp_script"
+#!/usr/bin/bash
+img="${wallpaper_img}"
+if command -v plasma-apply-wallpaperimage &>/dev/null && [[ -f "\$img" ]]; then
+    plasma-apply-wallpaperimage "\$img" || true
+fi
+rm -f "\$HOME/.config/autostart/topo-wallpaper.desktop"
+EOF
+    chmod +x "$wp_script"
+
+    local autostart="/mnt/etc/skel/.config/autostart"
+    mkdir -p "$autostart"
+    cat <<EOF > "$autostart/topo-wallpaper.desktop"
+[Desktop Entry]
+Type=Application
+Exec=/usr/local/bin/topo-apply-wallpaper.sh
+X-GNOME-Autostart-enabled=true
+Name=Topo Wallpaper
+OnlyShowIn=KDE;
+EOF
+
+    # Seed any existing home directories (if rerunning install on an existing system)
+    if [[ -d /mnt/home ]]; then
+        for home in /mnt/home/*; do
+            [[ -d "$home" ]] || continue
+            mkdir -p "$home/.config/autostart"
+            cp "$autostart/topo-wallpaper.desktop" "$home/.config/autostart/topo-wallpaper.desktop"
+            chown "$(stat -c '%u:%g' "$home")" "$home/.config" "$home/.config/autostart" "$home/.config/autostart/topo-wallpaper.desktop"
+        done
+    fi
+}
+
+setup_wallpaper_autostart
+
 # Configure sudoers
 echo "%wheel ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers.d/10-wheel
 chmod 440 /mnt/etc/sudoers.d/10-wheel

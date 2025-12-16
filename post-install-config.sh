@@ -165,51 +165,25 @@ Background=${bg}
 EOF
     fi
 
-    # KDE wallpaper apply via plasma-apply-wallpaperimage (autostart per user)
-    local wallpaper_img="$assets_dir/wallpaper.png"
-    if [[ -f "$assets_dir/wallpaper-dark.png" ]]; then
-        wallpaper_img="$assets_dir/wallpaper-dark.png"
-    fi
-    if [[ -f "$wallpaper_img" ]]; then
-        local wp_script="/usr/local/bin/topo-apply-wallpaper.sh"
-        cat <<EOF > "$wp_script"
-#!/usr/bin/bash
-img="$wallpaper_img"
-if command -v plasma-apply-wallpaperimage &>/dev/null && [[ -f "\$img" ]]; then
-    plasma-apply-wallpaperimage "\$img" || true
-fi
-rm -f "\$HOME/.config/autostart/topo-wallpaper.desktop"
-EOF
-        chmod +x "$wp_script"
-
-        mkdir -p /etc/skel/.config/autostart
-        cat <<EOF > /etc/skel/.config/autostart/topo-wallpaper.desktop
-[Desktop Entry]
-Type=Application
-Exec=$wp_script
-X-GNOME-Autostart-enabled=true
-Name=Topo Wallpaper
-OnlyShowIn=KDE;
-EOF
-
-        # Add autostart for existing users
-        for home in /home/*; do
-            [[ -d "$home" ]] || continue
-            mkdir -p "$home/.config/autostart"
-            cp /etc/skel/.config/autostart/topo-wallpaper.desktop "$home/.config/autostart/topo-wallpaper.desktop"
-            chown "$(stat -c '%u:%g' "$home")" "$home/.config/autostart/topo-wallpaper.desktop"
-        done
-    fi
-
     # Fastfetch logo
-    if [[ -f "$assets_dir/icon-ascii.txt" ]]; then
+    local ff_logo_source=""
+    local ff_logo_type="auto"
+    if [[ -f "$assets_dir/icon.png" ]]; then
+        mkdir -p /usr/share/fastfetch
+        cp "$assets_dir/icon.png" /usr/share/fastfetch/logo.png
+        ff_logo_source="/usr/share/fastfetch/logo.png"
+    elif [[ -f "$assets_dir/icon-ascii.txt" ]]; then
         mkdir -p /usr/share/fastfetch
         cp "$assets_dir/icon-ascii.txt" /usr/share/fastfetch/logo.txt
+        ff_logo_source="/usr/share/fastfetch/logo.txt"
+    fi
+    if [[ -n "$ff_logo_source" ]]; then
         mkdir -p /etc/fastfetch /etc/xdg/fastfetch /etc/fastfetch/presets /etc/skel/.config/fastfetch
-        cat <<'EOF' | tee /etc/fastfetch/config.jsonc /etc/fastfetch/presets/default.jsonc /etc/xdg/fastfetch/config.jsonc > /etc/skel/.config/fastfetch/config.jsonc
+        cat <<EOF | tee /etc/fastfetch/config.jsonc /etc/fastfetch/presets/default.jsonc /etc/xdg/fastfetch/config.jsonc > /etc/skel/.config/fastfetch/config.jsonc
 {
     "logo": {
-        "source": "/usr/share/fastfetch/logo.txt"
+        "type": "${ff_logo_type}",
+        "source": "${ff_logo_source}"
     },
     "modules": [
         "title",
