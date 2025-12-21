@@ -126,11 +126,27 @@ chkpkgroot() {
 
     local checker=()
 
-    # Prefer paru inside the target root for AUR awareness; fall back to pacman.
-    if [[ -x "$root/usr/bin/paru" || -x "$root/bin/paru" ]]; then
-        checker=(arch-chroot "$root" paru -Q)
-    else
-        checker=(pacman --root "$root" -Q)
+    # Prefer the configured AUR helper inside the target root; fall back to pacman.
+    local helper=""
+
+    if [[ -v IAUR_HELPER ]]; then
+        helper="$IAUR_HELPER"
+    fi
+
+    if [[ -n "$helper" ]]; then
+        if [[ -x "$root/usr/bin/$helper" || -x "$root/bin/$helper" ]]; then
+            checker=(arch-chroot "$root" "$helper" -Q)
+        fi
+    fi
+
+    if ((${#checker[@]} == 0)); then
+        if [[ -x "$root/usr/bin/paru" || -x "$root/bin/paru" ]]; then
+            checker=(arch-chroot "$root" paru -Q)
+        elif [[ -x "$root/usr/bin/yay" || -x "$root/bin/yay" ]]; then
+            checker=(arch-chroot "$root" yay -Q)
+        else
+            checker=(pacman --root "$root" -Q)
+        fi
     fi
 
     for pkg in "$@"; do
@@ -144,8 +160,18 @@ chkpkgroot() {
 chkpkg() {
     local checker=()
 
-    if command -v paru &>/dev/null; then
+    local helper=""
+
+    if [[ -v IAUR_HELPER ]]; then
+        helper="$IAUR_HELPER"
+    fi
+
+    if [[ -n "$helper" ]] && command -v "$helper" &>/dev/null; then
+        checker=("$helper" -Q)
+    elif command -v paru &>/dev/null; then
         checker=(paru -Q)
+    elif command -v yay &>/dev/null; then
+        checker=(yay -Q)
     else
         checker=(pacman -Q)
     fi

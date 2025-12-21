@@ -23,7 +23,7 @@ echo "DNS OK."
 
 echo "Installing late AUR / Pacman packages..."
 
-autosudo "$ISUPER_USER" / paru -Syu --needed --noconfirm \
+autosudo "$ISUPER_USER" / "$IAUR_HELPER" -Syu --needed --noconfirm \
     "${ILATE_PACKAGES[@]}" &
 
 ## Flatpak setup

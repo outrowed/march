@@ -38,6 +38,9 @@ export IHOME_PARTITION_FSTYPE=ext4
 export IREFLECTOR_COUNTRY="Singapore"
 export IREFLECTOR_LATEST=10
 
+# AUR helper to use for AUR packages: paru or yay.
+export IAUR_HELPER=paru
+
 # Swap configuration: zram or swapfile
 export ISWAP_TYPE=zram+swapfile
 

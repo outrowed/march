@@ -346,9 +346,9 @@ EOF
 
 echo Done
 
-# Install paru AUR helper (which requires a user to build)
+# Install AUR helper (which requires a user to build)
 
-echo Installing paru AUR helper...
+echo "Installing AUR helper ($IAUR_HELPER)..."
 
 ./install-paru.sh "$ISUPER_USER"
 

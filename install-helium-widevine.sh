@@ -4,7 +4,21 @@
 # https://github.com/imputnet/helium/issues/116#issuecomment-3455140414 (widevine drm linking)
 # https://github.com/imputnet/helium/issues/116#issuecomment-3506881566 (chromium-widevine)
 
-paru -S chromium-widevine
+if [[ -z "$IAUR_HELPER" ]]; then
+    if command -v paru &>/dev/null; then
+        IAUR_HELPER=paru
+    elif command -v yay &>/dev/null; then
+        IAUR_HELPER=yay
+    else
+        echo "No AUR helper found (paru or yay)."
+        exit 1
+    fi
+elif ! command -v "$IAUR_HELPER" &>/dev/null; then
+    echo "Configured AUR helper '$IAUR_HELPER' is not available."
+    exit 1
+fi
+
+"$IAUR_HELPER" -S chromium-widevine
 
 sudo ln -s /usr/lib/chromium/WidevineCdm /opt/helium-browser-bin/WidevineCdm
 
