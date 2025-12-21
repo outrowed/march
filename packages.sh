@@ -147,6 +147,7 @@ IPACMAN_PACKAGES=(
     ## Generic GPU/CPU
     vulkan-icd-loader
     vulkan-swrast                   # Vulkan Software Rasterizer (CPU)
+    vulkan-mesa-implicit-layers
     # ex: vulkan-mesa-device-select -- conflict with vulkan-mesa-implicit-layers
 
     ## NVIDIA
@@ -164,7 +165,7 @@ IPACMAN_PACKAGES=(
     ## Thunderbolt
     bolt
 
-    ## Admin
+    ## Admin Utils
     gparted
     smartmontools
     nvtop
@@ -241,15 +242,19 @@ IPACMAN_PACKAGES=(
     npm
     pnpm
 
-    ## Package manager
-    flatpak     # mostly user-space GUI-based applications
-
-    ## User software
+    ## User Utils
+    gif2png     # gif to png converter
+    scrcpy      # Android/PC screen mirroring
+    kgpg        # KDE gpg manager
     syncthing   # syncthing
     yt-dlp      # youtube download
     bat         # cat clone
     fuse3       # Filesystem in Userspace -- mount filesystem without root
     sshfs       # SSH FUSE
+    7zip        # 7z support
+
+    ## Package manager
+    flatpak     # mostly user-space GUI-based applications
 
     ## Fonts
     ttf-dejavu
@@ -277,7 +282,7 @@ IPACMAN_PACKAGES=(
     virt-viewer     # graphical display required by virt-manager
     
     ## Virtualization utility
-    dnsmasq         # DNS + DHCP server
+    dnsmasq         # DNS + DHCP server -- host uses systemd-resolved instead
     dmidecode       # system hardware report via SMBIOS/DMI standard
 
     ## Print support
@@ -287,12 +292,12 @@ IPACMAN_PACKAGES=(
     foomatic-db-gutenprint-ppds # PPD files for Gutenprint
     hplip                       # Drivers for HP printers
 
-    ## Fun
+    ## Fun (opiniated)
     c-lolcat
-    # opt: yumenikki-en
-    # opt: classicube
-    # opt: supertuxkart
-    # opt: kblocks
+    yumenikki-en
+    classicube
+    supertuxkart
+    kblocks
 )
 
 ## AUR packages
