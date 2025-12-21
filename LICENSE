@@ -1,4 +1,7 @@
 This project is licensed under the terms of the
 GNU General Public License, version 2 or (at your option) any later version.
 
-See the COPYING file for the full license text.
+See the LICENSE.GPL file for the GNU General Public License, version 2
+or LICENSE.GPL3 for the GNU General Public License, version 3.
+
+SPDX-License-Identifier: GPL-2.0-or-later

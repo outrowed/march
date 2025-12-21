@@ -46,4 +46,10 @@ It reformats partitions, bootstraps the system, installs a desktop stack, and se
 
 ## License
 
-GPLv2 or later (see [`COPYING`](COPYING)).
+This project is licensed under the terms of the GNU General Public License, version 2 or (at your option) any later version.
+
+See [`LICENSE`](LICENSE) file for more information.
+
+
+SPDX-License-Identifier: GPL-2.0-or-later
+
