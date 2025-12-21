@@ -313,7 +313,7 @@ ILATE_PACKAGES=(
     sunshine-bin        # remote server
     ventoy-bin          # ventoy bootloader
     archiso             # archiso creation
-    optimus-manager-git # NVIDIA optimus manager
     elecwhat-bin        # electron whatsapp client
     pwvucontrol         # native pavucontrol for PipeWire
+    # ex: optimus-manager-git # NVIDIA optimus manager -- DON'T USE IT FOR KDE PLASMA DEKSTOP -- it forces QPainter software/CPU rendering!
 )
