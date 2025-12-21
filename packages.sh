@@ -243,6 +243,8 @@ IPACMAN_PACKAGES=(
     pnpm
 
     ## User Utils
+    ark         # archive manager
+    audiorelay  # Android/PC mic and audio mirroring
     gif2png     # gif to png converter
     scrcpy      # Android/PC screen mirroring
     kgpg        # KDE gpg manager
