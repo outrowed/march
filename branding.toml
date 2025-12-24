@@ -1,0 +1,9 @@
+
+name = "Arch Linux"
+pretty_name = "Arch Linux"
+safe_name = "arch-linux"
+
+bootloader_name = "Arch Linux"
+boot_manager_name = "Arch Linux Boot Manager"
+
+default_hostname = "archie"

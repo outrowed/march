@@ -1,0 +1,29 @@
+
+# Standard profile
+[standard]
+pacstrap.include = [
+    "main",
+    "devel",
+    "zsh",
+    "bash",
+    "pipewire",
+    "nvidia",
+]
+pacman.include = [
+    "*"
+]
+aur.include = [
+    "*"
+]
+
+# KDE standard
+[kde-standard]
+base = "standard"
+
+# GNOME standard
+[gnome-standard]
+base = "standard"
+
+# Minimal profile
+[minimal]
+pacstrap.include = []
