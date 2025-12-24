@@ -10,10 +10,10 @@ pacstrap.include = [
     "nvidia",
 ]
 pacman.include = [
-    "*"
+    "main"
 ]
 aur.include = [
-    "*"
+    "main"
 ]
 
 # KDE standard
@@ -27,3 +27,13 @@ base = "standard"
 # Minimal profile
 [minimal]
 pacstrap.include = []
+
+# nvidia-580xx sub-profile
+[nvidia-580xx]
+base = "standard"
+pacstrap.exclude = [
+    "nvidia"
+]
+aur.include = [
+    "nvidia-580xx"
+]

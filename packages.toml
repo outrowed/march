@@ -307,6 +307,12 @@ main = [
     "chromium-widevine",  # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
     # ex: timeshift-systemd-timer
 ]
+nvidia-580xx = [
+    "nvidia-580xx-dkms",
+    "nvidia-580xx-utils",
+    "nvidia-580xx-settings",
+    "lib32-nvidia-580xx-utils",
+]
 
 ## Late AUR / Pacman packages
 # some packages have very long compile time and thus needs to be deferred / ran in background after KDE Plasma installation
