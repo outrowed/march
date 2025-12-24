@@ -128,8 +128,8 @@ IPACSTRAP_PACKAGES=(
     ## Generic GPU
     mesa
 
-    ## NVIDIA
-    nvidia
+    ## NVIDIA (non-Pascal)
+    nvidia-open
     nvidia-utils
     nvidia-settings
 )
