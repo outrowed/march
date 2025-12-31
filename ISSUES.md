@@ -12,10 +12,9 @@ Jan 01 02:17:43 archlinux kernel: nvidia 0000:07:00.0: PM: dpm_run_callback(): p
 Jan 01 02:17:43 archlinux kernel: PM: hibernation: Failed to load image, recovering.
 ```
 
-### Solution
+### Solutions
 
-* Remove `kms` hook and `nvidia*` modules from initramfs.
-
-### Drawback
-
-* `plymouth` does not work, as it requires early KMS.
+1. Remove `kms` hook and `nvidia*` modules from initramfs.
+    * **Drawback**: `plymouth` does not work, as it requires early KMS.
+1. Use dual initramfs: (1) initramfs with `plymouth` and `kms`, (2) initramfs with `plymouth` and `kms` disabled, but with NVIDIA hibernation support (`NVreg_PreserveVideoMemoryAllocations`).
+    * **Suggestion**: Can be configured with different `mkinitcpio.conf` presets and boot loader entries. For boot loader entries, this is easily configurable with `systemd-boot` in `/efi/loader/entries`.
