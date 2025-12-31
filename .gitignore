@@ -12,3 +12,8 @@ passwords/**/*
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+.mkarchiso-work
+out
+cache
+__pycache__
