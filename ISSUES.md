@@ -13,6 +13,6 @@ Jan 01 02:17:43 archlinux kernel: PM: hibernation: Failed to load image, recover
 
 * Remove `kms` hook and `nvidia*` modules from initramfs.
 
-## Drawback:
+## Drawback
 
 * `plymouth` does not work, as it requires early KMS.
