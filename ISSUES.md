@@ -19,4 +19,6 @@ Jan 01 02:17:43 archlinux kernel: PM: hibernation: Failed to load image, recover
 1. Remove `kms` hook and `nvidia*` modules from initramfs.
     * **Drawback**: `plymouth` does not work, as it requires early KMS.
 1. Use dual initramfs: (1) initramfs with `plymouth` and `kms`, (2) initramfs with `plymouth` and `kms` disabled, but with NVIDIA hibernation support (`NVreg_PreserveVideoMemoryAllocations`).
-    * **Suggestion**: Can be configured with different `mkinitcpio.conf` presets and boot loader entries. For boot loader entries, this is easily configurable with `systemd-boot` in `/efi/loader/entries`.
+    * Can be configured with different `mkinitcpio.conf` presets.
+    * Can be configured with boot loader entries loading different initramfs. For boot loader entries, this is easily configurable with `systemd-boot` in `/efi/loader/entries`.
+        * For singular boot loader entry, consider automatically setting up oneshot boot before hibernation triggers (in systemd-boot, this may be `bootctl set-oneshot`).
