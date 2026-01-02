@@ -1,4 +1,4 @@
-# System configuration issues
+# Common system issues
 
 This page lists issues related to specific system configuration (such as systemd, mkinitcpio, modprobe, etc.) that may degrade the entire system or specific features.
 
@@ -13,6 +13,8 @@ Jan 01 02:17:43 archlinux kernel: nvidia 0000:07:00.0: PM: pci_pm_freeze(): nv_p
 Jan 01 02:17:43 archlinux kernel: nvidia 0000:07:00.0: PM: dpm_run_callback(): pci_pm_freeze returns -5 Jan 01 02:17:43 archlinux kernel: nvidia 0000:07:00.0: PM: failed to quiesce async: error -5
 Jan 01 02:17:43 archlinux kernel: PM: hibernation: Failed to load image, recovering.
 ```
+
+**Note**: For computers/laptops with hybrid or dual GPU, if the primary GPU used for the system (or perhaps DE) is non-NVIDIA GPU, and the secondary NVIDIA GPU is not used (likely near 0%-5% usage on `btop`), then this will not affect.
 
 ### Solutions
 
