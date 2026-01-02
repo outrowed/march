@@ -24,3 +24,7 @@ Jan 01 02:17:43 archlinux kernel: PM: hibernation: Failed to load image, recover
     * Can be configured with different `mkinitcpio.conf` presets.
     * Can be configured with boot loader entries loading different initramfs. For boot loader entries, this is easily configurable with `systemd-boot` in `/efi/loader/entries`.
         * For singular boot loader entry, consider automatically setting up oneshot boot before hibernation triggers (in systemd-boot, this may be `bootctl set-oneshot`).
+
+## KDE Plasma using QPainter/software rendering instead of OpenGL/GPU rendering due to optimus-manager in a single dGPU setup
+
+An issue where `optimus-manager` forces software rendering (QPainter) for KDE Plasma instead of GPU rendering on a system with a single discrete GPU.
