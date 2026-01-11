@@ -1,9 +1,20 @@
 
 hostname = "archie"
+
+[branding]
+name = "Arch Linux"
+pretty_name = "Arch Linux"
+safe_name = "arch-linux"
+
+bootloader_name = "Arch Linux"
+boot_manager_name = "Arch Linux Boot Manager"
+
+# override names/identifiers set from this config
+override_config = true
+
+[users]
 wheel_user = "outrowed"
-# Use branding from this file or from "branding.toml"
-# "specified" (config.toml) or "external" (branding.toml)
-branding = "external"
+passwords_directory = "{PROGRAM}/passwords"
 
 [localization]
 timezone = "Asia/Singapore"
@@ -40,11 +51,14 @@ dns_over_tls = true
 dns_sec = false
 
 [partitions]
-root = "LABEL=arch-linux-root"
-home = "LABEL=arch-linux-home"
-# Only ext4 is supported by the current formatter; keep this as ext4.
-root_fs = "ext4"
-home_fs = "ext4"
+# Only ext4 is supported
+root.query = "LABEL=arch-linux-root"
+root.fs = "ext4"
+home.query = "LABEL=arch-linux-home"
+home.fs = "ext4"
+
+[btrfs]
+subvolumes = []
 
 [pacman]
 color = true
@@ -72,8 +86,6 @@ size = "ram * 1.5"
 explicit_resume_kernel_args = false
 
 [swap.zswap]
-# Optional zswap tuning appended only when zram is enabled
-# Let the kernel choose the default values
 enable = true
 
 [swap.zram]
