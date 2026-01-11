@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
 from os import PathLike
@@ -64,9 +64,9 @@ class PackageSynced(Package):
 class Pacman:
     pacman_cmd: str = "pacman"
     pacstrap_cmd: str = "pacstrap"
-    added_packages: list[Package] = []
-    synced_packages: list[PackageSynced] = []
-    removed_packages: list[Package | PackageSynced] = []
+    added_packages: list[Package] = field(default_factory=list)
+    synced_packages: list[PackageSynced] = field(default_factory=list)
+    removed_packages: list[Package | PackageSynced] = field(default_factory=list)
 
     def add_packages(self, *package_or_str: str | Package):
         packages = Package.to_packages(package_or_str)

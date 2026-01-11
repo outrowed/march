@@ -4,6 +4,7 @@ from os import PathLike
 from pathlib import Path
 from types import ModuleType
 from typing import cast, Callable
+from unittest import loader
 
 from core.frame import Frame
 from core.plugin import Plugin
@@ -17,9 +18,12 @@ def load_plugin_path(frame: Frame, path: str | PathLike[str]):
     # prepare load_plugin function
     spec = importlib.util.spec_from_file_location(plugin_init.stem, plugin_init)
 
-    if spec is None: raise ModuleNotFoundError(path=str(plugin_init.resolve()))
+    if spec is None \
+        or spec.loader is None: raise ModuleNotFoundError(path=str(plugin_init.resolve()))
 
     plugin_mod: ModuleType = importlib.util.module_from_spec(spec)
+
+    spec.loader.exec_module(plugin_mod)
 
     if not hasattr(plugin_mod, "load_plugin"):
         raise AttributeError(name="load_plugin", obj=plugin_mod)
@@ -33,10 +37,21 @@ def load_plugin_path(frame: Frame, path: str | PathLike[str]):
 
         spec = importlib.util.spec_from_file_location(file.stem, file)
 
-        if spec is None: raise ModuleNotFoundError(path=str(file.resolve()))
+        if spec is None \
+            or spec.loader is None: raise ModuleNotFoundError(path=str(file.resolve()))
 
-        _ = importlib.util.module_from_spec(spec)
+        hook_module = importlib.util.module_from_spec(spec)
+
+        spec.loader.exec_module(hook_module)
 
     plugin = load_plugin_func()
     
     frame.plugins.append(plugin)
+
+def load_plugins(frame: Frame, path: str | PathLike[str]):
+    plugins_path = Path(path)
+
+    for plugin in plugins_path.iterdir():
+        if plugin.is_file(): continue
+
+        load_plugin_path(frame, plugin)

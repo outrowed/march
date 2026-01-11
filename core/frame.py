@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from core.pacman import Pacman
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 @dataclass(kw_only=True)
 class Frame:
-    plugins: list[Plugin] = []
+    plugins: list[Plugin] = field(default_factory=list)
 
 class RunningFrame(Frame):
     pacman: Pacman = Pacman()
