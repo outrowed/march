@@ -7,4 +7,8 @@ hooker = Hooker()
 def load_plugin() -> Plugin:
     print(hooker.funcs)
 
-    return Plugin("march", hooker)
+    return Plugin(
+        name="march",
+        init_hook="init",
+        hooker=hooker
+    )
