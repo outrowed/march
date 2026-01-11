@@ -11,12 +11,12 @@ from core.plugin import Plugin
 log = logging.getLogger(__name__)
 
 @dataclass(kw_only=True)
-class Frame[Dict: Mapping[str, Any] = Any]:
+class Frame[ContextDict: Mapping[str, Any] = Any]:
     pacman: Pacman = field(default_factory=Pacman)
     plugins: list[Plugin] = field(default_factory=list)
     plugin_hooks: tuple[tuple[Plugin, Hook]] = tuple[tuple[Plugin, Hook]]()
     # dict for storing values that persist inside Frame
-    context_dict: Dict | dict[str, Any] = field(default_factory=dict[str, Any])
+    context_dict: ContextDict | dict[str, Any] = field(default_factory=dict[str, Any])
 
     def load_plugin_hooks(self):
         plugin_hooks: list[tuple[Plugin, Hook]] = []
@@ -28,8 +28,8 @@ class Frame[Dict: Mapping[str, Any] = Any]:
         self.plugin_hooks = tuple[tuple[Plugin, Hook]](plugin_hooks)
     
     def init_plugin_hooks(self):
-        for plug, hook in self.plugin_hooks:
-            if hook.label == plug.init_hook:
+        for plugin, hook in self.plugin_hooks:
+            if hook.label == plugin.init_hook:
                 hook.func(self)
 
     def dispatch_hook(self, label: str):

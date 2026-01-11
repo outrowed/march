@@ -93,5 +93,3 @@ class Pacman:
 
     def add_repo(self, _repo_name: str, _repo_urls: list[str]):
         ...
-
-# pacman = Pacman()
