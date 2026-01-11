@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from core.pacman import Pacman
 
@@ -9,15 +9,9 @@ if TYPE_CHECKING:
 
 @dataclass(kw_only=True)
 class Frame:
-    plugins: list[Plugin] = field(default_factory=list)
-
-class RunningFrame(Frame):
     pacman: Pacman = Pacman()
-    plugin_hooks: tuple[tuple[Plugin, Hook]]
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.load_plugin_hooks()
+    plugins: list[Plugin] = field(default_factory=list)
+    plugin_hooks: tuple[tuple[Plugin, Hook]] = tuple[tuple[Plugin, Hook]]()
 
     def load_plugin_hooks(self):
         plugin_hooks: list[tuple[Plugin, Hook]] = []

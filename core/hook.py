@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from types import FunctionType
-    from core.frame import RunningFrame
+    from core.frame import Frame
 
-type HookFunc = Callable[[RunningFrame], None]
+type HookFunc = Callable[[Frame], None]
 
 @dataclass
 class Hook:
