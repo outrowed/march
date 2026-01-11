@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -29,7 +28,7 @@ class RunningFrame(Frame):
 
         self.plugin_hooks = tuple[tuple[Plugin, Hook]](plugin_hooks)
 
-    def dispatch_hooks(self, label: str):
+    def dispatch_hook(self, label: str):
         for plugin, hook in self.plugin_hooks:
             if hook.label == label:
                 print(f"dispatch {plugin.name}:{hook.label}")
