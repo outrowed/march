@@ -16,7 +16,7 @@ class Frame[Dict: Mapping[str, Any] = Any]:
     plugins: list[Plugin] = field(default_factory=list)
     plugin_hooks: tuple[tuple[Plugin, Hook]] = tuple[tuple[Plugin, Hook]]()
     # dict for storing values that persist inside Frame
-    dict: Dict | dict[str, Any] = field(default_factory=dict[str, Any])
+    context_dict: Dict | dict[str, Any] = field(default_factory=dict[str, Any])
 
     def load_plugin_hooks(self):
         plugin_hooks: list[tuple[Plugin, Hook]] = []
