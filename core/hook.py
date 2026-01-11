@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
     from types import FunctionType
     from core.frame import Frame
 
-type HookFunc = Callable[[Frame], None]
+type HookFunc = Callable[[Frame[Any]], None]
 
 @dataclass
 class Hook:

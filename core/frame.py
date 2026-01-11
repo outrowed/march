@@ -30,10 +30,21 @@ class Frame[ContextDict: Mapping[str, Any] = Any]:
     def init_plugin_hooks(self):
         for plugin, hook in self.plugin_hooks:
             if hook.label == plugin.init_hook:
+                log.info(f"init {plugin.name}:{hook.label}")
                 hook.func(self)
 
     def dispatch_hook(self, label: str):
+        hook_label = label
+        target_plugin_name: str | None = None
+
+        # plugin-specific hook
+        if ":" in label:
+            target_plugin_name, hook_label = label.split(":")
+
         for plugin, hook in self.plugin_hooks:
-            if hook.label == label:
-                log.debug(f"dispatch {plugin.name}:{hook.label}")
+            if hook.label == hook_label:
+                if target_plugin_name is not None \
+                    and plugin.name != target_plugin_name: continue
+
+                log.info(f"dispatch {plugin.name}:{hook.label}")
                 hook.func(self)
