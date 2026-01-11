@@ -4,7 +4,6 @@ from os import PathLike
 from pathlib import Path
 from types import ModuleType
 from typing import cast, Callable
-from unittest import loader
 
 from core.frame import Frame
 from core.plugin import Plugin

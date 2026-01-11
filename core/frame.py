@@ -1,5 +1,6 @@
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, final
+from typing import TYPE_CHECKING, Any
 
 from core.pacman import Pacman
 
@@ -8,10 +9,12 @@ if TYPE_CHECKING:
     from core.plugin import Plugin
 
 @dataclass(kw_only=True)
-class Frame:
+class Frame[Dict: Mapping[str, Any] = Any]:
     pacman: Pacman = Pacman()
     plugins: list[Plugin] = field(default_factory=list)
     plugin_hooks: tuple[tuple[Plugin, Hook]] = tuple[tuple[Plugin, Hook]]()
+    # dict for storing values that persist inside Frame
+    dict: Dict | dict[str, Any] = dict[str, Any]()
 
     def load_plugin_hooks(self):
         plugin_hooks: list[tuple[Plugin, Hook]] = []

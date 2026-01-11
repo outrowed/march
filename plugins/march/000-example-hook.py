@@ -1,4 +1,5 @@
 
+from typing import TypedDict
 from core.frame import Frame
 from plugins.march import hooker
 
@@ -11,6 +12,10 @@ def pacstrap(frame: Frame):
 def install_aur_helper(frame: Frame):
     frame.dispatch_hook("post-install")
 
+class something(TypedDict):
+    x: int
+    y: int
+
 @hooker.hook("post-install")
-def install_large_packages(frame: Frame):
-    ...
+def install_large_packages(frame: Frame[something]):
+    frame.dict["x"] = 2

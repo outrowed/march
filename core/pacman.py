@@ -88,10 +88,10 @@ class Pacman:
     def unsync_packages(self):
         ...
 
-    def pacstrap(self, target: str | PathLike[str], package_or_str: list[str | Package]):
+    def pacstrap(self, _target: str | PathLike[str], _package_or_str: list[str | Package]):
         ...
 
-    def add_repo(self, repo_name: str, repo_urls: list[str]):
+    def add_repo(self, _repo_name: str, _repo_urls: list[str]):
         ...
 
 # pacman = Pacman()
