@@ -3,6 +3,11 @@ from typing import TypedDict
 from core.frame import Frame
 from plugins.march import hooker
 
+@hooker.hook("init")
+def init(frame: Frame):
+    print(frame)
+    frame.dispatch_hook("pre-install")
+
 @hooker.hook("pre-install")
 def pacstrap(frame: Frame):
     print("do pacstrap stuff")
