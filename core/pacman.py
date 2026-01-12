@@ -3,7 +3,10 @@ from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
 from os import PathLike
+import os
 from typing import override
+
+from core.config import get_dry_run
 
 class PackageVersion(Enum):
     LATEST = "latest"
@@ -65,14 +68,12 @@ class Pacman:
     pacman_cmd: str = "pacman"
     pacstrap_cmd: str = "pacstrap"
     added_packages: list[Package] = field(default_factory=list)
-    synced_packages: list[PackageSynced] = field(default_factory=list)
-    removed_packages: list[Package | PackageSynced] = field(default_factory=list)
+    synced_packages: list[Package] = field(default_factory=list)
+    removed_packages: list[Package] = field(default_factory=list)
 
     def add_packages(self, *package_or_str: str | Package):
         packages = Package.to_packages(package_or_str)
         
-        # _ = os.system(f"{self.pacman_cmd} -S {str.join(" ", (pac.resolve_sync(self) for pac in packages))}")
-
         self.added_packages.extend(packages)
 
     def remove_packages(self, *package_or_str: str | Package):
@@ -80,16 +81,29 @@ class Pacman:
 
         self.removed_packages.extend(packages)
         
-        for pac in packages: self.added_packages.remove(pac)
+        for pac in packages:
+            self.added_packages.remove(pac)
 
-    def sync_packages(self):
-        ...
+    def sync_packages(self, *package_or_str: str | Package):
+        self.add_packages(*package_or_str)
 
-    def unsync_packages(self):
-        ...
+        resolved_packages = " ".join(
+            pac.resolve_sync(self)
+                for pac in self.added_packages
+        )
+
+        if not get_dry_run():
+            _ = os.system(f"{self.pacman_cmd} -S --needed --noconfirm {resolved_packages}")
+
+        self.synced_packages.extend(self.added_packages)
+
+    def unsync_packages(self, *package_or_str: str | Package):
+        packages = Package.to_packages(package_or_str)
+
+        self.removed_packages.extend(packages)
+
+        for pac in packages:
+            self.synced_packages.remove(pac)
 
     def pacstrap(self, _target: str | PathLike[str], _package_or_str: list[str | Package]):
-        ...
-
-    def add_repo(self, _repo_name: str, _repo_urls: list[str]):
         ...
