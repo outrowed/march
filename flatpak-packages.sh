@@ -59,7 +59,8 @@ IFLATPAK_SYSTEM_PACKAGES=(
     org.kde.neochat
 
     ## Internet
-    org.mozilla.firefox
+    one.ablaze.floorp
+    # ex: org.mozilla.firefox -- replaced with one.ablaze.floorp
     org.mozilla.Thunderbird
     es.danirod.Cartero
     # ex: io.github.ungoogled_software.ungoogled_chromium -- helium-browser-bin in IAUR_PACKAGES

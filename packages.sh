@@ -129,7 +129,7 @@ IPACSTRAP_PACKAGES=(
     mesa
 
     ## NVIDIA (non-Pascal)
-    nvidia-open
+    nvidia-open-dkms    # use DKMS version for support with cachyos kernel
     nvidia-utils
     nvidia-settings
 )
@@ -225,8 +225,9 @@ IPACMAN_PACKAGES=(
     ffmpegthumbs
 
     ## Network
-    avahi       # Network discovery (mDNS/Bonjour)
-    nss-mdns    # Hostname resolution for .local domains
+    avahi           # Network discovery (mDNS/Bonjour)
+    nss-mdns        # Hostname resolution for .local domains
+    zerotier-one    # virtual network from ZeroTier services over internet
 
     ## Localization
     hunspell
@@ -241,22 +242,29 @@ IPACMAN_PACKAGES=(
     nodejs
     npm
     pnpm
+    # etc.
+    jdk-openjdk # arch's openjdk
+    mypy        # python type checker; required for code editor
+
 
     ## User Utils
-    ark         # archive manager
-    audiorelay  # Android/PC mic and audio mirroring
-    gif2png     # gif to png converter
-    scrcpy      # Android/PC screen mirroring
-    kgpg        # KDE gpg manager
-    syncthing   # syncthing
-    yt-dlp      # youtube download
-    bat         # cat clone
-    fuse3       # Filesystem in Userspace -- mount filesystem without root
-    sshfs       # SSH FUSE
-    7zip        # 7z support
+    ark             # archive manager
+    audiorelay      # Android/PC mic and audio mirroring
+    gif2png         # gif to png converter
+    scrcpy          # Android/PC screen mirroring
+    kgpg            # KDE gpg manager
+    syncthing       # syncthing
+    yt-dlp          # youtube download
+    bat             # cat clone
+    fuse3           # Filesystem in Userspace -- mount filesystem without root
+    sshfs           # SSH FUSE
+    7zip            # 7z support
+    rbw             # rust-based bitwarden cli
+    cryptomator-cli # cryptomator cli
 
-    ## Package manager
+    ## Package manager / GUI front end
     flatpak     # mostly user-space GUI-based applications
+    octopi      # GUI front end for pacman
 
     ## Fonts
     ttf-dejavu
@@ -317,10 +325,14 @@ ILATE_PACKAGES=(
     cuda                # big boi NVIDIA driver
     maliit-keyboard     # virtual keyboard
     topgrade            # all-in-one universal system upgrade
-    sunshine-bin        # remote server
+    sunshine            # remote server
     ventoy-bin          # ventoy bootloader
     archiso             # archiso creation
     elecwhat-bin        # electron whatsapp client
     pwvucontrol         # native pavucontrol for PipeWire
-    # ex: optimus-manager-git # NVIDIA optimus manager -- DON'T USE IT FOR KDE PLASMA DEKSTOP -- it forces QPainter software/CPU rendering!
+    # ex: optimus-manager-git   # NVIDIA optimus manager -- DON'T USE IT FOR KDE PLASMA DEKSTOP -- it forces QPainter software/CPU rendering! -- not recommended per cachyos
+    # ex: sunshine-bin          # incompatible with a library
 )
+
+# CachyOS repo:
+#   cachyos-samba-settings
