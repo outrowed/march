@@ -1,4 +1,5 @@
 import importlib, importlib.util
+import logging
 import tomllib
 
 from os import PathLike
@@ -11,6 +12,8 @@ from core.hook import Hook
 from core.plugin import Plugin
 
 type LoadPluginFunc = Callable[[], Plugin]
+
+log = logging.getLogger(__name__)
 
 def load_plugin_path(path: str | PathLike[str]):
     plugin_path = Path(path)
@@ -69,10 +72,9 @@ def load_plugins(frame: Frame, path: str | PathLike[str]):
     for name in load_order_names:
         if name in loaded_plugins_map:
             ordered_plugins.append(loaded_plugins_map[name])
-            # Remove from map so we know what's left
             del loaded_plugins_map[name]
         else:
-            print(f"Warning: Plugin '{name}' in config not found on disk.")
+            log.warning(f"plugin '{name}' in plugin-loader config is not found")
 
     remaining_plugins = sorted(loaded_plugins_map.values(), key=lambda p: p.name)
     ordered_plugins.extend(remaining_plugins)
