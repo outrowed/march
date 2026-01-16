@@ -1,4 +1,5 @@
 import importlib, importlib.util
+import tomllib
 
 from os import PathLike
 from pathlib import Path
@@ -48,15 +49,39 @@ def load_plugin_path(path: str | PathLike[str]):
 
 def load_plugins(frame: Frame, path: str | PathLike[str]):
     plugins_path = Path(path)
+    plugin_loader_config_path = plugins_path / "plugin-loader.toml"
 
+    plugin_loader_config = tomllib.loads(
+        plugin_loader_config_path.read_text("utf-8")
+    )
+    load_order_names = tuple[str](plugin_loader_config["load_order"])
+    
+    loaded_plugins_map: dict[str, Plugin] = {}
+    
     for plugin_path in plugins_path.iterdir():
         if plugin_path.is_file(): continue
-
+        
         plugin = load_plugin_path(plugin_path)
-        plugin_hooks: list[tuple[Plugin, Hook]] = []
+        loaded_plugins_map[plugin.name] = plugin
 
+    ordered_plugins: list[Plugin] = []
+
+    for name in load_order_names:
+        if name in loaded_plugins_map:
+            ordered_plugins.append(loaded_plugins_map[name])
+            # Remove from map so we know what's left
+            del loaded_plugins_map[name]
+        else:
+            print(f"Warning: Plugin '{name}' in config not found on disk.")
+
+    remaining_plugins = sorted(loaded_plugins_map.values(), key=lambda p: p.name)
+    ordered_plugins.extend(remaining_plugins)
+
+    plugin_hooks: list[tuple[Plugin, Hook]] = []
+    
+    for plugin in ordered_plugins:
         for hook in plugin.hooker.generate_hooks():
             plugin_hooks.append((plugin, hook))
 
-        frame.plugins.append(plugin)
-        frame.plugin_hooks.extend(plugin_hooks)
+    frame.plugins.extend(ordered_plugins)
+    frame.plugin_hooks.extend(plugin_hooks)

@@ -1,4 +1,5 @@
 {
     "reportImportCycles": "hint",
+    "reportAny": "hint",
     "reportExplicitAny": "none"
 }
