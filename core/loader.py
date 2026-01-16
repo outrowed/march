@@ -6,11 +6,12 @@ from types import ModuleType
 from typing import cast, Callable
 
 from core.frame import Frame
+from core.hook import Hook
 from core.plugin import Plugin
 
 type LoadPluginFunc = Callable[[], Plugin]
 
-def load_plugin_path(frame: Frame, path: str | PathLike[str]):
+def load_plugin_path(path: str | PathLike[str]):
     plugin_path = Path(path)
     plugin_init = plugin_path / "__init__.py"
 
@@ -43,14 +44,19 @@ def load_plugin_path(frame: Frame, path: str | PathLike[str]):
 
         spec.loader.exec_module(hook_module)
 
-    plugin = load_plugin_func()
-    
-    frame.plugins.append(plugin)
+    return load_plugin_func()
 
 def load_plugins(frame: Frame, path: str | PathLike[str]):
     plugins_path = Path(path)
 
-    for plugin in plugins_path.iterdir():
-        if plugin.is_file(): continue
+    for plugin_path in plugins_path.iterdir():
+        if plugin_path.is_file(): continue
 
-        load_plugin_path(frame, plugin)
+        plugin = load_plugin_path(plugin_path)
+        plugin_hooks: list[tuple[Plugin, Hook]] = []
+
+        for hook in plugin.hooker.generate_hooks():
+            plugin_hooks.append((plugin, hook))
+
+        frame.plugins.append(plugin)
+        frame.plugin_hooks.extend(plugin_hooks)

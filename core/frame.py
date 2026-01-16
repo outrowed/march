@@ -14,18 +14,9 @@ log = logging.getLogger(__name__)
 class Frame[ContextDict: Mapping[str, Any] = Any]:
     pacman: Pacman = field(default_factory=Pacman)
     plugins: list[Plugin] = field(default_factory=list)
-    plugin_hooks: tuple[tuple[Plugin, Hook]] = tuple[tuple[Plugin, Hook]]()
+    plugin_hooks: list[tuple[Plugin, Hook]] = field(default_factory=list)
     # dict for storing values that persist inside Frame
     context_dict: ContextDict | dict[str, Any] = field(default_factory=dict[str, Any])
-
-    def load_plugin_hooks(self):
-        plugin_hooks: list[tuple[Plugin, Hook]] = []
-
-        for plugin in self.plugins:
-            for hook in plugin.hooker.generate_hooks():
-                plugin_hooks.append((plugin, hook))
-
-        self.plugin_hooks = tuple[tuple[Plugin, Hook]](plugin_hooks)
     
     def init_plugin_hooks(self):
         for plugin, hook in self.plugin_hooks:
