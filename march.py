@@ -13,4 +13,4 @@ frame = Frame()
 
 load_plugins(frame, "./plugins")
 
-frame.init_plugin_hooks()
+frame.init_plugins()

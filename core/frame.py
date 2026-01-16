@@ -18,7 +18,7 @@ class Frame[ContextDict: Mapping[str, Any] = Any]:
     # dict for storing values that persist inside Frame
     context_dict: ContextDict | dict[str, Any] = field(default_factory=dict[str, Any])
     
-    def init_plugin_hooks(self):
+    def init_plugins(self):
         for plugin, hook in self.plugin_hooks:
             if hook.label == plugin.init_hook:
                 log.info(f"init {plugin.name}:{hook.label}")
