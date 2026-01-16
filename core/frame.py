@@ -2,7 +2,7 @@ import logging
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 from core.pacman import Pacman
 from core.hook import Hook
@@ -11,18 +11,21 @@ from core.plugin import Plugin
 log = logging.getLogger(__name__)
 
 @dataclass(kw_only=True)
-class Frame[ContextDict: Mapping[str, Any] = Any]:
+class Frame:
     pacman: Pacman = field(default_factory=Pacman)
     plugins: list[Plugin] = field(default_factory=list)
     plugin_hooks: list[tuple[Plugin, Hook]] = field(default_factory=list)
     # dict for storing values that persist inside Frame
-    context_dict: ContextDict | dict[str, Any] = field(default_factory=dict[str, Any])
+    context_dict: dict[str, dict[str, Any]] = field(default_factory=dict)
     
     def init_plugins(self):
         for plugin, hook in self.plugin_hooks:
             if hook.label == plugin.init_hook:
                 log.info(f"init {plugin.name}:{hook.label}")
                 hook.func(self)
+
+    def get_context[Dict: Mapping[str, Any] = dict[str, Any]](self, context_name: str):
+        return cast(Dict, self.context_dict[context_name])
 
     def dispatch_hook(self, label: str):
         hook_label = label
