@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum
 from os import PathLike
+from pathlib import Path
 from typing import override
 
 from core.util import subprocess_open
@@ -136,5 +137,18 @@ class Pacman:
             for removed_pac in removed_synced_packages:
                 self.synced_packages.remove(removed_pac)
 
-    def pacstrap(self, _target: str | PathLike[str], _package_or_str: list[str | Package]):
-        ...
+    def pacstrap(self, target: str | PathLike[str], package_or_str: list[str | Package]):
+        self.add_packages(*package_or_str)
+
+        resolved_packages = (
+            self.resolve_sync(pac) for pac in self.added_packages
+        )
+
+        subprocess_open(
+            self.pacstrap_cmd,
+            "-K",
+            Path(target).resolve().as_posix(),
+            *(str(pac) for pac in resolved_packages)
+        )
+
+        self.synced_packages.extend(resolved_packages)
