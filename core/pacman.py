@@ -118,9 +118,15 @@ class Pacman:
         self.synced_packages.extend(resolved_packages)
 
     def unsync_packages(self, *package_or_str: str | Package):
+        self.remove_packages(*package_or_str)
+
         packages = Package.from_pacstr_iter(package_or_str)
 
-        self.removed_packages.extend(packages)
+        subprocess_open(
+            self.pacman_cmd,
+            "-Rs",
+            *(str(pac) for pac in packages)
+        )
 
         for pac in packages:
             removed_synced_packages = (
