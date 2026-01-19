@@ -1,5 +1,4 @@
 import logging
-import subprocess
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -8,7 +7,7 @@ from enum import Enum
 from os import PathLike
 from typing import override
 
-from core.config import get_dry_run, get_pacman_output
+from core.util import subprocess_open
 
 log = logging.getLogger(__name__)
 
@@ -96,24 +95,7 @@ class Pacman:
                 for pac in self.added_packages
         )
 
-        if not get_dry_run():
-            pacman_log = logging.getLogger(self.pacman_cmd)
-            
-            with subprocess.Popen(
-                [self.pacman_cmd, "-S", "--needed", "--noconfirm", resolved_packages],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                bufsize=1
-            ) as proc:
-                if proc.stdout is not None:
-                    for line in proc.stdout:
-                        pacman_log.info(line)
-
-                _ = proc.wait(10_000)
-            
-            if proc.returncode != 0:
-                pacman_log.error(f"Process finished with errors (return code {proc.returncode})")
+        subprocess_open(self.pacman_cmd, "-S", "--needed", "--noconfirm", resolved_packages)
 
         self.synced_packages.extend(self.added_packages)
 
