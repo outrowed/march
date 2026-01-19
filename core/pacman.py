@@ -123,7 +123,12 @@ class Pacman:
         self.removed_packages.extend(packages)
 
         for pac in packages:
-            self.synced_packages.remove(pac)
+            removed_synced_packages = (
+                synced_pac for synced_pac in self.synced_packages
+                    if synced_pac.name == pac.name
+            )
+            for removed_pac in removed_synced_packages:
+                self.synced_packages.remove(removed_pac)
 
     def pacstrap(self, _target: str | PathLike[str], _package_or_str: list[str | Package]):
         ...
