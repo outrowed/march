@@ -1,3 +1,4 @@
+from ast import Dict
 import logging
 
 from collections.abc import Mapping
@@ -24,7 +25,7 @@ class Frame:
                 log.info(f"init {plugin.name}:{hook.label}")
                 hook.func(self)
 
-    def get_context[Dict: Mapping[str, Any] = dict[str, Any]](self, context_name: str):
+    def get_context[Dict: Mapping[str, Any] = dict[str, Any]](self, context_name: str, *, context_type: type[Dict] | None = None):
         return cast(Dict, self.context_dict[context_name])
 
     def dispatch_hook(self, label: str):
