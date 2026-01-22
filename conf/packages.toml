@@ -7,66 +7,82 @@
 # minimize the download/installation time
 [pacstrap]
 base = [
-    ## System + microcode
+    # System + microcode
     'base',
     'linux',
-    'linux-firmware',
-    'intel-ucode',
-    'amd-ucode',
-]
-base-extra = [
     # Extra
     'base-devel',
     'linux-headers',
     'zram-generator',
     'plymouth',  # boot startup
 ]
+hardware = [
+    'linux-firmware',   # linux firmware
+    'sof-firmware',     # Sound Open firmware
+    'intel-ucode',      # intel CPU ucode
+    'amd-ucode',        # amd CPU ucode
+    # utils
+    'fwupd',            # firmware updates
+    'dmidecode',        # system hardware report via SMBIOS/DMI standard
+    'dmraid',
+    'hdparm',
+    'hwdetect',
+    'lsscsi',
+    'mtools',
+    'sg3_utils',
+]
 partition = [
     # Partition
     'parted',
     'gptfdisk',
+    'fsarchiver',   # compress/restore filesystem partition
     # EFI
     'efibootmgr',
     'efivar',
 ]
 fs = [
+    # Filesystem
     'btrfs-progs',
     'ntfs-3g',
     'dosfstools',
     'e2fsprogs',
 ]
 admin = [
+    # System admin
     'sudo',
     'openssh',
     'openssl',
     'fuse3',
     'sshfs',
     # System info
-    'btop',  # alternative to htop
-    'fwupd',  # firmware updates
-    'fastfetch',
+    'btop',         # alternative to htop
+    'fastfetch',    # check your system
+    # Text editor
+    'nano',
+    'nano-syntax-highlighting',
+    'vim',
+    # Text utils
+    'man-db',
+    'man-pages',
+    'less',
+    'meld',      # file and directory comparison
+    'dos2unix',  # convert CRLF to LF
     # Remote downloader
     'git',
     'curl',
     'wget',
     'rsync',
-    # Text editor
-    'nano',
-    'vim',
-    # Text util
-    'man-db',
-    'man-pages',
-    'less',
-    'dos2unix',  # convert CRLF to LF
-    # Archival
+    # FS listing / finder
+    'tree',
+    'plocate',  # 'everything" file finder in linux
+]
+archive = [
+    # File archive utils
     'gzip',
     'xz',
     'zip',
     'unzip',
     '7zip',
-    # FS listing / finder
-    'tree',
-    'plocate',  # 'everything" file finder in linux
 ]
 devel = [
     'python',
@@ -78,6 +94,14 @@ devel = [
     'git-lfs',
     'jq',
     'go',
+]
+pacman = [
+    # Pacman utils
+    'pacman-contrib',   # extra pacman utils
+    'reflector',        # Arch Linux official repo mirror
+    'pkgfile',          # pkgfile for AUR
+    'rebuild-detector', # detect package rebuild
+    'arch-audit',       # audit arch packages
 ]
 zsh = [
     'zsh',
@@ -96,48 +120,48 @@ network = [
     'iptables-nft',
     'systemd-resolvconf',
     'networkmanager',
+    'modemmanager',
     'ufw',  # firewall
     # Utils
     'inetutils',
     'openbsd-netcat',
     'nmap',
     'speedtest-cli',
+    # VPN extra
+    'wireguard-tools',
+]
+wireless = [
     # Wireless
     'iwd',
     'wireless_tools',
     'wpa_supplicant',
+]
+bluetooth = [
     # Bluetooth
-    'bluez',  # bluetooth support
+    'bluez',            # bluetooth support
+    'bluez-hid2hci',
+    'bluez-libs',
     'bluez-utils',
-    'bluez-obex',
-    # Extra
-    'wireguard-tools',
+    'bluez-obex',       # bluetooth file transfer
 ]
-pacman = [
-    ## Pacman extra
-    'pacman-contrib',
-    'reflector',
-    'arch-audit',
+audio-utils = [
+    # Multimedia
+    'ffmpeg',
 ]
-pipewire = [
-    # required to avoid conflict with jack2
+audio = [
+    # Alsa
+    'alsa-firmware',
+    'alsa-utils',
+    'alsa-plugins',
+    # Pipewire
     'pipewire',
     'wireplumber',
     'pipewire-jack',
     'pipewire-pulse',
     'pipewire-alsa',
 ]
-audio-utils = [
-    ## Multimedia
-    'ffmpeg',
-]
-audio = [
-    ## Audio firmware
-    'sof-firmware',
-    'alsa-firmware',
-]
 graphics = [
-    ## Generic GPU
+    # Generic graphics
     'mesa',
 ]
 nvidia = [
@@ -158,7 +182,6 @@ graphics = [
 ]
 nvidia = [
     'nvidia-prime'
-    # ex: cuda -- added in ILATE_PACKAGES
 ]
 intel = [
     'intel-media-driver',
@@ -180,6 +203,12 @@ packman = [
     'octopi',
     'flatpak',  # mostly user-space GUI-based applications
 ]
+power = [
+    # Power management
+    'power-profiles-daemon',    # Powersaver/Balanced/Performance power profiles
+    'cpupower',
+    'upower',
+]
 generic-de = [
     'wl-clipboard',
     'xdg-utils',
@@ -187,7 +216,6 @@ generic-de = [
     'iio-sensor-proxy',
     # Extra
     'bolt',
-    'power-profiles-daemon',
     'network-manager-applet',
     'arch-audit-gtk',
 ]
@@ -236,7 +264,6 @@ gnome = [
 ]
 audio = [
     'phonon-qt6-vlc',
-    'alsa-utils',
     'gst-plugin-pipewire',
     'pavucontrol',
     # Audio player
@@ -244,15 +271,6 @@ audio = [
     'vlc',
     # Audio utils
     'ffmpegthumbs',
-]
-network-extra = [
-    'avahi',  # Network discovery (mDNS/Bonjour)
-    'nss-mdns',  # Hostname resolution for .local domains
-    'zerotier-one',
-]
-localization = [
-    'hunspell',
-    'hyphen',
 ]
 devel = [
     # AUR VSCode
@@ -269,7 +287,6 @@ devel = [
 ]
 utils = [
     'ark',          # archive manager
-    'audiorelay',   # Android/PC mic and audio mirroring
     'scrcpy',       # Android/PC screen mirroring
     'gif2png',      # gif to png converter
     'kgpg',         # KDE gpg manager
@@ -277,9 +294,15 @@ utils = [
     'yt-dlp',       # youtube download
     'bat',          # cat clone
 ]
-extra = [
-    'rbw',
-    'cryptomator-cli'
+network-utils = [
+    # Network utils
+    'avahi',        # Network discovery (mDNS/Bonjour)
+    'nss-mdns',     # Hostname resolution for .local domains
+    'dnsmasq',      # DNS + DHCP server; this is used for libvirt, the host uses systemd-resolved instead
+]
+localization = [
+    'hunspell',
+    'hyphen',
 ]
 fonts = [
     'ttf-dejavu',
@@ -299,23 +322,6 @@ fonts = [
     # Bitmap
     'bdf-unifont',
 ]
-virt = [
-    'qemu-desktop', # QEMU setup for desktop environment
-    'virt-manager', # GUI front end for virtualization
-    'libvirt',      # virtualizatin API
-    'edk2-ovmf',    # UEFI firmware for virtual machines
-    'virt-viewer',  # graphical display required by virt-manager
-    # Virt utils
-    'dnsmasq',  # DNS + DHCP server -- host uses systemd-resolved instead
-    'dmidecode',  # system hardware report via SMBIOS/DMI standard
-]
-print = [
-    'cups',                         # The core printing system
-    'cups-pdf',                     # Print to PDF support
-    'gutenprint',                   # High-quality drivers for Canon, Epson, etc.
-    'foomatic-db-gutenprint-ppds',  # PPD files for Gutenprint
-    'hplip',                        # Drivers for HP printers
-]
 fun = [
     'c-lolcat',
     'yumenikki-en',
@@ -324,8 +330,8 @@ fun = [
     'kblocks',
 ]
 
-## AUR packages
-# run with no password sudo
+## AUR / Pacman packages
+# Installed very late after the base system and pacman packages
 [aur]
 cuda = [
     'cuda',             # big boi NVIDIA driver
@@ -335,19 +341,51 @@ packman = [
     'paru',         # AUR helper
     'needrestart',  # automatically restart daemon after library update
 ]
-gnome = [
-    'gnome-shell-extension-sound-output-device-chooser',
-]
 apps = [
     'helium-browser-bin',   # ungoogled-chromium-based browser with convenient features
     'chromium-widevine',    # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
     'pwvucontrol',          # native pavucontrol for PipeWire
     'elecwhat-bin',         # electron whatsapp client
 ]
-extra = [
+cli = [
+    'audiorelay',       # Android/PC mic and audio mirroring
     'maliit-keyboard',  # maliit generic virtual keyboard
     'sunshine',         # remote server
+    'rbw',              # rust bitwarden cli
+    'cryptomator-cli',  # encrypted vault/folder
+    'zerotier-one',     # virtual LAN
     # ex: timeshift-systemd-timer
+]
+vlc-extra = [
+    'vlc-plugins-all'   # ALL vlc plugins
+]
+virt = [
+    'qemu-desktop', # QEMU setup for desktop environment
+    'virt-manager', # GUI front end for virtualization
+    'libvirt',      # virtualization library
+    'edk2-ovmf',    # UEFI firmware for virtual machines
+    'virt-viewer',  # graphical display required by virt-manager
+]
+gnome = [
+    'gnome-shell-extension-sound-output-device-chooser',
+]
+print = [
+    'cups',                         # The core printing system
+    'cups-filters',
+    'cups-pdf',                     # Print to PDF support
+    'foomatic-db',
+    'foomatic-db-engine',
+    'foomatic-db-gutenprint-ppds',
+    'foomatic-db-nonfree',
+    'foomatic-db-nonfree-ppds',
+    'foomatic-db-ppds',
+    'foomatic-db-gutenprint-ppds',  # PPD files for Gutenprint
+    'ghostscript',
+    'gsfonts',
+    'gutenprint',                   # High-quality drivers for Canon, Epson, etc.
+    'hplip',                        # Drivers for HP printers
+    'splix',
+    'system-config-printer',
 ]
 usbiso = [
     'ventoy',   # ventoy bootloader
