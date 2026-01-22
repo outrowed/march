@@ -33,10 +33,12 @@ IPACSTRAP_PACKAGES=(
     parted
     gptfdisk
 
-    ## Admin
+    ## Admin/User Utils
     sudo
     openssh
     openssl
+    fuse3           # Filesystem in Userspace -- mount filesystem without root
+    sshfs           # SSH FUSE
     # System info
     btop            # alternative to htop
     fwupd           # firmware updates
@@ -69,6 +71,8 @@ IPACSTRAP_PACKAGES=(
     xz
     zip
     unzip
+    libarchive
+    7zip            # 7z support
     # FS listing / finder
     tree
     plocate         # "everything" file finder in linux
@@ -91,6 +95,7 @@ IPACSTRAP_PACKAGES=(
     # Bluetooth
     bluez               # bluetooth support
     bluez-utils
+    bluez-obex          # bluetooth file transfer
     # Extra
     wireguard-tools
 
@@ -173,6 +178,9 @@ IPACMAN_PACKAGES=(
     vulkan-tools
     # ex: timeshift
 
+    ## Power
+    power-profiles-daemon
+
     ## Desktop Environment (KDE Plasma)
     # Core
     sddm
@@ -246,7 +254,6 @@ IPACMAN_PACKAGES=(
     jdk-openjdk # arch's openjdk
     mypy        # python type checker; required for code editor
 
-
     ## User Utils
     ark             # archive manager
     audiorelay      # Android/PC mic and audio mirroring
@@ -256,9 +263,6 @@ IPACMAN_PACKAGES=(
     syncthing       # syncthing
     yt-dlp          # youtube download
     bat             # cat clone
-    fuse3           # Filesystem in Userspace -- mount filesystem without root
-    sshfs           # SSH FUSE
-    7zip            # 7z support
     rbw             # rust-based bitwarden cli
     cryptomator-cli # cryptomator cli
 
