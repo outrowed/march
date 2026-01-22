@@ -1,4 +1,3 @@
-#!/usr/bin/bash
 
 ## Pacstrap packages
 # essential packages for 'comfortable but minimal" base Arch Linux installation
