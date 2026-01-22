@@ -1,0 +1,97 @@
+
+## Package rules
+# 'ii-' -- explicitly include, overriding previous rules
+# 'ex-' -- exclude these package groups
+# 'only-' -- only these package groups
+# by default, it includes all packages
+##
+# intended to be mix-and-match with '+' operator
+# e.g., standard + kde + nvidia-580xx
+
+[generic-pacstrap]
+ii-pacstrap = [
+    'base',
+    'base-extra',
+    'partition',
+    'fs',
+    'admin',
+    'devel',
+    'zsh',
+    'bash',
+    'network',
+    'pacman',
+    'pipewire',
+    'audio-utils',
+    'audio',
+    'graphics',
+]
+
+[generic-pacman]
+ii-pacman = [
+    'graphics',
+    'admin',
+    'packman',
+    'generic-de',
+    'audio',
+    'network-extra',
+    'localization',
+    'devel',
+    'utils',
+    'extra',
+    'fonts',
+    'virt',
+    'print',
+    'fun'
+]
+
+[generic-aur]
+ii-aur = [
+    'cuda',
+    'packman',
+    'apps',
+    'extra',
+    'usbiso',
+]
+
+## Extraneous
+# Make system compatible on a complete different hardware
+
+[extraneous]
+ii-all = [
+    'amd',
+    'nvidia',
+    'intel'
+]
+
+## DE
+
+[kde]
+ii-all = [
+    'plasma'
+]
+
+[gnome]
+ii-all = [
+    'gnome'
+]
+
+## Graphics
+
+[nvidia]
+ii-all = [
+    'nvidia',
+    'cuda'
+]
+
+[nvidia-580xx]
+ii-all = [
+    'nvidia-580xx',
+    'cuda'
+]
+
+## Misc.
+
+[no-fun]
+ex-all = [
+    'fun'
+]
