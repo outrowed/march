@@ -225,19 +225,19 @@ plasma = [
     'xorg-xwayland',
     # Theme
     'breeze',
-    # Extra
+    # Apps
     'kde-accessibility',
     'kde-system',
     'kde-utilities',
     'kde-graphics',
+    'krdc',                 # Remote desktop client
     # ex: kde-network
     # ex: kde-office
     # ex: kde-multimedia
     # KCM
     'sddm-kcm',
     'plymouth-kcm',
-    # Remote
-    'krdc',
+    'flatpak-kcm',
     # Plugin + integration
     'kdenetwork-filesharing',
     'plasma-thunderbolt',
@@ -293,11 +293,15 @@ utils = [
     'yt-dlp',       # youtube download
     'bat',          # cat clone
 ]
-network-utils = [
-    # Network utils
-    'avahi',        # Network discovery (mDNS/Bonjour)
-    'nss-mdns',     # Hostname resolution for .local domains
-    'dnsmasq',      # DNS + DHCP server; this is used for libvirt, the host uses systemd-resolved instead
+network = [
+    # Extra network backends and utils
+    'systemd-netword', # NetworkManager alternative
+    'iwd',             # wireless connection alternative
+    'dnsmasq',         # DNS + DHCP server; this is used for libvirt, the host uses systemd-resolved instead
+    'stubby',          # DNS privacy stub resolver for dnsmasq
+    'nss-mdns',        # Hostname resolution for .local domains
+    'avahi',           # Network discovery (mDNS/Bonjour)
+    'impala',          # iwd TUI
 ]
 localization = [
     'hunspell',
@@ -355,7 +359,7 @@ cli = [
     'zerotier-one',     # virtual LAN
     # ex: timeshift-systemd-timer
 ]
-vlc-extra = [
+vlc-plugins = [
     'vlc-plugins-all'   # ALL vlc plugins
 ]
 virt = [
