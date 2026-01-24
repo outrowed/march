@@ -132,8 +132,8 @@ network = [
 wireless = [
     # Wireless
     'iwd',
+    'wpa_supplicant',   # networkmanager default wireless connection
     'wireless_tools',
-    'wpa_supplicant',
 ]
 bluetooth = [
     # Bluetooth
@@ -199,7 +199,7 @@ admin = [
     # ex: timeshift
 ]
 packman = [
-    'octopi',
+    'octopi',   # pacman GUI
     'flatpak',  # mostly user-space GUI-based applications
 ]
 power = [
@@ -249,14 +249,14 @@ plasma = [
     'kio-zeroconf',
 ]
 gnome = [
-    ## Core
+    # Core
     'gdm',
     'gnome',
     'gnome-circle',
     # Extra
     'gnome-extra',
     'gnome-tweaks',
-    ## Extensions
+    # Extensions
     'gnome-shell-extensions',
     'gnome-browser-connector',
 
@@ -295,7 +295,7 @@ utils = [
 ]
 network = [
     # Extra network backends and utils
-    'systemd-netword', # NetworkManager alternative
+    'systemd-networkd', # NetworkManager alternative
     'iwd',             # wireless connection alternative
     'dnsmasq',         # DNS + DHCP server; this is used for libvirt, the host uses systemd-resolved instead
     'stubby',          # DNS privacy stub resolver for dnsmasq
@@ -312,7 +312,6 @@ fonts = [
     'ttf-liberation',
     'ttf-roboto',
     'gnu-free-fonts',
-    'ttf-ms-fonts',
     'noto-fonts',
     'noto-fonts-cjk',
     # Emoji / custom icon
@@ -324,6 +323,8 @@ fonts = [
     'ttf-cascadia-code',
     # Bitmap
     'bdf-unifont',
+    # Proprietary
+    'ttf-ms-fonts',
 ]
 fun = [
     'c-lolcat',

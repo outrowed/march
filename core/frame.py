@@ -24,7 +24,13 @@ class Frame:
                 log.info(f"init {plugin.name}:{hook.label}")
                 hook.func(self)
 
-    def get_context[Dict: Mapping[str, Any] = dict[str, Any]](self, context_name: str, *, context_type: type[Dict] | None = None):
+    def get_context[Dict: Mapping[str, Any] = dict[str, Any]](
+        self,
+        context_name: str,
+        *,
+        context_type: type[Dict] | None = None
+    ):
+        _ = context_type # shuts up (based)pyright
         return cast(Dict, self.context_dict[context_name])
 
     def dispatch_hook(self, label: str):
