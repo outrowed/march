@@ -241,7 +241,7 @@ plasma = [
     # Plugin + integration
     'kdenetwork-filesharing',
     'plasma-thunderbolt',
-    'plasma-keyboard',  # plasma virtual keyboard
+    'plasma-keyboard',          # plasma virtual keyboard
     # KIO
     'kio-admin',
     'kio-extras',
@@ -354,12 +354,15 @@ apps = [
 cli = [
     'audiorelay',       # Android/PC mic and audio mirroring
     'maliit-keyboard',  # maliit generic virtual keyboard
-    'sunshine',         # remote server
-    'rbw',              # rust bitwarden cli
+        'rbw',              # rust bitwarden cli
     'cryptomator-cli',  # encrypted vault/folder
     'steamguard-cli',   # Steam Guard authenticator in CLI
+        # ex: timeshift-systemd-timer
+]
+services = [
+    'samba',            # samba transfers
+    'sunshine',         # sunshine remote desktop
     'zerotier-one',     # virtual LAN
-    # ex: timeshift-systemd-timer
 ]
 vlc-plugins = [
     'vlc-plugins-all'   # ALL vlc plugins
