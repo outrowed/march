@@ -30,10 +30,10 @@ def subprocess_open(cmd: str, *args: str, retry: bool = False):
 
     if proc.returncode != 0:
         proc_logger.error(f"Process '{cmd}' finished with errors (return code {proc.returncode})")
+        if retry: subprocess_retry(proc_logger, cmd, *args)
     else:
         proc_logger.info(f"Process '{cmd}' finished (return code {proc.returncode})")
 
-    if retry: subprocess_retry(proc_logger, cmd, *args)
 
 def subprocess_retry(logger: logging.Logger, *subprocess_args: Any):
     while True:
