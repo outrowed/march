@@ -357,6 +357,7 @@ cli = [
     'sunshine',         # remote server
     'rbw',              # rust bitwarden cli
     'cryptomator-cli',  # encrypted vault/folder
+    'steamguard-cli',   # Steam Guard authenticator in CLI
     'zerotier-one',     # virtual LAN
     # ex: timeshift-systemd-timer
 ]
