@@ -12,8 +12,8 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Pacman:
-    pacman_cmd: str = "pacman"
-    pacstrap_cmd: str = "pacstrap"
+    pacman_base_args: list[str] = ["pacman"]
+    pacstrap_base_args: list[str] = ["pacstrap"]
     added_packages: list[Package] = field(default_factory=list)
     synced_packages: list[PackageSynced] = field(default_factory=list)
     removed_packages: list[Package | PackageSynced] = field(default_factory=list)
@@ -51,7 +51,7 @@ class Pacman:
         )
 
         subprocess_open(
-            self.pacman_cmd,
+            *self.pacman_base_args,
             "-S", "--needed", "--noconfirm",
             *(str(pac) for pac in resolved_packages)
         )
@@ -64,7 +64,7 @@ class Pacman:
         packages = Package.from_pacstr_iter(package_or_str)
 
         subprocess_open(
-            self.pacman_cmd,
+            *self.pacman_base_args,
             "-Rs",
             *(str(pac) for pac in packages)
         )
@@ -85,7 +85,7 @@ class Pacman:
         )
 
         subprocess_open(
-            self.pacstrap_cmd,
+            *self.pacstrap_base_args,
             "-K",
             Path(target).resolve().as_posix(),
             *(str(pac) for pac in resolved_packages)
