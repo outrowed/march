@@ -1,63 +1,72 @@
 
 ## Package rules
-# 'ii-' -- explicitly include, overriding previous rules
-# 'ex-' -- exclude these package groups
-# 'only-' -- only these package groups
-# by default, it includes all packages
-##
-# intended to be mix-and-match with '+' operator
-# e.g., standard + kde + nvidia-580xx
+# 'include-' -- explicitly include, overriding previous rules
+# 'exclude-' -- exclude these package groups
+# 'spread' -- include packages from other rules
+# ---
+# intended to be mix-and-match with '+' operator, which has the same behavior as spread
+# e.g., generic + kde + nvidia-580xx
 
 [generic-pacstrap]
-ii-pacstrap = [
+include-pacstrap = [
     'base',
-    'base-extra',
+    'hardware',
     'partition',
     'fs',
     'admin',
+    'archive',
     'devel',
+    'pacman',
     'zsh',
     'bash',
     'network',
-    'pacman',
-    'pipewire',
+    'wireless',
+    'bluetooth',
     'audio-utils',
     'audio',
     'graphics',
 ]
 
 [generic-pacman]
-ii-pacman = [
+include-pacman = [
     'graphics',
     'admin',
     'packman',
+    'power',
     'generic-de',
     'audio',
-    'network-extra',
-    'localization',
     'devel',
     'utils',
-    'extra',
+    'network',
+    'localization',
     'fonts',
-    'virt',
-    'print',
     'fun'
 ]
 
 [generic-aur]
-ii-aur = [
-    'cuda',
+include-aur = [
     'packman',
     'apps',
-    'extra',
+    'cli',
+    'vlc-plugins',
+    'virt',
+    'print',
     'usbiso',
+    'nvidia-580xx',
+]
+
+[generic]
+spread = [
+    'generic-pacstrap',
+    'generic-pacman',
+    'generic-aur'
 ]
 
 ## Extraneous
-# Make system compatible on a complete different hardware
+# Include extraneous packages that are harmless for the sake of making it work out-of-the-box on other system
 
 [extraneous]
-ii-all = [
+include-all = [
     'amd',
     'nvidia',
     'intel'
@@ -66,32 +75,49 @@ ii-all = [
 ## DE
 
 [kde]
-ii-all = [
+include-all = [
     'plasma'
 ]
 
 [gnome]
-ii-all = [
+include-all = [
     'gnome'
 ]
 
 ## Graphics
 
 [nvidia]
-ii-all = [
+include-all = [
     'nvidia',
-    'cuda'
+    'cuda',
 ]
 
 [nvidia-580xx]
-ii-all = [
+include-all = [
     'nvidia-580xx',
     'cuda'
+]
+
+## Full
+# All the packages to make a working system
+
+[kde-full]
+spread = [
+    'generic',
+    'extraneous',
+    'kde',
+]
+
+[gnome-full]
+spread = [
+    'generic',
+    'extraneous',
+    'gnome',
 ]
 
 ## Misc.
 
 [no-fun]
-ex-all = [
+exclude-all = [
     'fun'
 ]
