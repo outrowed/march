@@ -48,7 +48,7 @@ include-aur = [
     'packman',
     'apps',
     'cli',
-'services',
+    'services',
     'vlc-plugins',
     'virt',
     'print',
@@ -120,5 +120,10 @@ spread = [
 
 [no-fun]
 exclude-all = [
-    'fun'
+    'fun',
+]
+
+[no-devel]
+exclude-all = [
+    'devel',
 ]
