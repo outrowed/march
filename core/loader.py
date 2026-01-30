@@ -1,6 +1,7 @@
-import importlib, importlib.util
+import importlib
+import importlib.util
 import logging
-import tomllib
+import tomli
 
 from os import PathLike
 from pathlib import Path
@@ -23,7 +24,8 @@ def load_plugin_path(path: str | PathLike[str]):
     spec = importlib.util.spec_from_file_location(plugin_init.stem, plugin_init)
 
     if spec is None \
-        or spec.loader is None: raise ModuleNotFoundError(path=str(plugin_init.resolve()))
+        or spec.loader is None:
+        raise ModuleNotFoundError(path=str(plugin_init.resolve()))
 
     plugin_mod: ModuleType = importlib.util.module_from_spec(spec)
 
@@ -37,12 +39,14 @@ def load_plugin_path(path: str | PathLike[str]):
     # load hooks
     for file in plugin_path.glob("*.py"):
         if not file.is_file() \
-            or file.stem == "__init__.py": continue
+            or file.stem == "__init__.py":
+            continue
 
         spec = importlib.util.spec_from_file_location(file.stem, file)
 
         if spec is None \
-            or spec.loader is None: raise ModuleNotFoundError(path=str(file.resolve()))
+            or spec.loader is None:
+            raise ModuleNotFoundError(path=str(file.resolve()))
 
         hook_module = importlib.util.module_from_spec(spec)
 
@@ -54,7 +58,7 @@ def load_plugins(frame: Frame, path: str | PathLike[str]):
     plugins_path = Path(path)
     plugin_loader_config_path = plugins_path / "plugin-loader.toml"
 
-    plugin_loader_config = tomllib.loads(
+    plugin_loader_config = tomli.loads(
         plugin_loader_config_path.read_text("utf-8")
     )
     load_order_names = tuple[str](plugin_loader_config["load_order"])
@@ -62,7 +66,8 @@ def load_plugins(frame: Frame, path: str | PathLike[str]):
     loaded_plugins_map: dict[str, Plugin] = {}
     
     for plugin_path in plugins_path.iterdir():
-        if plugin_path.is_file(): continue
+        if plugin_path.is_file():
+            continue
         
         plugin = load_plugin_path(plugin_path)
         loaded_plugins_map[plugin.name] = plugin

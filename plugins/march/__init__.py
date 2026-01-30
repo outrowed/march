@@ -7,6 +7,6 @@ hooker = Hooker()
 def load_plugin() -> Plugin:
     return Plugin(
         name="march",
-        init_hook="init",
+        init_hook="pre-install",
         hooker=hooker
     )

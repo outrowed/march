@@ -12,8 +12,8 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Pacman:
-    pacman_base_args: list[str] = ["pacman"]
-    pacstrap_base_args: list[str] = ["pacstrap"]
+    pacman_base_args: list[str] = field(default_factory=lambda: ["pacman"])
+    pacstrap_base_args: list[str] = field(default_factory=lambda: ["pacstrap"])
     added_packages: list[Package] = field(default_factory=list)
     synced_packages: list[PackageSynced] = field(default_factory=list)
     removed_packages: list[Package | PackageSynced] = field(default_factory=list)
