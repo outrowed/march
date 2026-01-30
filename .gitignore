@@ -16,3 +16,4 @@ passwords/*
 out
 cache
 __pycache__
+*.egg-info
