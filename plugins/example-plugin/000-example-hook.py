@@ -27,3 +27,6 @@ class Something(TypedDict):
 @hooker.hook("post-install")
 def install_large_packages(frame: Frame):
     something = frame.get_context("test", context_type=Something)
+
+    something["x"] = 2
+    something["y"] = 4
