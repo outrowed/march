@@ -6,11 +6,8 @@ name = "Arch Linux"
 pretty_name = "Arch Linux"
 safe_name = "arch-linux"
 
-bootloader_name = "Arch Linux"
+boot_entry_name = "Arch Linux"
 boot_manager_name = "Arch Linux Boot Manager"
-
-# override names/identifiers set from this config
-override_config = true
 
 [users]
 wheel_user = "outrowed"
@@ -18,10 +15,7 @@ wheel_user = "outrowed"
 user_names = []
 default_password = "a_default_password123"
 
-passwords_directory = "{PROGRAM}/passwords"
-
 [localization]
-timezone = "Asia/Singapore"
 keymap = "us"
 locale_gen = [
     "en_US.UTF-8",
@@ -36,49 +30,88 @@ locale_gen = [
     "zh_HK.UTF-8",
     "zh_SG.UTF-8"
 ]
+locale_conf = {
+    LANG = "en_US.UTF-8",
+    LANGUAGE = "en_GB:en:C",
+    LC_TIME = "en_DK.UTF-8",
+    LC_MEASUREMENT = "en_GB.UTF-8"
+}
 
-# locale.conf
-[localization.locale_conf]
-LANG = "en_US.UTF-8"
-LANGUAGE = "en_GB:en:C"
-LC_TIME = "en_DK.UTF-8"
-LC_MEASUREMENT = "en_GB.UTF-8"
+[timedate]
+timezone = "Asia/Singapore"
 
-[ntp]
+[timedate.ntp]
 main = "0.arch.pool.ntp.org 1.arch.pool.ntp.org"
 fallback = "0.pool.ntp.org 1.pool.ntp.org"
 
-[systemd-resolved]
-dns = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com"
-dns_fallback = "9.9.9.9#dns.quad9.net"
-dns_over_tls = true
-dns_sec = false
+[network]
+# networkmanager | systemd-networkd (unsupported yet)
+backend = "networkmanager"
+# wpa_supplicant | iwd
+wifi_backend = "wpa_supplicant"
 
-[partitions]
-# Only ext4 is supported
-root.query = "LABEL=arch-linux-root"
-root.fs = "ext4"
-home.query = "LABEL=arch-linux-home"
-home.fs = "ext4"
+[network.dns]
+# networkmanager | systemd-resolved | dnsmaq
+backend = "systemd-resolved"
+main = "1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com"
+fallback = "9.9.9.9#dns.quad9.net"
+over_tls = true
+sec = false
 
-[btrfs]
-subvolumes = []
+[partition]
+reformat = false
+create_if_not_exist = true
+# partition to find with empty space, if nvme is not empty, then go to sd
+partition_order = [
+    "/dev/nvme",
+    "/dev/sd",
+]
+
+[partition.target]
+esp = {
+    query = "LABEL=ESP",
+    label = "ESP",
+    size = "1GB",
+    fs = "esp",
+    reformat = false,
+}
+root = {
+    query = "LABEL=arch-linux-root",
+    label = "arch-linux-root",
+    fit_size = "60%",
+    fs = "ext4",
+}
+home = {
+    query = "LABEL=arch-linux-home",
+    label = "arch-linux-home",
+    fit_size = "40%",
+    fs = "ext4",
+}
 
 [pacman]
 color = true
 parallel = 6
-
-[pacman.reflector]
-country = "Singapore"
-latest = 10
-
-[pacman.aur]
-# AUR helper to use for AUR packages: paru or yay.
-helper = "paru"
+repository_list = [
+    "core",
+    "cachyos-v3",
+    "cachyos",
+    "chaotic-aur"
+]
+aur = "paru"
+reflector_options = """
+--country Singapore \
+--latest 10 \
+--protocol https \
+--sort rate \
+--age 12 \
+"""
+reflector_save = "/etc/pacman.d/"
 
 [mkinitcpio]
-# Which initramfs layout to use: busybox or systemd
+# Which initramfs layout to use: busybox | systemd
 initramfs_type = "systemd"
+hooks_exclude = []
+module_templates = []
 
 [swap]
 enable = true
@@ -94,21 +127,18 @@ enable = true
 size = "min(ram / 2, 4096)"
 
 [bootloader]
-# EFI System Partition location
-# IEFI_DEVICE and IEFI_PARTITION_INDEX are derived automatically from IEFI_PARTITION.
-esp = "DEV=/dev/nvme0n1p1"
-# IEFI_LINUNX_DIRNAME is the directory stored in the ESP, must be safe non-space characters (regex: /[a-zA-Z-_]+/)
-boot_dirname = "arch-linux"
-# Kernel command line appended after root=UUID=... in install.sh
-kernel_cmdline = "rw nvidia_drm.modeset=1 i915.enable_guc=2 quiet splash rd.systemd.show_status=auto systemd.gpt_auto=0"
+kernel_options =  """
+rw \
+nvidia_drm.modeset=1 \
+i915.enable_guc=2 \
+rd.systemd.show_status=auto \
+systemd.gpt_auto=0 \
+quiet splash \
+"""
 
 [bootloader.systemd-boot]
 enable = true
 timeout = 5
-os_label = "Arch Linux"
-systemd_boot_efi_label = "Arch Linux Boot Manager"
 
 [bootloader.uki]
 enable = false
-efi_label = "Arch Linux"
-efi_exec = "arch.efi"
