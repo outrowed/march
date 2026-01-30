@@ -1,14 +1,14 @@
 
 ## Package rules
-# 'include-' -- explicitly include, overriding previous rules
-# 'exclude-' -- exclude these package groups
+# 'include' -- explicitly include, overriding previous rules
+# 'exclude' -- exclude these package groups
 # 'spread' -- include packages from other rules
 # ---
 # intended to be mix-and-match with '+' operator, which has the same behavior as spread
 # e.g., generic + kde + nvidia-580xx
 
 [generic-pacstrap]
-include-pacstrap = [
+include.pacstrap = [
     'base',
     'hardware',
     'partition',
@@ -28,7 +28,7 @@ include-pacstrap = [
 ]
 
 [generic-pacman]
-include-pacman = [
+include.pacman = [
     'graphics',
     'admin',
     'packman',
@@ -44,7 +44,7 @@ include-pacman = [
 ]
 
 [generic-aur]
-include-aur = [
+include.aur = [
     'packman',
     'apps',
     'cli',
@@ -67,7 +67,7 @@ spread = [
 # Include extraneous packages that are harmless for the sake of making it work out-of-the-box on other system
 
 [extraneous]
-include-all = [
+include.all = [
     'amd',
     'nvidia',
     'intel'
@@ -76,25 +76,25 @@ include-all = [
 ## DE
 
 [kde]
-include-all = [
+include.all = [
     'plasma'
 ]
 
 [gnome]
-include-all = [
+include.all = [
     'gnome'
 ]
 
 ## Graphics
 
 [nvidia]
-include-all = [
+include.all = [
     'nvidia',
     'cuda',
 ]
 
 [nvidia-580xx]
-include-all = [
+include.all = [
     'nvidia-580xx',
     'cuda'
 ]
@@ -119,11 +119,11 @@ spread = [
 ## Misc.
 
 [no-fun]
-exclude-all = [
+exclude.all = [
     'fun',
 ]
 
 [no-devel]
-exclude-all = [
+exclude.all = [
     'devel',
 ]
