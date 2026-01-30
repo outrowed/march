@@ -1,78 +1,87 @@
-
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal
 
-@dataclass(kw_only=True)
-class Branding:
-    name: str = "Arch Linux"
-    pretty_name: str = "Arch Linux"
-    safe_name: str = "arch-linux"
-
-    boot_entry_name: str = "Arch Linux"
-    boot_manager_name: str = "Arch Linux Manager"
 
 @dataclass(kw_only=True)
-class UserConfig:
+class BrandingConfig:
+    name: str
+    pretty_name: str
+    safe_name: str
+    boot_entry_name: str
+    boot_manager_name: str
+
+@dataclass(kw_only=True)
+class UsersConfig:
     wheel_user: str
-
-    user_names: list[str] = []
-    default_password: str = "default_password_lol"
-
-@dataclass(kw_only=True)
-class AutoUserConfig:
-    required_users: list[str] = []
-    passwords_path: str = ""
+    user_names: list[str] = field(default_factory=list)
+    default_password: str
 
 @dataclass(kw_only=True)
-class LocaleConfig:
-    keymap: str = "us"
+class LocalizationConfig:
+    keymap: str
     locale_gen: list[str]
     locale_conf: dict[str, str]
 
 @dataclass(kw_only=True)
-class TimeNtpConfig:
-    timezone: str
-    ntp_main: str
-    ntp_fallback: str
+class NtpConfig:
+    main: str
+    fallback: str
 
 @dataclass(kw_only=True)
-class NetworkConfig:
-    dns_handler: Literal["networkmanager", "systemd-resolved", "dnsmaq"] = "systemd-resolved"
-    wifi_handler: Literal["wpa_supplicant", "iwd"] = "wpa_supplicant"
+class TimeDateConfig:
+    timezone: str
+    ntp: NtpConfig
 
 @dataclass(kw_only=True)
 class DnsConfig:
-    dns_main: str
-    dns_fallback: str
-    dns_over_tls: bool
-    dns_sec: bool
+    backend: Literal["networkmanager", "systemd-resolved", "dnsmasq"]
+    main: str
+    fallback: str
+    over_tls: bool
+    sec: bool
+
+@dataclass(kw_only=True)
+class NetworkConfig:
+    backend: Literal["networkmanager", "systemd-networkd"]
+    wifi_backend: Literal["wpa_supplicant", "iwd"]
+    dns: DnsConfig
+
+@dataclass(kw_only=True)
+class TargetPartitionConfig:
+    query: str
+    label: str
+    fs: str
+    size: str | None = None
+    fit_size: str | None = None
+    reformat: bool | None = None
+
+@dataclass(kw_only=True)
+class PartitionTargetConfig:
+    esp: TargetPartitionConfig
+    root: TargetPartitionConfig
+    home: TargetPartitionConfig
+
+@dataclass(kw_only=True)
+class PartitionConfig:
+    reformat: bool
+    create_if_not_exist: bool
+    partition_order: list[str]
+    target: PartitionTargetConfig
 
 @dataclass(kw_only=True)
 class PacmanConfig:
-    aur: Literal["paru", "yay"]
-    repository_list: list[str] = [
-        "core",
-        "cachyos-v3",
-        "cachyos",
-        "chaotic-aur"
-    ]
     color: bool
     parallel: int
-    pacman_conf_overrides: dict[str, str]
+    repository_list: list[str]
+    aur: Literal["paru", "yay"]
     reflector_options: str
+    reflector_save: str
 
 @dataclass(kw_only=True)
 class MkinitcpioConfig:
-    modules_template: list[str]
-    hooks_exclude: list[str]
     initramfs_type: Literal["systemd", "busybox"]
-
-@dataclass(kw_only=True)
-class SwapConfig:
-    enable: bool
-    zswap_enable: bool
-    size: str
-    hibernation_explicit_resume_kernel_args: bool
+    hooks_exclude: list[str] = field(default_factory=list)
+    module_templates: list[str] = field(default_factory=list)
 
 @dataclass(kw_only=True)
 class ZramConfig:
@@ -80,14 +89,38 @@ class ZramConfig:
     size: str
 
 @dataclass(kw_only=True)
-class BootloaderConfig:
-    esp: str
-    kernel_cmdline: str
-    # systemd-boot or grub
+class SwapConfig:
+    enable: bool
+    zswap: bool
+    size: str
+    explicit_resume_kernel_args: bool
+    zram: ZramConfig
+
+@dataclass(kw_only=True)
+class SystemdBootConfig:
+    enable: bool
     timeout: int
 
 @dataclass(kw_only=True)
-class Config:
-    default_hostname: str
+class UkiConfig:
+    enable: bool
 
-    branding: Branding
+@dataclass(kw_only=True)
+class BootloaderConfig:
+    kernel_options: str
+    systemd_boot: SystemdBootConfig
+    uki: UkiConfig
+
+@dataclass(kw_only=True)
+class MarchConfig:
+    default_hostname: str
+    branding: BrandingConfig
+    users: UsersConfig
+    localization: LocalizationConfig
+    timedate: TimeDateConfig
+    network: NetworkConfig
+    partition: PartitionConfig
+    pacman: PacmanConfig
+    mkinitcpio: MkinitcpioConfig
+    swap: SwapConfig
+    bootloader: BootloaderConfig
