@@ -10,7 +10,12 @@ authors = [
 ]
 description = "Opinionated Arch Linux installer."
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "GPL-2.0-or-later"
+license-files = [
+    "LICENSE",
+    "LICENSE.GPL",
+    "LICENSE.GPL3"
+]
 requires-python = ">=3.12"
 keywords = ["arch-linux", "installer", "bootstrap", "system-setup"]
 classifiers = [
