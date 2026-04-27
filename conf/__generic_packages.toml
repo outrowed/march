@@ -6,13 +6,14 @@
 # minimize the download/installation time
 [pacstrap]
 base = [
-    # Linux base
+    # System + microcode
     'base',
+    'linux',
+    # Extra
     'base-devel',
-    'linux-cachyos',
-    'linux-cachyos-headers',
+    'linux-headers',
     'zram-generator',
-    'plymouth',             # boot startup
+    'plymouth',  # boot startup
 ]
 hardware = [
     'linux-firmware',   # linux firmware
@@ -40,29 +41,24 @@ partition = [
 ]
 fs = [
     # Filesystem
-    'ntfs-3g',
-    'sshfs',
-    # FS utils
     'btrfs-progs',
-    'zfs-utils',
+    'ntfs-3g',
     'dosfstools',
     'e2fsprogs',
-    'fuse3',
 ]
 admin = [
     # System admin
     'sudo',
     'openssh',
     'openssl',
+    'fuse3',
+    'sshfs',
     # System info
     'btop',         # alternative to htop
     'fastfetch',    # check your system
-]
-text-utils = [
     # Text editor
     'nano',
     'nano-syntax-highlighting',
-    'neovim',
     'vim',
     # Text utils
     'man-db',
@@ -70,16 +66,12 @@ text-utils = [
     'less',
     'meld',      # file and directory comparison
     'dos2unix',  # convert CRLF to LF
-]
-remote-downloader = [
     # Remote downloader
     'git',
     'git-lfs',
     'curl',
     'wget',
     'rsync',
-]
-finder = [
     # FS listing / finder
     'tree',
     'plocate',  # 'everything" file finder in linux
@@ -104,13 +96,11 @@ devel = [
 ]
 pacman = [
     # Pacman utils
-    'pacman-contrib',       # extra pacman utils
-    'reflector',            # Arch Linux official repo mirror
-    'cachyos-rate-mirrors', # rate mirrors for cachyos and arch repo
-    'rate-mirrors',         # rust-based reflector alternative
-    'pkgfile',              # pkgfile for AUR
-    'rebuild-detector',     # detect package rebuild
-    'arch-audit',           # audit arch packages
+    'pacman-contrib',   # extra pacman utils
+    'reflector',        # Arch Linux official repo mirror
+    'pkgfile',          # pkgfile for AUR
+    'rebuild-detector', # detect package rebuild
+    'arch-audit',       # audit arch packages
 ]
 zsh = [
     'zsh',
@@ -130,7 +120,7 @@ network = [
     'systemd-resolvconf',
     'networkmanager',
     'modemmanager',
-    'ufw',                  # firewall
+    'ufw',  # firewall
     # Utils
     'inetutils',
     'openbsd-netcat',
@@ -209,8 +199,8 @@ admin = [
     # ex: timeshift
 ]
 packman = [
-    'octopi',               # pacman GUI
-    'flatpak',              # mostly user-space GUI-based applications
+    'octopi',   # pacman GUI
+    'flatpak',  # mostly user-space GUI-based applications
 ]
 power = [
     # Power management
@@ -258,6 +248,19 @@ plasma = [
     'kio-gdrive',
     'kio-zeroconf',
 ]
+gnome = [
+    # Core
+    'gdm',
+    'gnome',
+    'gnome-circle',
+    # Extra
+    'gnome-extra',
+    'gnome-tweaks',
+    # Extensions
+    'gnome-shell-extensions',
+    'gnome-browser-connector',
+
+]
 audio = [
     'phonon-qt6-vlc',
     'gst-plugin-pipewire',
@@ -289,10 +292,11 @@ utils = [
     'syncthing',    # syncthing
     'yt-dlp',       # youtube download
     'bat',          # cat clone
-    'eza',          # ls clone
 ]
 network = [
     # Extra network backends and utils
+    'systemd-networkd', # NetworkManager alternative
+    'iwd',             # wireless connection alternative
     'dnsmasq',         # DNS + DHCP server; this is used for libvirt, the host uses systemd-resolved instead
     'stubby',          # DNS privacy stub resolver for dnsmasq
     'nss-mdns',        # Hostname resolution for .local domains
@@ -322,35 +326,6 @@ fonts = [
     # Proprietary
     'ttf-ms-fonts',
 ]
-
-## AUR / Pacman packages
-# Installed after the base system and pacman packages
-[aur]
-packman = [
-    'topgrade',     # upgrades everything
-    'paru',         # AUR helper
-    'needrestart',  # automatically restart daemon after library update
-]
-apps = [
-    'helium-browser-bin',   # secondary ungoogled-chromium-based browser with convenient features
-    'chromium-widevine',    # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
-    'pwvucontrol',          # native pavucontrol for PipeWire
-]
-net-services = [
-    'samba',                    # samba transfers
-    'cachyos-samba-settings',   # Preset settings provided by CachyOS
-]
-
-## Background install packages
-# Installed after the system is complete in the background
-# Mostly user application or non-system-important packages
-[background]
-cuda = [
-    'cuda',             # big boi NVIDIA driver
-]
-apps = [
-    'elecwhat-bin',         # electron whatsapp client
-]
 fun = [
     'c-lolcat',
     'yumenikki-en',
@@ -358,8 +333,23 @@ fun = [
     'supertuxkart',
     'kblocks',
 ]
-vlc-plugins = [
-    'vlc-plugins-all'   # ALL vlc plugins
+
+## AUR / Pacman packages
+# Installed very late after the base system and pacman packages
+[aur]
+cuda = [
+    'cuda',             # big boi NVIDIA driver
+]
+packman = [
+    'topgrade',     # upgrades everything
+    'paru',         # AUR helper
+    'needrestart',  # automatically restart daemon after library update
+]
+apps = [
+    'helium-browser-bin',   # ungoogled-chromium-based browser with convenient features
+    'chromium-widevine',    # play DRM content on chromium-based browser (like helium). needs linking (see install-helium-widevine.sh)
+    'pwvucontrol',          # native pavucontrol for PipeWire
+    'elecwhat-bin',         # electron whatsapp client
 ]
 cli = [
     'audiorelay',       # Android/PC mic and audio mirroring
@@ -369,9 +359,13 @@ cli = [
     'steamguard-cli',   # Steam Guard authenticator in CLI
     # ex: timeshift-systemd-timer
 ]
-net-services = [
+services = [
+    'samba',            # samba transfers
     'sunshine',         # sunshine remote desktop
     'zerotier-one',     # virtual LAN
+]
+vlc-plugins = [
+    'vlc-plugins-all'   # ALL vlc plugins
 ]
 virt = [
     'qemu-desktop', # QEMU setup for desktop environment
@@ -404,4 +398,15 @@ print = [
 usbiso = [
     'ventoy',   # ventoy bootloader
     'archiso',  # archiso creation
+]
+nvidia-580xx = [
+    'nvidia-580xx-dkms',
+    'nvidia-580xx-utils',
+    'nvidia-580xx-settings',
+    'lib32-nvidia-580xx-utils',
+]
+
+[cachyos]
+samba = [
+    'cachyos-samba-settings',
 ]
