@@ -321,7 +321,7 @@ fonts = [
     # Bitmap
     'bdf-unifont',
     # Proprietary
-    'ttf-ms-fonts',
+    'ttf-ms-fonts', # Windows font
 ]
 
 ## AUR / Pacman packages
@@ -340,6 +340,9 @@ apps = [
 net-services = [
     'samba',                    # samba transfers
     'cachyos-samba-settings',   # Preset settings provided by CachyOS
+]
+fonts = [
+    'ttf-envycoder-nerd'
 ]
 
 ## Background install packages
