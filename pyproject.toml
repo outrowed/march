@@ -32,7 +32,7 @@ classifiers = [
 dependencies = [
     "tomli>=2.4.0",
     "tomli-w>=1.0.0",
-    "pydantic>=2.0.0"
+    "pydantic>=2.0.0",
 ]
 
 [tool.setuptools]
