@@ -219,6 +219,7 @@ power = [
     'upower',
 ]
 generic-de = [
+    'maliit-keyboard',  # maliit generic virtual keyboard
     'wl-clipboard',
     'xdg-utils',
     'trash-cli',
@@ -363,7 +364,6 @@ vlc-plugins = [
 ]
 cli = [
     'audiorelay',       # Android/PC mic and audio mirroring
-    'maliit-keyboard',  # maliit generic virtual keyboard
     'rbw',              # rust bitwarden cli
     'cryptomator-cli',  # encrypted vault/folder
     'steamguard-cli',   # Steam Guard authenticator in CLI
