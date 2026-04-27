@@ -12,6 +12,8 @@ file-tools = [
     # File tools
     "io.github.cboxdoerfer.FSearch",
     "io.gitlab.adhami3310.Converter",
+    "org.kde.kdiff3",
+    "org.kde.kompare",
 ]
 
 camera = [
@@ -29,14 +31,6 @@ lan-remote = [
     "com.moonlight_stream.Moonlight", # sunshine
 ]
 
-devel = [
-    "com.gitbutler.gitbutler",
-    "io.dbeaver.DBeaverCommunity",
-    "org.kde.kdiff3",
-    "org.kde.kompare",
-    "org.octave.Octave",
-]
-
 gaming-wine = [
     # front-ends
     "com.valvesoftware.Steam",
@@ -48,19 +42,13 @@ gaming-wine = [
     "com.vysp3r.ProtonPlus",
 ]
 
-gaming-etc = [
-    "org.prismlauncher.PrismLauncher",
-    "org.vinegarhq.Sober",
-]
-
 office = [
     "org.onlyoffice.desktopeditors",
     "org.kde.ghostwriter",
     "org.kde.okular",
 ]
 
-internet-social = [
-    "dev.vencord.Vesktop", # better discord
+chatting = [
     "org.kde.konversation",
     "org.kde.neochat",
 ]
@@ -69,29 +57,16 @@ internet = [
     "one.ablaze.floorp",
     # "org.mozilla.firefox", # replaced with one.ablaze.floorp
     "org.mozilla.Thunderbird",
-    "es.danirod.Cartero",
     # "io.github.ungoogled_software.ungoogled_chromium", # helium-browser-bin in IAUR_PACKAGES
     "org.qbittorrent.qBittorrent",
-    "org.kde.kget",
-    "org.kde.alligator",
 ]
 
-video = [
+2d-media = [
+    "org.gimp.GIMP",
     "com.obsproject.Studio",
 ]
 
-creative-graphics = [
-    "org.gimp.GIMP",
-    "org.kde.krita",
-    "org.kde.kdenlive",
-    "org.blender.Blender",
-    "org.inkscape.Inkscape",
-    "org.kde.digikam",
-]
-
 miscellaneous = [
-    "info.febvre.Komikku",
-    "org.godotengine.Godot",
     "com.bitwarden.desktop",
 ]
 
@@ -103,9 +78,46 @@ apps = [
     # "com.vscodium.codium", # AUR code code-features code-marketplace
 ]
 
+internet = [
+    "es.danirod.Cartero",   # postman FOSS
+    "org.kde.kget",         # download manager
+    "org.kde.alligator",    # RSS/atom reader
+]
+
+gaming-etc = [
+    "org.prismlauncher.PrismLauncher",
+    "org.vinegarhq.Sober",
+]
+
+devel = [
+    "com.gitbutler.gitbutler",
+    "io.dbeaver.DBeaverCommunity",
+    "org.octave.Octave",
+]
+
 multimedia = [
     "com.github.wwmm.easyeffects",
     "org.tenacityaudio.Tenacity",
     "com.github.marinm.songrec",
     "no.mifi.losslesscut",
+]
+
+chatting = [
+    "dev.vencord.Vesktop", # better discord
+]
+
+2d-media = [
+    "org.kde.krita",
+    "org.kde.kdenlive",
+    "org.inkscape.Inkscape",
+    "org.kde.digikam",
+]
+
+3d-media = [
+    "org.blender.Blender",
+    "org.godotengine.Godot",
+]
+
+miscellaneous = [
+    "info.febvre.Komikku",
 ]
