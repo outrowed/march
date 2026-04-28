@@ -1,54 +1,23 @@
-# march
+# march - (My-)Arch Linux
 
-*Another Arch Linux installation script*
+march is a semi-unattended Arch Linux installation scripts customizable for personal uses.
 
-Opiniated Arch Linux installation script (for personal use).
+This project is a *template* rather than a full-fledge OS installation experience. It's designed for tinkers and developers to quickly setup Arch system and customize their step-by-step installation. In other words, it's a cooking recipe intended that you can change and modify.
 
-It reformats partitions, bootstraps the system, installs a desktop stack, and sets up post-boot tasks.
+## Technical notes
 
-## Disclaimer
-* **It will reformat partitions** labeled in [`config.sh`](config.sh) (`IROOT_PARTITION_LABEL`, `IHOME_PARTITION_LABEL`). Only [ext4](https://wiki.archlinux.org/title/ext4) is supported for now.
-* Requires internet ([pacman mirror](https://wiki.archlinux.org/title/Reflector) & packages installation).
-* Not fully unattended; prompts remain (e.g., AUR helper password, confirmation before formatting).
-
-## What it does
-* Mounts [ESP](https://wiki.archlinux.org/title/EFI_system_partition), root, and home partitions by label, pacstraps base and configured packages in [`packages.sh`](./packages.sh), sets hostname, locale, timezone, and keymap.
-* Sets up [systemd-boot](https://wiki.archlinux.org/title/systemd-boot) or [unified kernel image (UKI)](https://wiki.archlinux.org/title/Unified_kernel_image).
-* Creates users from hashed passwords in [`passwords/`](passwords/).
-* Installs AUR helper ([paru](https://github.com/Morganamilo/paru) or [yay](https://github.com/Jguer/yay)), pacman hooks, and systemd services.
-* Post-installation systemd services, packages, and [flatpak](https://wiki.archlinux.org/title/Flatpak) applications.
-
-## Configure before running
-* [`config.sh`](config.sh): host/user names, timezone/locale, partition labels, EFI path (`IEFI_PARTITION`), bootloader choice (`IBOOTLOADER=systemd-boot|uki`), swap (`ISWAP_TYPE=zram|swapfile`, defaults to zram).
-* [`packages.sh`](packages.sh): base/pacman/AUR/late package selections. Late packages are installed after the system is fully installed (after base, pacman, and AUR packages).
-* [`flatpak-packages.sh`](flatpak-packages.sh): flatpaks to install post-boot.
-* You can use the interactive wizard to generate the configs: [`./config-wizard.sh`](config-wizard.sh) (defaults to `config-user.sh` when saving) and [`./packages-wizard.sh`](packages-wizard.sh) (defaults to `packages-user.sh` / `flatpak-packages-user.sh` when saving).
-* [`users-wizard.sh`](users-wizard.sh): generate hashed passwords into [`passwords/`](passwords/) (`filename` = username or `username+groups`; contents from `openssl passwd -6`).
-
-## Quickstart
-1. Boot Arch ISO with internet.
-1. Install `git` by `pacman -Sy git`.
-1. Clone this repo into the live environment.
-1. Make scripts executable: `chmod +x *.sh`.
-1. Adjust [`config.sh`](config.sh), [`packages.sh`](packages.sh), [`flatpak-packages.sh`](flatpak-packages.sh) (or use the wizards: [`./config-wizard.sh`](config-wizard.sh), [`./packages-wizard.sh`](packages-wizard.sh)).
-1. Generate users: [`./user-wizard.sh`](user-wizard.sh) (creates [`passwords/`](passwords/) entries).
-1. Run the installer: [`./install.sh`](install.sh) (will prompt before formatting and during AUR helper build).
-1. Reboot into the installed system; post-install services will finish remaining packages/flatpaks.
-
-## Post-boot services
-* `march-post-install-config.service`: one-time system config (firewall, samba groups, etc.).
-* `march-post-install-packages.service`: late AUR packages + flatpaks.
-
-## Notes
-* Bootloaders: `IBOOTLOADER=systemd-boot` or `uki`; EFI device set from `IEFI_PARTITION`.
-* GPU: installs NVIDIA, AMD, and Intel GPU stack by default; adjust in `packages.sh` if not needed.
-* Security: temporary passwordless sudo is used during AUR helper installation and then removed.
+* This project exclusively supports:
+    * NetworkManager and systemd-resolved for networking
+    * systemd-boot or [Unified Kernel Image (UKI)](https://wiki.archlinux.org/title/Unified_Kernel_Image) for the bootloader
+    * CachyOS Linux kernel, and additionally other tools and utilities made by them
+* It supports *most variations of common PC hardware* -- meaning it will install many drivers to support common hardware you'll see on PC builds
+    * For example, NVIDIA, AMD, and Intel graphics drivers are intentionally added in the installation so it support most common graphics card extensively
+    * Most available printers drivers are also installed, including Cups, Gutenprint, and hplip packages
 
 ## License
 
 This project is licensed under the terms of the GNU General Public License, version 2 or (at your option) any later version.
 
 See [`LICENSE`](LICENSE) file for more information.
-
 
 SPDX-License-Identifier: GPL-2.0-or-later
